@@ -13,4 +13,7 @@ class BaseExchange:
         # get order cost
         pass
 
+    def get_ohlcv(self, symbol, timeframe, since, limit):
+        # get ohlcv history
+        pass
 

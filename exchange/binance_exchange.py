@@ -10,7 +10,7 @@ class BinanceExchange(BaseExchange):
         })
 
     def get_order_book(self, symbol):
-
+        print("Ticker: " + str(self.exchange.fetch_ticker(symbol)))
         return self.exchange.fetch_order_book(symbol)
 
     def calculate_order_cost(self, symbol, amount, side):
@@ -19,6 +19,9 @@ class BinanceExchange(BaseExchange):
         price = top_of_book[0]
         cost = price * amount
         return cost
+
+    def get_ohlcv(self, symbol, timeframe, since=None, limit=None):
+        return self.exchange.fetch_ohlcv(symbol, timeframe, since, limit)
 
     def aboba(self):
         pass

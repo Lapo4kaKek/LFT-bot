@@ -1,1 +1,8 @@
 .env
+
+
+# JetBrains IDEs (PyCharm, IntelliJ, etc.)
+.idea/
+*.iml
+*.iws
+*.ipr
