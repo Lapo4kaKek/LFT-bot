@@ -1,6 +1,5 @@
 .env
 
-
 # JetBrains IDEs (PyCharm, IntelliJ, etc.)
 .idea/
 *.iml

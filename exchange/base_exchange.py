@@ -9,8 +9,8 @@ class BaseExchange:
         # get orderbook
         pass
 
-    def calculate_order_cost(self, symbol, amount, side):
-        # get order cost
+    def get_ticker(self, symbol, side=None):
+        # get ticker
         pass
 
     def get_ohlcv(self, symbol, timeframe, since, limit):
