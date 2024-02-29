@@ -18,13 +18,13 @@ class BinanceExchange(BaseExchange):
             'secret': api_secret,
         })
 
-    def get_order_book(self, symbol):
+    def get_order_book(self, coin):
         """
 
         :param symbol: Символ торговой пары, для которой требуется получить стакан ордеров.
         :return: dict: Стакан ордеров для указанной торговой пары.
         """
-        return self.exchange.fetch_order_book(symbol)
+        return self.exchange.fetch_order_book(coin)
 
     def get_ticker(self, symbol, side=None):
         """
@@ -42,15 +42,24 @@ class BinanceExchange(BaseExchange):
             return ticker["bid"], ticker["bidVolume"]
         return ticker
 
-    def get_ohlcv(self, symbol, timeframe, since=None, limit=None):
+    def get_ohlcv(self, coin, since=None, limit=None, timeframe='1m'):
+        params = {}
+        if since is not None:
+            params['since'] = since
+        if limit is not None:
+            params['limit'] = limit
+
+        return self.exchange.fetch_ohlcv(coin, timeframe, **params)
+
+
+    # you need add a parameters checker
+    def create_order(self, coin, type, side, amount, price):
         """
-        Возвращает исторические данные OHLCV (открытие, максимум, минимум, закрытие, объем)
-        для заданной торговой пары и временного интервала. Позволяет указать начальное время
-        и максимальное количество точек данных для возврата.
-        :param symbol: Символ торговой пары, для которой требуется получить данные OHLCV.
-        :param timeframe: Временной интервал для данных ('1m', '1h', '1d', '1M', '1y').
-        :param since: Начальная метка времени для получения данных (в миллисекундах). По умолчанию None.
-        :param limit: Количество возвращаемых точек данных. По умолчанию None.
-        :return: list: Список данных OHLCV для указанной торговой пары и временного интервала.
+        :param coin: Token name
+        :param type: Market or Limit
+        :param amount: Buy or Sell
+        :param price:
+        :return:
         """
-        return self.exchange.fetch_ohlcv(symbol, timeframe, since, limit)
+        self.exchange.create_order(coin, type, side, amount, price)
+

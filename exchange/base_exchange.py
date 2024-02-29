@@ -5,15 +5,15 @@ class BaseExchange:
         self.api_key = api_key
         self.api_secret = api_secret
 
-    def get_order_book(self):
+    def get_order_book(self, coin):
         # get orderbook
         pass
 
-    def get_ticker(self, symbol, side=None):
+    def get_ticker(self, coin, side=None):
         # get ticker
         pass
 
-    def get_ohlcv(self, symbol, timeframe, since, limit):
+    def get_ohlcv(self, coin, since=None, limit=None, timeframe='1m'):
         # get ohlcv history
         pass
 
