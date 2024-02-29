@@ -18,15 +18,16 @@ class BinanceExchange(BaseExchange):
             'secret': api_secret,
         })
 
-    def get_order_book(self, coin):
+    def get_order_book(self, coin, limit=None):
         """
 
         :param symbol: Символ торговой пары, для которой требуется получить стакан ордеров.
         :return: dict: Стакан ордеров для указанной торговой пары.
         """
-        return self.exchange.fetch_order_book(coin)
+        return super().get_order_book(coin, limit)
 
-    def get_ticker(self, symbol, side=None):
+
+    def get_ticker(self, coin, side=None):
         """
         Возвращает информацию о последних ценах и объемах для заданной торговой пары.
         Может возвращать данные конкретно для покупки или продажи, если указан параметр side.
@@ -35,21 +36,10 @@ class BinanceExchange(BaseExchange):
         :return: При указании side возвращает кортеж (цена, объем).
         Без side возвращает полный тикер с информацией о последней цене, объеме и других данных.
         """
-        ticker = self.exchange.fetch_ticker(symbol)
-        if side == 'buy':
-            return ticker["ask"], ticker["askVolume"]
-        elif side == 'sell':
-            return ticker["bid"], ticker["bidVolume"]
-        return ticker
+        return super().get_ticker(coin, side)
 
     def get_ohlcv(self, coin, since=None, limit=None, timeframe='1m'):
-        params = {}
-        if since is not None:
-            params['since'] = since
-        if limit is not None:
-            params['limit'] = limit
-
-        return self.exchange.fetch_ohlcv(coin, timeframe, **params)
+        return super().get_ohlcv(coin, since, limit, timeframe)
 
 
     # you need add a parameters checker

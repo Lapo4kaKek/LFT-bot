@@ -15,25 +15,15 @@ class BybitExchange(BaseExchange):
         })
 
     def get_order_book(self, coin, limit = None):
-        return self.exchange.fetch_order_book(coin, limit)
+        return super().get_order_book(coin, limit)
 
     def get_ohlcv(self, coin, since=None, limit=None, timeframe='1m'):
-        params = {}
-        if since is not None:
-            params['since'] = since
-        if limit is not None:
-            params['limit'] = limit
+        return super().get_ohlcv(coin, since, limit, timeframe)
 
-        return self.exchange.fetch_ohlcv(coin, timeframe, **params)
-
+    def get_ticker(self, coin, side=None):
+        return super().get_ticker(coin, side)
 
     # you need add a parameters checker
     def create_order(self, coin, type, side, amount, price):
-        """
-        :param coin: Token name
-        :param type: Market or Limit
-        :param amount: Buy or Sell
-        :param price:
-        :return:
-        """
-        self.exchange.create_order(coin, type, side, amount, price)
+        return super().create_order(coin, type, side, amount, price)
+
