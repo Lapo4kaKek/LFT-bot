@@ -1,26 +1,18 @@
 from http.server import HTTPServer, BaseHTTPRequestHandler
-import json
 import time
 from hyperliquid.info import Info
 from hyperliquid.utils import constants
-import utils
-import eth_account
-from eth_abi import encode
-from eth_account.signers.local import LocalAccount
-from eth_utils import keccak, to_hex
-from eth_account.signers.local import LocalAccount
-from hyperliquid.utils.constants import TESTNET_API_URL
+import json
 from hyperliquid.exchange import Exchange
-from constans import MAINNET_API_URL
-import datetime
+from eth_account.account import Account
 from typing import Any, Dict
 import requests
-
+# HYPERLIQUID_URL
 class HyperLiquidManager:
-    def __init__(self, account, api_url):
+    def __init__(self, account):
         self.account = account
-        self.info = Info(api_url, skip_ws=True)
-        self.exchange = Exchange(account, api_url)
+        self.info = Info("https://api.hyperliquid.xyz", skip_ws=True)
+        self.exchange = Exchange(self.account, "https://api.hyperliquid.xyz")
 
     def post(self, endpoint: str, payload: Dict[str, Any]) -> Any:
         """Отправить POST запрос к API.
@@ -42,6 +34,22 @@ class HyperLiquidManager:
             raise Exception(f"Ошибка запроса: {response.status_code}, {response.text}")
 
         return response.json()
+
+    def send_rpc_request(self, url, method, params):
+        headers = {'Content-Type': 'application/json'}
+        payload = {
+            "id": 1,
+            "jsonrpc": "2.0",
+            "method": method,
+            "params": params
+        }
+        print(url)
+        response = requests.post(url, data=json.dumps(payload), headers=headers)
+        return response.json()  # return json response
+
+    def get_address(self):
+        return self.account.address
+
 
     def get_user_state(self):
         return self.info.user_state(self.account.address)

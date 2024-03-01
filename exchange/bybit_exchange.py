@@ -27,3 +27,6 @@ class BybitExchange(BaseExchange):
     def create_order(self, coin, type, side, amount, price):
         return super().create_order(coin, type, side, amount, price)
 
+    def get_balance(self):
+        return super().get_balance()
+

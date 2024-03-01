@@ -53,3 +53,5 @@ class BinanceExchange(BaseExchange):
         """
         self.exchange.create_order(coin, type, side, amount, price)
 
+    def get_balance(self):
+        return super().get_balance()

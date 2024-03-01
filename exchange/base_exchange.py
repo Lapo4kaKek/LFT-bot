@@ -40,3 +40,6 @@ class BaseExchange:
         :return: order_id?
         """
         self.exchange.create_order(coin, type, side, amount, price)
+
+    def get_balance(self):
+        return self.exchange.fetch_balance()
