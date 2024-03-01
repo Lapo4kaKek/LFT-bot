@@ -12,16 +12,10 @@ class HyperLiquidExchange(BaseExchange):
         super().__init__(api_key=None, api_secret=privateKey)
 
     def get_order_book(self, coin, limit=None):
-        return self.exchange.fetch_order_book(coin, limit)
+        pass
 
     def get_ohlcv(self, coin, since=None, limit=None, timeframe='1m'):
-        params = {}
-        if since is not None:
-            params['since'] = since
-        if limit is not None:
-            params['limit'] = limit
-
-        return self.exchange.fetch_ohlcv(coin, timeframe, **params)
+        pass
 
     # you need add a parameters checker
     def create_order(self, coin, type, side, amount, price):
