@@ -1,6 +1,6 @@
 import constans
 from .base_exchange import BaseExchange
-from Services.HyperLiquidManager import HyperLiquidManager
+from services.HyperLiquidManager import HyperLiquidManager
 import ccxt
 from http.server import HTTPServer, BaseHTTPRequestHandler
 from eth_account.account import Account
@@ -44,4 +44,7 @@ class HyperLiquidExchange(BaseExchange):
         print(address)
         params = [address, "latest"]
 
-        return manager.send_rpc_request(constans.ARBITRUM_MAINNET, "eth_getBalance", params)
+        response_json = manager.send_rpc_request(constans.ARBITRUM_MAINNET, "eth_getBalance", params)
+        balance_hex = response_json['result']
+
+        return balance_hex
