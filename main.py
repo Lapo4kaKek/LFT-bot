@@ -26,10 +26,13 @@ api_secret = os.getenv('BINANCE_API_SECRET')
 # api_secret_bybit = os.getenv('BYBIT_API_SECRET')
 #
 # bybit = BybitExchange(api_key_bybit, api_secret_bybit)
-# print(bybit.get_balance())
-
-# account = Account.from_key("")
-# print(account.address)
-
-
-
+# print(bybit.update_leverage("ARB", 2))
+#
+# # account = Account.from_key("")
+# # print(account.address)
+#
+#
+pkey = os.getenv('METAMASK_PKEY')
+print(pkey)
+client = HyperLiquidExchange(pkey)
+print(client.get_leverage())
