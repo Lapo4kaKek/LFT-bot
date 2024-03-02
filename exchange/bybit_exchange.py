@@ -30,6 +30,13 @@ class BybitExchange(BaseExchange):
     def get_balance(self):
         return super().get_balance()
 
-    def update_leverage(self, coin, level):
-        response = self.exchange.set_leverage(level, f'{coin}/USDT')
-        print(response)
+    # futures
+    def set_leverage(self, coin, level):
+        """
+
+        :param coin: Example: SOL/USDT = SOLUSDT
+        :param level:
+        :return:
+        """
+        return self.exchange.set_leverage(level, coin)
+

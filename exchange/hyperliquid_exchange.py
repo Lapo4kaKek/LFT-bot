@@ -82,6 +82,10 @@ class HyperLiquidExchange(BaseExchange):
     def update_leverage(self, leverage, coin, is_cross=True):
         return self.exchange.update_leverage(leverage, coin, is_cross)
 
+    # the same 'update leverage'
+    def set_leverage(self, leverage, coin):
+        return self.exchange.update_leverage(leverage, coin, True)
+
     # Gtc - Good Till Canceled
     # work
     def place_long_order(self, coin, amount, price):

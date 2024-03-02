@@ -22,17 +22,26 @@ api_secret = os.getenv('BINANCE_API_SECRET')
 # # print(binance.get_ticker('BTC/USDT', 'buy'))
 # # print(TechnicalAnalysis(binance, 'BTC/USDT').get_ohlcv('1m', limit=1000))
 #
-# api_key_bybit = os.getenv('BYBIT_API_KEY')
-# api_secret_bybit = os.getenv('BYBIT_API_SECRET')
-#
-# bybit = BybitExchange(api_key_bybit, api_secret_bybit)
-# print(bybit.update_leverage("ARB", 2))
+api_key_bybit = os.getenv('BYBIT_API_KEY')
+api_secret_bybit = os.getenv('BYBIT_API_SECRET')
+
+client = ccxt.bybit({
+    'apiKey': api_key_bybit,
+    'secret': api_secret_bybit,
+})
+bybit = BybitExchange(api_key_bybit, api_secret_bybit)
+print(bybit.set_leverage("ARBUSDT", 2))
+# client.load_markets()
+# result = client.set_leverage(4, 'SOLUSDT')
+# res = client.leverage
+# print(result)
+
 #
 # # account = Account.from_key("")
 # # print(account.address)
 #
 #
-pkey = os.getenv('METAMASK_PKEY')
-print(pkey)
-client = HyperLiquidExchange(pkey)
-print(client.get_leverage())
+# pkey = os.getenv('METAMASK_PKEY')
+# print(pkey)
+# client = HyperLiquidExchange(pkey)
+# print(client.get_leverage())

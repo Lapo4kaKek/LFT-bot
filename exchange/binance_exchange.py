@@ -58,6 +58,6 @@ class BinanceExchange(BaseExchange):
 
 
     # futures
-    def update_leverage(self, coin, level):
-        response = self.exchange.set_leverage(level, f'{coin}/USDT')
-        print(response)
+    def set_leverage(self, coin, level):
+        return self.exchange.set_leverage(level, coin)
+
