@@ -88,20 +88,20 @@ class HyperLiquidExchange(BaseExchange):
 
     # Gtc - Good Till Canceled
     # work
-    def place_long_order(self, coin, amount, price):
+    def __place_long_order(self, coin, amount, price):
         return self.exchange.order(coin, True, amount, price, {"limit": {"tif": "Gtc"}})
 
     # Gtc - Good Till Canceled
     # work
-    def place_short_order(self, amount, price):
-        return self.exchange.order("ETH", False, amount, price, {"limit": {"tif": "Gtc"}})
+    def __place_short_order(self, coin, amount, price):
+        return self.exchange.order(coin, False, amount, price, {"limit": {"tif": "Gtc"}})
     # work
-    def place_long_market_buy_order(self, coin, size):
+    def __place_long_market_buy_order(self, coin, size):
         is_buy = True
         return self.exchange.market_open(coin, is_buy, size, None)
 
     # work
-    def place_short_market_buy_order(self, coin, size):
+    def __place_short_market_buy_order(self, coin, size):
         is_buy = False
         return self.exchange.market_open(coin, is_buy, size, None)
 
@@ -153,3 +153,18 @@ class HyperLiquidExchange(BaseExchange):
                     total_funding_fee += funding_fee
 
         return total_funding_fee
+
+    def create_order(self, coin, type, side, amount, price=None):
+        if type == "MARKET":
+            if side == "BUY":
+                return self.__place_long_market_buy_order(coin, amount)
+            elif side == "SELL": # i think maybe here need close_market
+                return self.__place_short_market_buy_order(coin, amount)
+        elif type == "LIMIT":
+            if side == "BUY":
+                return self.__place_long_order(coin, amount, price)
+            elif side == "SELL": # i think maybe here need close_market
+                return self.__place_short_order(coin, amount, price)
+        else:
+            raise ValueError("Invalid order type or side")
+
