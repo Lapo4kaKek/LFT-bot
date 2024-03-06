@@ -32,10 +32,10 @@ api_secret = os.getenv('BINANCE_API_SECRET')
 # # print(account.address)
 #
 #
-pkey = os.getenv('METAMASK_PKEY')
-print(pkey)
-client = HyperLiquidExchange(pkey)
-print(client.get_leverage())
+# pkey = os.getenv('METAMASK_PKEY')
+# print(pkey)
+# client = HyperLiquidExchange(pkey)
+# print(client.get_leverage())
 
 binance = BinanceExchange(api_key, api_secret)
 
@@ -45,7 +45,7 @@ print(binance.get_ticker('BTC/USDT', 'buy'))
 ta = TechnicalAnalysis(binance, 'BTC/USDT')
 
 # OHLCV
-print(ta.get_ohlcv('1d', limit=1000))
+print(ta.get_ohlcv(timeframe='1d', limit=1000))
 
 # RSI
 print("RSI:", ta.get_rsi().to_dict())
