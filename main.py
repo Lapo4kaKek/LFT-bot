@@ -31,10 +31,7 @@ client = ccxt.bybit({
 })
 bybit = BybitExchange(api_key_bybit, api_secret_bybit)
 print(bybit.set_leverage("ARBUSDT", 2))
-# client.load_markets()
-# result = client.set_leverage(4, 'SOLUSDT')
-# res = client.leverage
-# print(result)
+client.load_markets()
 
 #
 # # account = Account.from_key("")
