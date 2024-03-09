@@ -48,3 +48,8 @@ class BaseExchange(ABC):
     @abstractmethod
     def get_balance(self):
         return self.exchange.fetch_balance()
+
+
+    # futures
+    def update_leverage(self, coin, level):
+        pass

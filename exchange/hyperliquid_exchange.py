@@ -12,7 +12,6 @@ from hyperliquid.exchange import Exchange
 import requests
 from typing import Any, Dict
 
-
 # Work in arbitrum network
 class HyperLiquidExchange(BaseExchange):
     def __init__(self, privateKey):
@@ -34,15 +33,13 @@ class HyperLiquidExchange(BaseExchange):
             Any: Ответ от сервера.
         """
         url = f"{endpoint}"
-        headers = {'Content-Type': 'application/json',
-                   'Content-Length': '<calculated when request is sent>'}
+        headers = {'Content-Type': 'application/json', 'Content-Length': '<calculated when request is sent>'}
         print(headers)
         print(payload)
         response = requests.post(url, json=payload, headers=headers)
 
         if response.status_code != 200:
-            raise Exception(
-                f"Ошибка запроса: {response.status_code}, {response.text}")
+            raise Exception(f"Ошибка запроса: {response.status_code}, {response.text}")
 
         return response.json()
 
@@ -55,15 +52,13 @@ class HyperLiquidExchange(BaseExchange):
             "params": params
         }
         print(url)
-        response = requests.post(url, data=json.dumps(payload),
-                                 headers=headers)
+        response = requests.post(url, data=json.dumps(payload), headers=headers)
         return response.json()  # return json response
 
-    def get_balance(self, api_url=constans.ARBITRUM_MAINNET):
+    def get_balance(self, api_url = constans.ARBITRUM_MAINNET):
         address = self.get_address()
         print(address)
-        response_json = self.send_rpc_request(api_url, "eth_getBalance",
-                                              [address, "latest"])
+        response_json = self.send_rpc_request(api_url, "eth_getBalance", [address, "latest"])
         balance_hex = response_json['result']
 
         return balance_hex
@@ -79,9 +74,7 @@ class HyperLiquidExchange(BaseExchange):
     def get_leverage(self, order_number=0):
         user_state = self.get_user_state()
         try:
-            return \
-            user_state["assetPositions"][order_number]["position"]["leverage"][
-                "value"]
+            return user_state["assetPositions"][order_number]["position"]["leverage"]["value"]
         except (IndexError, KeyError):
             return "Information not available"
 
@@ -89,27 +82,29 @@ class HyperLiquidExchange(BaseExchange):
     def update_leverage(self, leverage, coin, is_cross=True):
         return self.exchange.update_leverage(leverage, coin, is_cross)
 
-    # Gtc - Good Till Canceled
-    # work
-    def place_long_order(self, coin, amount, price):
-        return self.exchange.order(coin, True, amount, price,
-                                   {"limit": {"tif": "Gtc"}})
+    # the same 'update leverage'
+    def set_leverage(self, leverage, coin):
+        return self.exchange.update_leverage(leverage, coin, True)
 
     # Gtc - Good Till Canceled
     # work
-    def place_short_order(self, amount, price):
-        return self.exchange.order("ETH", False, amount, price,
-                                   {"limit": {"tif": "Gtc"}})
+    def __place_long_order(self, coin, amount, price):
+        return self.exchange.order(coin, True, amount, price, {"limit": {"tif": "Gtc"}})
 
+    # Gtc - Good Till Canceled
     # work
-    def place_long_market_buy_order(self, coin, size):
+    def __place_short_order(self, coin, amount, price):
+        return self.exchange.order(coin, False, amount, price, {"limit": {"tif": "Gtc"}})
+    # work
+    def __place_long_market_buy_order(self, coin, size):
         is_buy = True
         return self.exchange.market_open(coin, is_buy, size, None)
 
     # work
-    def place_short_market_buy_order(self, coin, size):
+    def __place_short_market_buy_order(self, coin, size):
         is_buy = False
         return self.exchange.market_open(coin, is_buy, size, None)
+
 
     # work
     def close_market_order(self, coin, size):
@@ -131,25 +126,21 @@ class HyperLiquidExchange(BaseExchange):
 
     # work
     def get_user_funding(self, start_time):
-        return self.info.post("/info", {"type": "userFunding",
-                                        "user": self.account.address,
-                                        "startTime": start_time})
+        return self.info.post("/info", {"type": "userFunding", "user": self.account.address, "startTime": start_time})
         # return self.post(constants.MAINNET_API_URL + "/info", {"type": "userState", "user": self.account.address, "startTime": start_time})
 
     # work
     def user_state(self, start_time):
         # Здесь мы отправляем запрос на получение состояния пользователя, а не истории фандинга.
         return self.post(constans.HYPERLIQUID_MAIN_API_URL + "/info",
-                         {"type": "userState", "user": self.account.address,
-                          "startTime": start_time})
+                         {"type": "userState", "user": self.account.address, "startTime": start_time})
+
 
     # work
-    def calculate_funding_impact(self, open_time, position_size,
-                                 position_side):
+    def calculate_funding_impact(self, open_time, position_size, position_side):
         current_time = int(time.time() * 1000)
 
-        funding_history = self.info.funding_history('BTC', open_time,
-                                                    current_time)
+        funding_history = self.info.funding_history('BTC', open_time, current_time)
 
         total_funding_fee = 0
 
@@ -162,3 +153,17 @@ class HyperLiquidExchange(BaseExchange):
                     total_funding_fee += funding_fee
 
         return total_funding_fee
+
+    def create_order(self, coin, type, side, amount, price=None):
+        if type == "MARKET":
+            if side == "BUY":
+                return self.__place_long_market_buy_order(coin, amount)
+            elif side == "SELL": # i think maybe here need close_market
+                return self.__place_short_market_buy_order(coin, amount)
+        elif type == "LIMIT":
+            if side == "BUY":
+                return self.__place_long_order(coin, amount, price)
+            elif side == "SELL": # i think maybe here need close_market
+                return self.__place_short_order(coin, amount, price)
+        else:
+            raise ValueError("Invalid order type or side")
