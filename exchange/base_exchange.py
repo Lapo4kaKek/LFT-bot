@@ -1,8 +1,8 @@
 import ccxt
+from abc import ABC, abstractmethod
 
 
-# abstract class
-class BaseExchange:
+class BaseExchange(ABC):
     def __init__(self, api_key, api_secret):
         self.api_key = api_key
         self.api_secret = api_secret
@@ -11,9 +11,11 @@ class BaseExchange:
             'secret': api_secret,
         })
 
+    @abstractmethod
     def get_order_book(self, coin, limit=None):
         return self.exchange.fetch_order_book(coin, limit)
 
+    @abstractmethod
     def get_ticker(self, coin, side=None):
         ticker = self.exchange.fetch_ticker(coin)
         if side == 'buy':
@@ -22,6 +24,7 @@ class BaseExchange:
             return ticker["bid"], ticker["bidVolume"]
         return ticker
 
+    @abstractmethod
     def get_ohlcv(self, coin, since=None, limit=None, timeframe='1m'):
         params = {}
         if since is not None:
@@ -31,6 +34,7 @@ class BaseExchange:
 
         return self.exchange.fetch_ohlcv(coin, timeframe, **params)
 
+    @abstractmethod
     def create_order(self, coin, type, side, amount, price):
         """
         :param coin: Token name
@@ -41,6 +45,7 @@ class BaseExchange:
         """
         self.exchange.create_order(coin, type, side, amount, price)
 
+    @abstractmethod
     def get_balance(self):
         return self.exchange.fetch_balance()
 

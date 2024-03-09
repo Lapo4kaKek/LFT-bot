@@ -11,7 +11,7 @@ from eth_account.account import Account
 
 
 load_dotenv()
-#
+
 api_key = os.getenv('BINANCE_API_KEY')
 api_secret = os.getenv('BINANCE_API_SECRET')
 #
@@ -33,12 +33,3 @@ bybit = BybitExchange(api_key_bybit, api_secret_bybit)
 print(bybit.set_leverage("ARBUSDT", 2))
 client.load_markets()
 
-#
-# # account = Account.from_key("")
-# # print(account.address)
-#
-#
-# pkey = os.getenv('METAMASK_PKEY')
-# print(pkey)
-# client = HyperLiquidExchange(pkey)
-# print(client.get_leverage())
