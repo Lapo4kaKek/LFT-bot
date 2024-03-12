@@ -14,10 +14,19 @@ async def main():
     api_key_bybit = os.getenv('BYBIT_API_KEY')
     api_secret_bybit = os.getenv('BYBIT_API_SECRET')
 
-    client = ccxt.bybit({
-        'apiKey': api_key_bybit,
-        'secret': api_secret_bybit,
+    api_key_binance = os.getenv('BINANCE_API_KEY')
+    api_secret_binance = os.getenv('BYBIT_API_SECRET')
+
+    # client = ccxt.bybit({
+    #     'apiKey': api_key_bybit,
+    #     'secret': api_secret_bybit,
+    # })
+
+    client = ccxt.binance({
+        'apiKey': api_key_binance,
+        'secret': api_secret_binance,
     })
+
     bybit = BybitExchange(api_key_bybit, api_secret_bybit)
     # print(client.set_leverage(2, "STRK/USDT:USDT"))
 
