@@ -61,3 +61,7 @@ class BinanceExchange(BaseExchange):
     def set_leverage(self, coin, level):
         return self.exchange.set_leverage(level, coin)
 
+    def create_market_buy_order(self, symbol, order_size):
+        return super().create_market_buy_order(symbol, order_size)
+
+

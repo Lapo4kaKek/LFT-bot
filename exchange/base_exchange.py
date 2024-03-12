@@ -43,7 +43,7 @@ class BaseExchange(ABC):
         :param price:
         :return: order_id?
         """
-        self.exchange.create_order(coin, type, side, amount, price)
+        return self.exchange.create_order(coin, type, side, amount, price)
 
     @abstractmethod
     def get_balance(self):
@@ -53,3 +53,9 @@ class BaseExchange(ABC):
     # futures
     def update_leverage(self, coin, level):
         pass
+
+    def create_market_buy_order(self, symbol, order_size):
+        return self.exchange.create_market_buy_order(symbol, order_size)
+
+    def create_market_sell_order(self, symbol, order_size):
+        return self.exchange.create_market_sell_order(symbol, order_size)
