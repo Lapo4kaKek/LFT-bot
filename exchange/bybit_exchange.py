@@ -1,5 +1,6 @@
 from .base_exchange import BaseExchange
 import ccxt
+import ccxt.async_support as ccxt
 
 class BybitExchange(BaseExchange):
     def __init__(self, api_key, api_secret):
@@ -40,8 +41,8 @@ class BybitExchange(BaseExchange):
         """
         return self.exchange.set_leverage(level, coin)
 
-    def create_market_buy_order(self, symbol, order_size):
-        return super().create_market_buy_order(symbol, order_size)
+    async def create_market_buy_order(self, symbol, order_size):
+        return await super().create_market_buy_order(symbol, order_size)
 
-    def create_market_sell_order(self, symbol, order_size):
-        return super().create_market_sell_order(symbol, order_size)
+    async def create_market_sell_order(self, symbol, order_size):
+        return await super().create_market_sell_order(symbol, order_size)

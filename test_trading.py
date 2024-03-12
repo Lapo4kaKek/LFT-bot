@@ -21,14 +21,18 @@ async def main():
     bybit = BybitExchange(api_key_bybit, api_secret_bybit)
     # print(client.set_leverage(2, "STRK/USDT:USDT"))
 
-    print(bybit.set_leverage("STRKUSDT", 2))
+    #print(bybit.set_leverage("STRKUSDT", 2))
 
-    print(client.load_markets())
-    order = await client.create_order('STRKUSDT', "market", "buy", 6)
+
+    order = await bybit.create_market_buy_order("STRK/USDT", 3)
     print(order)
     await asyncio.sleep(10)
-    response = await client.cancel_order(order['id'], order['symbol'])
+    response = await bybit.create_market_sell_order("STRK/USDT", 3)
     print(response)
+
+    # Закрытие асинхронного клиента после выполнения всех операций
+    await client.close()
+
 
 
 api_key = os.getenv('BINANCE_API_KEY')
