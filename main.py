@@ -72,5 +72,7 @@ def insert_order_history_to_db(bybit_exchange, monitoring_instance):
 
 bybit = BybitExchange(api_key_bybit, api_secret_bybit)
 
-insert_order_history_to_db(bybit, monitoring)
-monitoring.fetch_and_print_table_data("orders")
+# insert_order_history_to_db(bybit, monitoring)
+#monitoring.fetch_and_print_table_data("orders")
+
+monitoring.calculate_and_insert_daily_pnl(bybit.get_order_history(20), 100)

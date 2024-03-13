@@ -47,5 +47,5 @@ async def main():
 
 
 bybit = BybitExchange(api_key_bybit, api_secret_bybit)
-pprint(bybit.get_order_history(4))
+result = bybit.get_order_history(4)
 

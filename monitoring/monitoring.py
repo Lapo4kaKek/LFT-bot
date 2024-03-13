@@ -75,3 +75,29 @@ class Monitoring:
         table_name = 'orders'
         self.insert_data(table_name, data, column_names)
 
+
+    # нужно еще поработать над этим
+    def calculate_and_insert_daily_pnl(self, orders_data, starting_capital):
+        pnl_data = {}
+
+        # Расчет PnL
+        for order in orders_data:
+            date = order['created_time']
+            price = order['price']
+            qty = order['qty']
+            if order['side'] == 'Buy':
+                pnl = -price * qty  # Покупка уменьшает PnL
+            else:
+                pnl = price * qty  # Продажа увеличивает PnL
+            if date in pnl_data:
+                pnl_data[date] += pnl
+            else:
+                pnl_data[date] = pnl
+
+        for date, daily_pnl in pnl_data.items():
+            self.insert_data(
+                'daily_pnl',
+                [(date, daily_pnl, daily_pnl / starting_capital * 100)],
+                # starting_capital - это наш баланс
+                ['date', 'daily_pnl', 'pnl_percentage']
+            )
