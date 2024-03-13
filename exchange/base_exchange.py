@@ -1,6 +1,6 @@
 import ccxt
 from abc import ABC, abstractmethod
-
+import ccxt.async_support as ccxt
 
 class BaseExchange(ABC):
     def __init__(self, api_key, api_secret):
@@ -43,7 +43,7 @@ class BaseExchange(ABC):
         :param price:
         :return: order_id?
         """
-        self.exchange.create_order(coin, type, side, amount, price)
+        return self.exchange.create_order(coin, type, side, amount, price)
 
     @abstractmethod
     def get_balance(self):
@@ -53,3 +53,9 @@ class BaseExchange(ABC):
     # futures
     def update_leverage(self, coin, level):
         pass
+
+    async def create_market_buy_order(self, symbol, order_size):
+        return await self.exchange.create_market_buy_order(symbol, order_size)
+
+    async def create_market_sell_order(self, symbol, order_size):
+        return await self.exchange.create_market_sell_order(symbol, order_size)

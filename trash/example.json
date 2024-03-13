@@ -1,0 +1,73 @@
+{'retCode': '0', 'retMsg': 'OK', 'result': {}, 'retExtInfo': {}, 'time': '1710248727429'}
+{'info': {'orderId': 'd68001a7-2a56-4efe-b6e7-c1f6fd8117ad', 'orderLinkId': ''}, 'id': 'd68001a7-2a56-4efe-b6e7-c1f6fd8117ad', 'clientOrderId': None, 'timestamp': None, 'datetime': None, 'lastTradeTimestamp': None, 'lastUpdateTimestamp': None, 'symbol': 'STRK/USDT:USDT', 'type': None, 'timeInForce': None, 'postOnly': None, 'reduceOnly': None, 'side': None, 'price': None, 'stopPrice': None, 'triggerPrice': None, 'takeProfitPrice': None, 'stopLossPrice': None, 'amount': None, 'cost': None, 'average': None, 'filled': None, 'remaining': None, 'status': None, 'fee': None, 'trades': [], 'fees': []}
+
+
+{
+  'info': {
+    'orderId': '1640107357109493248',
+    'orderLinkId': '1640107357109493249'
+  },
+  'id': '1640107357109493248',
+  'clientOrderId': '1640107357109493249',
+  'timestamp': None,
+  'datetime': None,
+  'lastTradeTimestamp': None,
+  'lastUpdateTimestamp': None,
+  'symbol': 'STRK/USDT',
+  'type': None,
+  'timeInForce': None,
+  'postOnly': None,
+  'reduceOnly': None,
+  'side': None,
+  'price': None,
+  'stopPrice': None,
+  'triggerPrice': None,
+  'takeProfitPrice': None,
+  'stopLossPrice': None,
+  'amount': None,
+  'cost': None,
+  'average': None,
+  'filled': None,
+  'remaining': None,
+  'status': None,
+  'fee': None,
+  'trades': [],
+  'fees': []
+}
+{
+  'info': {
+    'orderId': '1640107446423002624',
+    'orderLinkId': '1640107446423002625'
+  },
+  'id': '1640107446423002624',
+  'clientOrderId': '1640107446423002625',
+  'timestamp': None,
+  'datetime': None,
+  'lastTradeTimestamp': None,
+  'lastUpdateTimestamp': None,
+  'symbol': 'STRK/USDT',
+  'type': None,
+  'timeInForce': None,
+  'postOnly': None,
+  'reduceOnly': None,
+  'side': None,
+  'price': None,
+  'stopPrice': None,
+  'triggerPrice': None,
+  'takeProfitPrice': None,
+  'stopLossPrice': None,
+  'amount': None,
+  'cost': None,
+  'average': None,
+  'filled': None,
+  'remaining': None,
+  'status': None,
+  'fee': None,
+  'trades': [],
+  'fees': []
+}
+
+
+
+{'info': {'orderId': '1640291668450352640', 'orderLinkId': '1640291668450352641'}, 'id': '1640291668450352640', 'clientOrderId': '1640291668450352641', 'timestamp': None, 'datetime': None, 'lastTradeTimestamp': None, 'lastUpdateTimestamp': None, 'symbol': 'STRK/USDT', 'type': None, 'timeInForce': None, 'postOnly': None, 'reduceOnly': None, 'side': None, 'price': None, 'stopPrice': None, 'triggerPrice': None, 'takeProfitPrice': None, 'stopLossPrice': None, 'amount': None, 'cost': None, 'average': None, 'filled': None, 'remaining': None, 'status': None, 'fee': None, 'trades': [], 'fees': []}
+{'info': {'orderId': '1640291759164759552', 'orderLinkId': '1640291759164759553'}, 'id': '1640291759164759552', 'clientOrderId': '1640291759164759553', 'timestamp': None, 'datetime': None, 'lastTradeTimestamp': None, 'lastUpdateTimestamp': None, 'symbol': 'STRK/USDT', 'type': None, 'timeInForce': None, 'postOnly': None, 'reduceOnly': None, 'side': None, 'price': None, 'stopPrice': None, 'triggerPrice': None, 'takeProfitPrice': None, 'stopLossPrice': None, 'amount': None, 'cost': None, 'average': None, 'filled': None, 'remaining': None, 'status': None, 'fee': None, 'trades': [], 'fees': []}
