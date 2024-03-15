@@ -28,12 +28,14 @@ class BybitExchange(BaseExchange):
     def get_ohlcv(self, coin, since=None, limit=None, timeframe='1m'):
         return super().get_ohlcv(coin, since, limit, timeframe)
 
-    def get_ticker(self, coin, side=None):
-        return super().get_ticker(coin, side)
+    async def get_ticker(self, coin, side=None):
+        return await super().get_ticker(coin, side)
 
     # you need add a parameters checker
-    def create_order(self, coin, type, side, amount, price):
-        return super().create_order(coin, type, side, amount, price)
+    async def create_order(self, coin, type, side, amount, price, params=None):
+        if params is None:
+            params = {}
+        return await super().create_order(coin, type, side, amount, price, params)
 
     def get_balance(self):
         return super().get_balance()
@@ -53,9 +55,11 @@ class BybitExchange(BaseExchange):
     #
     # async def create_market_sell_order(self, symbol, order_size):
     #     return await super().create_market_sell_order(symbol, order_size)
-    async def create_market_buy_order_with_cost(self, coin, cost):
+    async def create_market_buy_order_with_cost(self, coin, cost, params=None):
+        if params is None:
+            params = {}
         return await self.exchange.create_market_buy_order_with_cost(coin,
-                                                                     cost)
+                                                                     cost, params)
 
     async def create_market_sell_order_with_cost(self, coin, cost):
         return await self.exchange.create_market_sell_order_with_cost(coin,

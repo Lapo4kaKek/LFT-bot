@@ -1,34 +1,45 @@
 import asyncio
 import os
+from dotenv import load_dotenv
 
 from analysis.technical_analysis import TechnicalAnalysis
+from decimal import *
 from exchange.binance_exchange import BinanceExchange
 from exchange.bybit_exchange import BybitExchange
 from strategy.base_strategy import BaseStrategy
 
 
 class MACDStrategy(BaseStrategy):
-    def __init__(self, exchange, balance, token, settings):
+    def __init__(self, exchange, balance, symbol, settings):
         """
         Конструктор.
         :param exchange: Биржа, на которой будет осуществляться торговля.
         :param balance: Выделенный на стратегию баланс.
-        :param token: Токен, который будет торговаться.
+        :param symbol: Символ торговой пары.
         :param settings: Настройки стратегии, включающие в себя следующие пункты:
             - limit: Целое число, количество фреймов в запрашиваемом графике.
             - filter_days: Целое число, количество дней, в которые должен сохраняться тренд индикатора MACD для определения устойчивого тренда.
         """
         self.exchange = exchange
         self.balance = balance
-        self.token = token
+        self.symbol = symbol
         self.settings = settings
         self.is_active = True
         # Экземпляр для получения технических индикаторов заданного токена.
-        self.technical_indicators = TechnicalAnalysis(exchange, token + 'USDT')
+        self.technical_indicators = TechnicalAnalysis(exchange, symbol)
         # Флаг, отвечающий за наличие открытой позиции на рынке.
         self.open_positions = False
 
     async def calculate_moving_averages(self):
+        """
+        Асинхронно рассчитывает индикаторы MACD и сигнальную линию для определения
+        моментов пересечения, что может указывать на потенциальные точки входа или выхода из рынка.
+
+        Использует настройки стратегии, такие как 'limit' и 'filter_days'.
+
+        :return: Число, указывающее на тип пересечения и его значимость (чем выше абсолютное значение, тем выше значимость):
+        -2 или -1 для пересечения вниз, 2 или 1 для пересечения вверх, 0 если пересечений не обнаружено.
+        """
         await self.technical_indicators.get_ohlcv(limit=self.settings['limit'])
         macd, signal = self.technical_indicators.get_macd()
         cross_upward = cross_downward = False
@@ -53,6 +64,13 @@ class MACDStrategy(BaseStrategy):
         return 0
 
     async def get_signal(self):
+        """
+        Генерирует финальный торговый сигнал, который указывает на
+        необходимость открыть или закрыть позицию.
+
+        :return: Сигнал к действию: -1 для продажи (закрытия позиции),
+        1 для покупки (открытия позиции), 0 для отсутствия действий.
+        """
         result = await self.calculate_moving_averages()
         if self.open_positions and result < 0:
             return -1
@@ -66,10 +84,28 @@ class MACDStrategy(BaseStrategy):
         """
         Осуществление асинхронной торговли в соответствии с заданными настройками.
         """
+        """
+        params={
+        'stopLoss': {
+            'type': 'market',
+            'price': price * Decimal(self.settings['loss_coef'])
+        }}
+        """
         while True:
             print(self.settings['strategy_name'] + ": ", end='')
+            print(await self.exchange.get_balance())
             signal = await self.get_signal()
             if signal == 1:
+                price = Decimal((await self.exchange.get_ticker(self.symbol, 'buy'))[0])
+                order = await self.exchange.create_order(coin=self.symbol, type='market', side='buy',
+                                                         amount=self.balance / price, price=None)
+                print(order)
+                order = await self.exchange.create_order(coin=self.symbol, type='market', side='sell',
+                                                         amount=self.balance / price, price=None, params={
+                        'stopLossPrice': price * Decimal(self.settings['loss_coef']),
+                        }
+                )
+                print(order)
                 print('Buy')
             elif signal == -1:
                 print('Sell')
@@ -85,12 +121,16 @@ class MACDStrategy(BaseStrategy):
 
 
 async def example():
+    load_dotenv()
     api_key_bybit = os.getenv('BYBIT_API_KEY')
     api_secret_bybit = os.getenv('BYBIT_API_SECRET')
     # Создание экземпляров стратегий
     bybit = BybitExchange(api_key_bybit, api_secret_bybit)
-    strategy1 = MACDStrategy(exchange=bybit, balance=1000, token="BTC",
-                             settings={'strategy_name': 'Strategy 1', 'filter_days': 3, 'limit': 100})
+    bybit.exchange.set_sandbox_mode(True)
+    # bybit.exchange.verbose = True
+    strategy1 = MACDStrategy(exchange=bybit, balance=Decimal(1000.0), symbol="BTCUSDT",
+                             settings={'strategy_name': 'Strategy 1',
+                                       'filter_days': 3, 'limit': 100, 'loss_coef': 0.95})
 
     # Запуск торговли для всех стратегий
     await asyncio.gather(

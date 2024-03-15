@@ -17,8 +17,8 @@ class BaseExchange(ABC):
         return self.exchange.fetch_order_book(coin, limit)
 
     @abstractmethod
-    def get_ticker(self, coin, side=None):
-        ticker = self.exchange.fetch_ticker(coin)
+    async def get_ticker(self, coin, side=None):
+        ticker = await self.exchange.fetch_ticker(coin)
         if side == 'buy':
             return ticker["ask"], ticker["askVolume"]
         elif side == 'sell':
@@ -36,7 +36,7 @@ class BaseExchange(ABC):
         return self.exchange.fetch_ohlcv(coin, timeframe, **params)
 
     @abstractmethod
-    def create_order(self, coin, type, side, amount, price):
+    async def create_order(self, coin, type, side, amount, price, params):
         """
         :param coin: Token name
         :param type: Market or Limit
@@ -44,7 +44,7 @@ class BaseExchange(ABC):
         :param price:
         :return: order_id?
         """
-        return self.exchange.create_order(coin, type, side, amount, price)
+        return await self.exchange.create_order(coin, type, side, amount, price, params)
 
     @abstractmethod
     def get_balance(self):
