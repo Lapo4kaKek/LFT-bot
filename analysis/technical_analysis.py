@@ -18,7 +18,7 @@ class TechnicalAnalysis:
         self.symbol = symbol
         self.df = None
 
-    def get_ohlcv(self, timeframe, since=None, limit=None):
+    async def get_ohlcv(self, timeframe='1d', since=None, limit=None):
         """
          Получает исторические данные OHLCV для указанной торговой пары и временного интервала.
 
@@ -27,7 +27,7 @@ class TechnicalAnalysis:
         :param limit: Максимальное количество возвращаемых записей. Если None, используется значение по умолчанию биржи.
         :return: DataFrame, содержащий колонки 'timestamp', 'open', 'high', 'low', 'close', 'volume', где 'timestamp' преобразован в формат datetime.
         """
-        ohlcv = self.exchange.get_ohlcv(self.symbol, since, limit, timeframe)
+        ohlcv = await self.exchange.get_ohlcv(self.symbol, since, limit, timeframe)
         df = pd.DataFrame(ohlcv, columns=['timestamp', 'open', 'high', 'low', 'close', 'volume'])
         df['timestamp'] = pd.to_datetime(df['timestamp'], unit='ms')
         self.df = df

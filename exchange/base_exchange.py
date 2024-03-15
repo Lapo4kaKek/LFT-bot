@@ -2,6 +2,7 @@ import ccxt
 from abc import ABC, abstractmethod
 import ccxt.async_support as ccxt
 
+
 class BaseExchange(ABC):
     def __init__(self, api_key, api_secret):
         self.api_key = api_key
@@ -48,7 +49,6 @@ class BaseExchange(ABC):
     @abstractmethod
     def get_balance(self):
         return self.exchange.fetch_balance()
-
 
     # futures
     def update_leverage(self, coin, level):

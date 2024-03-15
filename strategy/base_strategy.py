@@ -7,9 +7,9 @@ class BaseStrategy(ABC):
     """
 
     @abstractmethod
-    def get_signals(self):
+    def get_signal(self):
         """
-        Получение и обработка сигналов.
+        Получение и обработка сигнала.
         :return: Dict, содержащий списки ордеров на покупку ('buy') и продажу ('sell')
         """
         pass

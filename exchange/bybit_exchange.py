@@ -3,6 +3,7 @@ import ccxt
 import ccxt.async_support as ccxt
 from pybit.unified_trading import HTTP
 
+
 class BybitExchange(BaseExchange):
     def __init__(self, api_key, api_secret):
         """
@@ -21,7 +22,7 @@ class BybitExchange(BaseExchange):
             api_secret=self.api_secret,
         )
 
-    def get_order_book(self, coin, limit = None):
+    def get_order_book(self, coin, limit=None):
         return super().get_order_book(coin, limit)
 
     def get_ohlcv(self, coin, since=None, limit=None, timeframe='1m'):
@@ -53,10 +54,12 @@ class BybitExchange(BaseExchange):
     # async def create_market_sell_order(self, symbol, order_size):
     #     return await super().create_market_sell_order(symbol, order_size)
     async def create_market_buy_order_with_cost(self, coin, cost):
-        return await self.exchange.create_market_buy_order_with_cost(coin, cost)
+        return await self.exchange.create_market_buy_order_with_cost(coin,
+                                                                     cost)
 
     async def create_market_sell_order_with_cost(self, coin, cost):
-        return await self.exchange.create_market_sell_order_with_cost(coin, cost)
+        return await self.exchange.create_market_sell_order_with_cost(coin,
+                                                                      cost)
 
     def get_order_history(self, limit=5):
         result = self.session.get_order_history(
