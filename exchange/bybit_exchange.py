@@ -251,8 +251,3 @@ class BybitExchange(BaseExchange):
         )
 
         return result
-
-
-
-
-
