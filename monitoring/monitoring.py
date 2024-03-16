@@ -31,7 +31,7 @@ class Monitoring:
     #     return datetime.fromtimestamp(int(timestamp_str) / 1000)
 
     def format_time_to_datetime(self, timestamp_str):
-        return datetime.fromtimestamp(int(timestamp_str) / 1000).strftime('%Y-%m-%d %H:%M:%S')
+        return datetime.fromtimestamp(int(timestamp_str) / 1000)
 
     def insert_orders_history_to_db(self, order_history):
         """
