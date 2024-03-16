@@ -18,7 +18,7 @@ class BybitExchange(BaseExchange):
             'secret': api_secret,
         })
         self.session = HTTP(
-            testnet=False,
+            testnet=True,
             api_key=self.api_key,
             api_secret=self.api_secret,
         )
@@ -34,7 +34,7 @@ class BybitExchange(BaseExchange):
         return await super().get_ticker(coin, side)
 
     # you need add a parameters checker
-    async def create_order(self, coin, type, side, amount, price=None):
+    async def create_order(self, coin, type, side, amount, price=None, params={}):
         if price is not None:
             result = await self.exchange.create_order(coin, type, side, amount, price)
         else:
@@ -45,7 +45,7 @@ class BybitExchange(BaseExchange):
             print("Не удалось выполнить ордер.")
             return None
 
-        order = self.get_order_history(1)
+        order = await self.get_order_history(1)
         print(order)
         order_stm = self.parse_order_to_clickhouse_format(order)
         if order_stm:
@@ -55,8 +55,8 @@ class BybitExchange(BaseExchange):
 
         return result
 
-    def get_balance(self):
-        return super().get_balance()
+    async def get_balance(self):
+        return await super().get_balance()
 
     # futures
     def set_leverage(self, coin, level):
@@ -106,8 +106,8 @@ class BybitExchange(BaseExchange):
     #     else:
     #         Exception
 
-    def get_order_history(self, limit=5):
-        result = self.session.get_order_history(
+    async def get_order_history(self, limit=5):
+        result = await self.session.get_order_history(
             category="linear",
             limit=limit,
         )
@@ -130,7 +130,7 @@ class BybitExchange(BaseExchange):
     def format_time_to_datetime(self, timestamp_str):
         return datetime.fromtimestamp(int(timestamp_str) / 1000) if timestamp_str else None
 
-    def parse_order_to_clickhouse_format(self, response):
+    async def parse_order_to_clickhouse_format(self, response):
         if response.get('retCode') != 0:
             print("Invalid response")
             return []

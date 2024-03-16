@@ -1,4 +1,3 @@
-import ccxt
 from abc import ABC, abstractmethod
 import ccxt.async_support as ccxt
 
@@ -36,7 +35,7 @@ class BaseExchange(ABC):
         return self.exchange.fetch_ohlcv(coin, timeframe, **params)
 
     @abstractmethod
-    async def create_order(self, coin, type, side, amount, price, params):
+    async def create_order(self, coin, type, side, amount, price=None, params={}):
         """
         :param coin: Token name
         :param type: Market or Limit
@@ -47,8 +46,8 @@ class BaseExchange(ABC):
         return await self.exchange.create_order(coin, type, side, amount, price, params)
 
     @abstractmethod
-    def get_balance(self):
-        return self.exchange.fetch_balance()
+    async def get_balance(self):
+        return await self.exchange.fetch_balance()
 
     # futures
     def update_leverage(self, coin, level):

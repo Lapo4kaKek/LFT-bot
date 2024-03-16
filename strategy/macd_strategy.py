@@ -93,19 +93,19 @@ class MACDStrategy(BaseStrategy):
         """
         while True:
             print(self.settings['strategy_name'] + ": ", end='')
-            print(await self.exchange.get_balance())
+            # print(await self.exchange.get_balance())
             signal = await self.get_signal()
-            if signal == 1:
+            if signal != -2: # Сейчас работает всегда это условие
                 price = Decimal((await self.exchange.get_ticker(self.symbol, 'buy'))[0])
                 order = await self.exchange.create_order(coin=self.symbol, type='market', side='buy',
                                                          amount=self.balance / price, price=None)
-                print(order)
-                order = await self.exchange.create_order(coin=self.symbol, type='market', side='sell',
-                                                         amount=self.balance / price, price=None, params={
-                        'stopLossPrice': price * Decimal(self.settings['loss_coef']),
-                        }
-                )
-                print(order)
+                print("Order: " + order)
+                # order = await self.exchange.create_order(coin=self.symbol, type='market', side='sell',
+                #                                          amount=self.balance / price, price=None, params={
+                #         'stopLossPrice': price * Decimal(self.settings['loss_coef']),
+                #         }
+                # )
+                # print(order)
                 print('Buy')
             elif signal == -1:
                 print('Sell')
@@ -118,24 +118,3 @@ class MACDStrategy(BaseStrategy):
         Остановка стратегии.
         """
         self.is_active = False
-
-
-async def example():
-    load_dotenv()
-    api_key_bybit = os.getenv('BYBIT_API_KEY')
-    api_secret_bybit = os.getenv('BYBIT_API_SECRET')
-    # Создание экземпляров стратегий
-    bybit = BybitExchange(api_key_bybit, api_secret_bybit)
-    bybit.exchange.set_sandbox_mode(True)
-    # bybit.exchange.verbose = True
-    strategy1 = MACDStrategy(exchange=bybit, balance=Decimal(1000.0), symbol="BTCUSDT",
-                             settings={'strategy_name': 'Strategy 1',
-                                       'filter_days': 3, 'limit': 100, 'loss_coef': 0.95})
-
-    # Запуск торговли для всех стратегий
-    await asyncio.gather(
-        strategy1.trading(),
-    )
-
-
-asyncio.run(example())
