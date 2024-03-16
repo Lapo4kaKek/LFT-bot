@@ -4,7 +4,14 @@ import ccxt
 from pybit.unified_trading import HTTP
 from utils.converter import Converter
 from datetime import datetime
-
+import hashlib
+import hmac
+import json
+import requests
+import urllib3
+import time
+import uuid
+from urllib.parse import quote_plus
 class BybitExchange(BaseExchange):
     def __init__(self, api_key, api_secret, monitoring):
         """
@@ -39,18 +46,18 @@ class BybitExchange(BaseExchange):
         else:
             result = self.exchange.create_order(coin, type, side, amount)
 
-        print(result)
-        if not result:
-            print("Не удалось выполнить ордер.")
-            return None
-
-        order = self.get_order_history(1)
-        print(order)
-        order_stm = self.parse_order_to_clickhouse_format(order)
-        if order_stm:
-            self.monitoring.insert_single_order_to_db(order_stm)
-        else:
-            return None
+        # print(result)
+        # if not result:
+        #     print("Не удалось выполнить ордер.")
+        #     return None
+        #
+        # order = self.get_order_history(1)
+        # print(order)
+        # order_stm = self.parse_order_to_clickhouse_format(order)
+        # if order_stm:
+        #     self.monitoring.insert_single_order_to_db(order_stm)
+        # else:
+        #     return None
 
         return result
 
@@ -68,9 +75,20 @@ class BybitExchange(BaseExchange):
         return self.exchange.set_leverage(level, coin)
 
     def create_market_buy_order(self, symbol, order_size):
-        order = self.exchange.create_market_buy_order_with_cost(symbol, order_size)
+        response_data = self.create_order(symbol, 'market', 'buy', order_size)
+        time.sleep(1)
+        order_id = response_data['info']['orderId']
+        print("Order id:" + order_id)
+        order = self.session.get_executions(
+            category="spot",
+            orderId=f'{order_id}',
+            limit=1,
+        )
+        print("Order:")
+        print(order)
+
         if order is not None:
-            order_stm = self.parse_order_to_clickhouse_format(self.get_order_history(1))
+            order_stm = self.parse_order_to_clickhouse_format(order)
             print(order_stm)
             self.monitoring.insert_single_order_to_db(order_stm[0])
             return order
@@ -78,32 +96,25 @@ class BybitExchange(BaseExchange):
             Exception
 
     def create_market_sell_order(self, symbol, order_size):
-        order = self.exchange.create_market_sell_order_with_cost(symbol, order_size)
+        response_data = self.create_order(symbol, 'market', 'sell', order_size)
+        time.sleep(1)
+        order_id = response_data['result']['orderId']
+        print("Order id:" + order_id)
+        order = self.session.get_executions(
+            category="spot",
+            orderId=f'{order_id}',
+            limit=1,
+        )
+        print("Order:")
+        print(order)
+
         if order is not None:
-            order_stm = self.parse_order_to_clickhouse_format(self.get_order_history(1))
+            order_stm = self.parse_order_to_clickhouse_format(order)
             print(order_stm)
             self.monitoring.insert_single_order_to_db(order_stm[0])
             return order
         else:
             Exception
-
-    # def create_market_buy_order_with_cost(self, coin, cost):
-    #     order = self.exchange.create_market_buy_order_with_cost(coin, cost)
-    #     if order is not None:
-    #         order_stm = self.get_order_history(1)
-    #         self.monitoring.insert_single_order_to_db(order_stm)
-    #         return order
-    #     else:
-    #         Exception
-    #
-    # def create_market_sell_order_with_cost(self, coin, cost):
-    #     order = self.exchange.create_market_sell_order_with_cost(coin, cost)
-    #     if order is not None:
-    #         order_stm = self.get_order_history(1)
-    #         self.monitoring.insert_single_order_to_db(order_stm)
-    #         return order
-    #     else:
-    #         Exception
 
     def get_order_history(self, limit=5):
         result = self.session.get_order_history(
@@ -119,12 +130,12 @@ class BybitExchange(BaseExchange):
         )
         return result
 
-    def find_order_by_id(self, order_id):
-        order_history = self.get_trade_history()
-        for order in order_history['result']['list']:
-            if order['orderId'] == order_id:
-                return order
-        return None
+    # def find_order_by_id(self, order_id):
+    #     order_history = self.get_order_history()
+    #     for order in order_history['result']['list']:
+    #         if order['orderId'] == order_id:
+    #             return order
+    #     return None
 
     def format_time_to_datetime(self, timestamp_str):
         return datetime.fromtimestamp(int(timestamp_str) / 1000) if timestamp_str else None
@@ -138,27 +149,108 @@ class BybitExchange(BaseExchange):
         data_for_insertion = []
 
         for order in orders_list:
+            order_status = 'Filled' if order.get('leavesQty') == '0' else 'Partial'
+            #created_time = self.format_time_to_datetime(str(response.get('time')))
+            #updated_time = self.format_time_to_datetime(str(order.get('execTime', response.get('time'))))
+
             order_data = {
                 'orderId': order.get('orderId'),
                 'exchange': 'bybit',
                 'symbol': order.get('symbol'),
-                'price': float(order.get('price', 0)),
-                'qty': float(order.get('qty', 0)),
-                'executedQty': float(order.get('executedQty', order.get('qty', 0))),
-                'totalCost': float(order.get('cumExecValue', 0)),
+                'price': float(order.get('execPrice', 0)),
+                'qty': float(order.get('execQty', 0)),
+                'executedQty': float(order.get('execQty', 0)),
+                'totalCost': float(order.get('execValue', 0)),
                 'side': order.get('side'),
                 'orderType': order.get('orderType'),
-                'orderStatus': order.get('orderStatus'),
-                'createdTime': order.get('createdTime'),
-                'updatedTime': order.get('updatedTime'),
-                'commission': float(order.get('cumExecFee', 0))
+                'orderStatus': order_status,
+                'createdTime': response.get('time'),
+                'updatedTime': response.get('time'),
+                'commission': float(order.get('execFee', 0))
             }
             data_for_insertion.append(order_data)
 
         return data_for_insertion
 
+    def create_market_buy_order_native(self, coin, order_size, testnet=False):
+        if testnet==True:
+            self.session = HTTP(
+                testnet=True,
+                api_key=self.api_key,
+                api_secret=self.api_secret,
+            )
+        response_data = self.session.place_order(
+            category="spot",
+            symbol=coin,
+            side="Buy",
+            orderType="Market",
+            qty=order_size,
+        )
+        time.sleep(1)
+        order_id = response_data['result']['orderId']
+        print("Order id:" + order_id)
+        order = self.session.get_executions(
+            category="spot",
+            orderId=f'{order_id}',
+            limit=1,
+        )
+        print("Order:")
+        print(order)
+
+        if order is not None:
+            order_stm = self.parse_order_to_clickhouse_format(order)
+            print(order_stm)
+            self.monitoring.insert_single_order_to_db(order_stm[0])
+            return order
+        else:
+            Exception
 
 
+    def create_market_sell_order_native(self, coin, order_size, testnet=False):
+        if testnet == True:
+            self.session = HTTP(
+                testnet=True,
+                api_key=self.api_key,
+                api_secret=self.api_secret,
+            )
+        response_data = self.session.place_order(
+            category="spot",
+            symbol=coin,
+            side="Sell",
+            orderType="Market",
+            qty=order_size,
+        )
+        time.sleep(1)
+        order_id = response_data['result']['orderId']
+        print("Order id:" + order_id)
+        order = self.session.get_executions(
+            category="spot",
+            orderId=f'{order_id}',
+            limit=1,
+        )
+        print("Order:")
+        print(order)
+
+        if order is not None:
+            order_stm = self.parse_order_to_clickhouse_format(order)
+            print(order_stm)
+            self.monitoring.insert_single_order_to_db(order_stm[0])
+            return order
+        else:
+            Exception
+    def get_balance_native(self, coin, testnet=False):
+        if testnet==True:
+            self.session = HTTP(
+                testnet=True,
+                api_key=self.api_key,
+                api_secret=self.api_secret,
+            )
+        result = self.session.get_wallet_balance(
+            accountType="UNIFIED",
+            coin="SOL",
+        )
+
+        return result
 
 
 
