@@ -1,4 +1,5 @@
 from eth_utils import from_wei, to_wei
+from datetime import datetime
 
 class Converter:
     @staticmethod
@@ -22,3 +23,7 @@ class Converter:
         """Конвертирует шестнадцатеричное значение сразу в Ether."""
         wei_value = Converter.hex_to_big(hex_value)
         return Converter.wei_to_eth(wei_value)
+
+    def format_time_to_datetime(timestamp_str):
+        return datetime.fromtimestamp(int(timestamp_str) / 1000)
+

@@ -167,3 +167,13 @@ class HyperLiquidExchange(BaseExchange):
                 return self.__place_short_order(coin, amount, price)
         else:
             raise ValueError("Invalid order type or side")
+
+
+
+    #############################
+
+    def create_market_buy_order(self, symbol, order_size):
+        return self.__place_long_market_buy_order(symbol, order_size)
+
+    def create_market_sell_order(self, symbol, order_size):
+        return self.__place_short_market_buy_order(symbol, order_size)

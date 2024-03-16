@@ -1,12 +1,14 @@
 import ccxt
 from .base_exchange import BaseExchange
-
+from monitoring.monitoring import Monitoring
+from datetime import datetime
+from utils.converter import Converter
 
 class BinanceExchange(BaseExchange):
     """
     Предоставляет специализированные методы для работы с криптовалютной биржей Binance.
     """
-    def __init__(self, api_key, api_secret):
+    def __init__(self, api_key, api_secret, monitoring):
         """
         Инициализирует экземпляр BinanceExchange с использованием предоставленных API key и API secret.
         :param api_key: API ключ пользователя для доступа к Binance.
@@ -17,6 +19,7 @@ class BinanceExchange(BaseExchange):
             'apiKey': api_key,
             'secret': api_secret,
         })
+        self.monitoring = monitoring
 
     def get_order_book(self, coin, limit=None):
         """
@@ -43,7 +46,7 @@ class BinanceExchange(BaseExchange):
 
 
     # you need add a parameters checker
-    def create_order(self, coin, type, side, amount, price):
+    def create_order(self, coin, type, side, amount, price=None):
         """
         :param coin: Token name
         :param type: Market or Limit
@@ -51,7 +54,9 @@ class BinanceExchange(BaseExchange):
         :param price:
         :return:
         """
-        self.exchange.create_order(coin, type, side, amount, price)
+        if price is not None:
+            return self.exchange.create_order(coin, type, side, amount, price)
+        return self.exchange.create_order(coin, type, side, amount)
 
     def get_balance(self):
         return super().get_balance()
@@ -61,9 +66,66 @@ class BinanceExchange(BaseExchange):
     def set_leverage(self, coin, level):
         return self.exchange.set_leverage(level, coin)
 
-    async def create_market_buy_order(self, symbol, order_size):
-        return await super().create_market_buy_order(symbol, order_size)
 
-    async def create_market_sell_order(self, symbol, order_size):
-        return await super().create_market_sell_order(symbol, order_size)
+    # work
+    def create_market_buy_order(self, symbol, order_size):
+        result = self.exchange.create_order(symbol, 'market', 'buy', order_size)
+        print(result)
+        if result is not None:
+            order_stm = self.parse_order_to_clickhouse_format(result)
+            self.monitoring.insert_single_order_to_db(order_stm)
+            return result
+        return result
+
+    # work
+    def create_market_sell_order(self, symbol, order_size):
+        result = self.exchange.create_order(symbol, 'market', 'sell', order_size)
+        print(result)
+        if result is not None:
+            order_stm = self.parse_order_to_clickhouse_format(result)
+            self.monitoring.insert_single_order_to_db(order_stm)
+            return result
+        return result
+
+    def format_time_to_datetime(self, timestamp_str):
+        if timestamp_str.isdigit():
+            return datetime.fromtimestamp(int(timestamp_str) / 1000).strftime('%Y-%m-%d %H:%M:%S')
+        else:
+            return datetime.strptime(timestamp_str, '%Y-%m-%d %H:%M:%S').strftime('%Y-%m-%d %H:%M:%S')
+
+    def parse_order_to_clickhouse_format(self, order):
+        info = order['info']
+        executed_qty = float(info.get('executedQty', 0))
+        cummulative_quote_qty = float(info.get('cummulativeQuoteQty', 0))
+        commission = 0.0
+        commission_asset = ''
+        fills = info.get('fills', [])
+        if fills:
+            fill = fills[0]
+            commission = float(fill.get('commission', '0'))
+            commission_asset = fill.get('commissionAsset', '')
+
+        parsed_order = {
+            'orderId': info['orderId'],
+            'exchange': 'binance',
+            'symbol': info['symbol'],
+            'price': float(fills[0]['price']) if fills else 0.0,
+            # Берем цену из первого заполнения, если оно существует
+            'qty': float(info['origQty']),
+            'executedQty': executed_qty,
+            'totalCost': cummulative_quote_qty,
+            'side': info['side'],
+            'orderType': info['type'],
+            'orderStatus': info['status'],
+            'createdTime': info['workingTime'],
+            'updatedTime': info['workingTime'],
+            'commission': commission,
+            #'commission_asset': commission_asset,
+            #'average_price': cummulative_quote_qty / executed_qty if executed_qty > 0 else 0
+        }
+        print(parsed_order)
+
+        return parsed_order
+
+
 
