@@ -1,6 +1,6 @@
 from .base_exchange import BaseExchange
-import ccxt
-#import ccxt.async_support as ccxt
+
+import ccxt.async_support as ccxt
 from pybit.unified_trading import HTTP
 from utils.converter import Converter
 from datetime import datetime
@@ -36,15 +36,15 @@ class BybitExchange(BaseExchange):
     def get_ohlcv(self, coin, since=None, limit=None, timeframe='1m'):
         return super().get_ohlcv(coin, since, limit, timeframe)
 
-    def get_ticker(self, coin, side=None):
-        return super().get_ticker(coin, side)
+    async def get_ticker(self, coin, side=None):
+        return await super().get_ticker(coin, side)
 
     # you need add a parameters checker
-    def create_order(self, coin, type, side, amount, price=None):
+    async def create_order(self, coin, type, side, amount, price=None, params={}):
         if price is not None:
-            result = self.exchange.create_order(coin, type, side, amount, price)
+            result = await self.exchange.create_order(coin, type, side, amount, price)
         else:
-            result = self.exchange.create_order(coin, type, side, amount)
+            result = await self.exchange.create_order(coin, type, side, amount)
 
         # print(result)
         # if not result:
@@ -61,8 +61,8 @@ class BybitExchange(BaseExchange):
 
         return result
 
-    def get_balance(self):
-        return super().get_balance()
+    async def get_balance(self):
+        return await super().get_balance()
 
     # futures
     def set_leverage(self, coin, level):
@@ -74,9 +74,8 @@ class BybitExchange(BaseExchange):
         """
         return self.exchange.set_leverage(level, coin)
 
-    def create_market_buy_order(self, symbol, order_size):
-        response_data = self.create_order(symbol, 'market', 'buy', order_size)
-        time.sleep(1)
+    async def create_market_buy_order(self, symbol, order_size):
+        response_data = await self.create_order(symbol, 'market', 'buy', order_size)
         order_id = response_data['info']['orderId']
         print("Order id:" + order_id)
         order = self.session.get_executions(
@@ -172,7 +171,7 @@ class BybitExchange(BaseExchange):
 
         return data_for_insertion
 
-    def create_market_buy_order_native(self, coin, order_size, testnet=False):
+    def create_market_buy_order_native(self, symbol, order_size, testnet=False):
         if testnet==True:
             self.session = HTTP(
                 testnet=True,
@@ -181,7 +180,7 @@ class BybitExchange(BaseExchange):
             )
         response_data = self.session.place_order(
             category="spot",
-            symbol=coin,
+            symbol=symbol,
             side="Buy",
             orderType="Market",
             qty=order_size,

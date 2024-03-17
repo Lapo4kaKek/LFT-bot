@@ -97,9 +97,8 @@ class MACDStrategy(BaseStrategy):
             signal = await self.get_signal()
             if signal != -2: # Сейчас работает всегда это условие
                 price = Decimal((await self.exchange.get_ticker(self.symbol, 'buy'))[0])
-                order = await self.exchange.create_order(coin=self.symbol, type='market', side='buy',
-                                                         amount=self.balance / price, price=None)
-                print("Order: " + order)
+                order = self.exchange.create_market_buy_order_native(symbol=self.symbol, order_size=self.balance, testnet=True)
+                print("Order: " + str(order))
                 # order = await self.exchange.create_order(coin=self.symbol, type='market', side='sell',
                 #                                          amount=self.balance / price, price=None, params={
                 #         'stopLossPrice': price * Decimal(self.settings['loss_coef']),
