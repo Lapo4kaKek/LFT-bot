@@ -12,6 +12,8 @@ import urllib3
 import time
 import uuid
 from urllib.parse import quote_plus
+
+
 class BybitExchange(BaseExchange):
     def __init__(self, api_key, api_secret, monitoring):
         """
@@ -30,7 +32,8 @@ class BybitExchange(BaseExchange):
             api_secret=self.api_secret,
         )
         self.monitoring = monitoring
-    def get_order_book(self, coin, limit = None):
+
+    def get_order_book(self, coin, limit=None):
         return super().get_order_book(coin, limit)
 
     def get_ohlcv(self, coin, since=None, limit=None, timeframe='1m'):
@@ -149,8 +152,8 @@ class BybitExchange(BaseExchange):
 
         for order in orders_list:
             order_status = 'Filled' if order.get('leavesQty') == '0' else 'Partial'
-            #created_time = self.format_time_to_datetime(str(response.get('time')))
-            #updated_time = self.format_time_to_datetime(str(order.get('execTime', response.get('time'))))
+            # created_time = self.format_time_to_datetime(str(response.get('time')))
+            # updated_time = self.format_time_to_datetime(str(order.get('execTime', response.get('time'))))
 
             order_data = {
                 'orderId': order.get('orderId'),
@@ -172,7 +175,7 @@ class BybitExchange(BaseExchange):
         return data_for_insertion
 
     def create_market_buy_order_native(self, symbol, order_size, testnet=False):
-        if testnet==True:
+        if testnet == True:
             self.session = HTTP(
                 testnet=True,
                 api_key=self.api_key,
@@ -204,8 +207,7 @@ class BybitExchange(BaseExchange):
         else:
             Exception
 
-
-    def create_market_sell_order_native(self, coin, order_size, testnet=False):
+    def create_market_sell_order_native(self, symbol, order_size, testnet=False):
         if testnet == True:
             self.session = HTTP(
                 testnet=True,
@@ -214,7 +216,7 @@ class BybitExchange(BaseExchange):
             )
         response_data = self.session.place_order(
             category="spot",
-            symbol=coin,
+            symbol=symbol,
             side="Sell",
             orderType="Market",
             qty=order_size,
@@ -237,8 +239,9 @@ class BybitExchange(BaseExchange):
             return order
         else:
             Exception
+
     def get_balance_native(self, coin, testnet=False):
-        if testnet==True:
+        if testnet == True:
             self.session = HTTP(
                 testnet=True,
                 api_key=self.api_key,
