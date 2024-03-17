@@ -42,4 +42,7 @@ columns = {
     'created_time': 'DateTime'
 }
 
+columns = ['orderId', 'exchange', 'symbol', 'price', 'qty', 'executedQty', 'totalCost', 'side', 'orderType',
+                        'orderStatus', 'createdTime', 'updatedTime', 'commission']
+
 monitoring.create_table('orders', columns)

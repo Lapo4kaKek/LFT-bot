@@ -9,8 +9,8 @@ CREATE TABLE IF NOT EXISTS orders (
     side String,
     orderType String,
     orderStatus String,
-    created_time DateTime,
-    updated_time DateTime,
+    createdTime DateTime,
+    updatedTime DateTime,
     commission Float32
 ) ENGINE = MergeTree()
-ORDER BY (createdTime, order_id);
+ORDER BY (createdTime, orderId);

@@ -51,7 +51,6 @@ async def main():
 
     bybit = BybitExchange(api_key_bybit, api_secret_bybit, monitoring)
     bybit.exchange.set_sandbox_mode(True)
-    await bybit.exchange.load_time_difference()
     binance = BinanceExchange(api_key_binance, api_secret_binance, monitoring)
 
     await macd_trading(bybit)

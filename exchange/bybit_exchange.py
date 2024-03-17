@@ -1,6 +1,6 @@
 from .base_exchange import BaseExchange
-import ccxt
-#import ccxt.async_support as ccxt
+
+import ccxt.async_support as ccxt
 from pybit.unified_trading import HTTP
 from utils.converter import Converter
 from datetime import datetime
@@ -12,6 +12,8 @@ import urllib3
 import time
 import uuid
 from urllib.parse import quote_plus
+
+
 class BybitExchange(BaseExchange):
     def __init__(self, api_key, api_secret, monitoring):
         """
@@ -30,21 +32,22 @@ class BybitExchange(BaseExchange):
             api_secret=self.api_secret,
         )
         self.monitoring = monitoring
-    def get_order_book(self, coin, limit = None):
+
+    def get_order_book(self, coin, limit=None):
         return super().get_order_book(coin, limit)
 
     def get_ohlcv(self, coin, since=None, limit=None, timeframe='1m'):
         return super().get_ohlcv(coin, since, limit, timeframe)
 
-    def get_ticker(self, coin, side=None):
-        return super().get_ticker(coin, side)
+    async def get_ticker(self, coin, side=None):
+        return await super().get_ticker(coin, side)
 
     # you need add a parameters checker
-    def create_order(self, coin, type, side, amount, price=None):
+    async def create_order(self, coin, type, side, amount, price=None, params={}):
         if price is not None:
-            result = self.exchange.create_order(coin, type, side, amount, price)
+            result = await self.exchange.create_order(coin, type, side, amount, price)
         else:
-            result = self.exchange.create_order(coin, type, side, amount)
+            result = await self.exchange.create_order(coin, type, side, amount)
 
         # print(result)
         # if not result:
@@ -61,8 +64,8 @@ class BybitExchange(BaseExchange):
 
         return result
 
-    def get_balance(self):
-        return super().get_balance()
+    async def get_balance(self):
+        return await super().get_balance()
 
     # futures
     def set_leverage(self, coin, level):
@@ -74,9 +77,8 @@ class BybitExchange(BaseExchange):
         """
         return self.exchange.set_leverage(level, coin)
 
-    def create_market_buy_order(self, symbol, order_size):
-        response_data = self.create_order(symbol, 'market', 'buy', order_size)
-        time.sleep(1)
+    async def create_market_buy_order(self, symbol, order_size):
+        response_data = await self.create_order(symbol, 'market', 'buy', order_size)
         order_id = response_data['info']['orderId']
         print("Order id:" + order_id)
         order = self.session.get_executions(
@@ -150,8 +152,8 @@ class BybitExchange(BaseExchange):
 
         for order in orders_list:
             order_status = 'Filled' if order.get('leavesQty') == '0' else 'Partial'
-            #created_time = self.format_time_to_datetime(str(response.get('time')))
-            #updated_time = self.format_time_to_datetime(str(order.get('execTime', response.get('time'))))
+            # created_time = self.format_time_to_datetime(str(response.get('time')))
+            # updated_time = self.format_time_to_datetime(str(order.get('execTime', response.get('time'))))
 
             order_data = {
                 'orderId': order.get('orderId'),
@@ -172,8 +174,8 @@ class BybitExchange(BaseExchange):
 
         return data_for_insertion
 
-    def create_market_buy_order_native(self, coin, order_size, testnet=False):
-        if testnet==True:
+    def create_market_buy_order_native(self, symbol, order_size, testnet=False):
+        if testnet == True:
             self.session = HTTP(
                 testnet=True,
                 api_key=self.api_key,
@@ -181,7 +183,7 @@ class BybitExchange(BaseExchange):
             )
         response_data = self.session.place_order(
             category="spot",
-            symbol=coin,
+            symbol=symbol,
             side="Buy",
             orderType="Market",
             qty=order_size,
@@ -205,8 +207,7 @@ class BybitExchange(BaseExchange):
         else:
             Exception
 
-
-    def create_market_sell_order_native(self, coin, order_size, testnet=False):
+    def create_market_sell_order_native(self, symbol, order_size, testnet=False):
         if testnet == True:
             self.session = HTTP(
                 testnet=True,
@@ -215,7 +216,7 @@ class BybitExchange(BaseExchange):
             )
         response_data = self.session.place_order(
             category="spot",
-            symbol=coin,
+            symbol=symbol,
             side="Sell",
             orderType="Market",
             qty=order_size,
@@ -238,8 +239,9 @@ class BybitExchange(BaseExchange):
             return order
         else:
             Exception
+
     def get_balance_native(self, coin, testnet=False):
-        if testnet==True:
+        if testnet == True:
             self.session = HTTP(
                 testnet=True,
                 api_key=self.api_key,
