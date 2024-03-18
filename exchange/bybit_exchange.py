@@ -210,9 +210,9 @@ class BybitExchange(BaseExchange):
 
     def get_executions(self, order_id, category="spot", limit = 1):
         order = self.session.get_executions(
-            category="spot",
+            category=category,
             order_id=f'{order_id}',
-            limit=1
+            limit=limit
         )
         return order
 
