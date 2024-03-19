@@ -113,7 +113,7 @@ if __name__ == '__main__':
     end_time = time.time()
     print(f"Time ccxt: {end_time - start_time} sec")
 
-    # monitoring.delete_all_data("orders")
+    # database.delete_all_data("orders")
     start_time = time.time()
     bybit.create_market_buy_order_native("STRKUSDT", 2)
     end_time = time.time()

@@ -2,6 +2,7 @@ import os
 
 from _decimal import Decimal
 
+from database.database import Database
 from monitoring.monitoring import Monitoring
 from dotenv import load_dotenv
 import ccxt
@@ -47,8 +48,8 @@ async def macd_trading(bybit):
     )
 
 async def main():
-    monitoring = Monitoring('localhost', port, login_click, password_click)
-
+    database = Database('localhost', port, login_click, password_click)
+    monitoring = Monitoring(database)
     bybit = BybitExchange(api_key_bybit, api_secret_bybit, monitoring)
     bybit.exchange.set_sandbox_mode(True)
     binance = BinanceExchange(api_key_binance, api_secret_binance, monitoring)

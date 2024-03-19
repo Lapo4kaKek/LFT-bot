@@ -1,37 +1,6 @@
-import clickhouse_connect
-from datetime import datetime
-
 class Monitoring:
-    def __init__(self, host='localhost', port=8123, username='default', password=''):
-        self.client = clickhouse_connect.get_client(host=host, port=port, username=username, password=password)
-
-    def create_table(self, table_name, columns):
-        columns_with_types = ', '.join([f'{name} {type}' for name, type in columns.items()])
-        create_table_query = f'CREATE TABLE IF NOT EXISTS {table_name} ({columns_with_types}) ENGINE = MergeTree() ORDER BY tuple()'
-        self.client.command(create_table_query)
-
-    def delete_all_data(self, table_name):
-        '''
-        Удаляет все данные из таблицы
-        :param table_name: название таблицы
-        :return:
-        '''
-        create_table_query = f'TRUNCATE TABLE {table_name}'
-        self.client.command(create_table_query)
-
-    def insert_data(self, table_name, data, column_names=None):
-        self.client.insert(table_name, data, column_names=column_names)
-
-    def fetch_and_print_table_data(self, table_name):
-        result = self.client.query(f'SELECT * FROM {table_name}')
-        for row in result.result_rows:
-            print(row)
-
-    # def format_time_to_datetime(self, timestamp_str):
-    #     return datetime.fromtimestamp(int(timestamp_str) / 1000)
-
-    def format_time_to_datetime(self, timestamp_str):
-        return datetime.fromtimestamp(int(timestamp_str) / 1000)
+    def __init__(self, database):
+        self.database = database
 
     def insert_orders_history_to_db(self, order_history):
         """
@@ -51,8 +20,8 @@ class Monitoring:
                 order['side'],
                 order['orderType'],
                 order['orderStatus'],
-                self.format_time_to_datetime(order['createdTime']),
-                self.format_time_to_datetime(order['updatedTime'])
+                self.database.format_time_to_datetime(order['createdTime']),
+                self.database.format_time_to_datetime(order['updatedTime'])
             ))
 
             # Define the column names in the same order as the data
@@ -61,14 +30,15 @@ class Monitoring:
 
             # Insert data into the database
             table_name = 'orders'  # Change this to your actual table name
-            self.insert_data(table_name, data, column_names)
+            self.database.insert_data(table_name, data, column_names)
 
     def insert_single_order_to_db(self, order):
         """
         Adds a single order to ClickHouse
         :param order: order data (dictionary)
         """
-        required_keys = ['orderId', 'exchange','symbol', 'price', 'qty', 'executedQty', 'totalCost', 'side', 'orderType',
+        required_keys = ['orderId', 'exchange', 'symbol', 'price', 'qty', 'executedQty', 'totalCost', 'side',
+                         'orderType',
                          'orderStatus', 'createdTime', 'updatedTime', 'commission']
         if not all(key in order for key in required_keys):
             print("Some required fields are missing in the order")
@@ -77,7 +47,7 @@ class Monitoring:
         # Preparing data for insertion
         data = [(
             order['orderId'],  # order_id
-            order['exchange'], # exchange (binance or bybit)
+            order['exchange'],  # exchange (binance or bybit)
             order['symbol'],  # symbol
             float(order['price']),  # price
             float(order['qty']),  # amount
@@ -86,16 +56,17 @@ class Monitoring:
             order['side'],  # side
             order['orderType'],  # order_type
             order['orderStatus'],  # order_status
-            self.format_time_to_datetime(order['createdTime']),  # created_time
-            self.format_time_to_datetime(order['updatedTime']),  # updated_time
+            self.database.format_time_to_datetime(order['createdTime']),  # created_time
+            self.database.format_time_to_datetime(order['updatedTime']),  # updated_time
             float(order['commission'])  # commission
         )]
 
-        column_names = ['orderId', 'exchange', 'symbol', 'price', 'qty', 'executedQty', 'totalCost', 'side', 'orderType',
+        column_names = ['orderId', 'exchange', 'symbol', 'price', 'qty', 'executedQty', 'totalCost', 'side',
+                        'orderType',
                         'orderStatus', 'createdTime', 'updatedTime', 'commission']
 
         table_name = 'orders'
-        self.insert_data(table_name, data, column_names=column_names)
+        self.database.insert_data(table_name, data, column_names=column_names)
 
     # нужно еще поработать над этим
     def calculate_and_insert_daily_pnl(self, orders_data, starting_capital):
@@ -116,7 +87,7 @@ class Monitoring:
                 pnl_data[date] = pnl
 
         for date, daily_pnl in pnl_data.items():
-            self.insert_data(
+            self.database.insert_data(
                 'daily_pnl',
                 [(date, daily_pnl, daily_pnl / starting_capital * 100)],
                 # starting_capital - это наш баланс
