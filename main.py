@@ -1,5 +1,5 @@
 import os
-from monitoring.monitoring import Monitoring
+from database.database import Database
 from dotenv import load_dotenv
 import ccxt
 from datetime import datetime
@@ -23,13 +23,9 @@ api_secret_bybit = os.getenv('BYBIT_API_SECRET')
 login_click = os.getenv('CLICKHOUSE_LOGIN')
 password_click = os.getenv('CLICKHOUSE_PASSWORD')
 
-monitoring = Monitoring('localhost', 8123, login_click, password_click)
+database = Database('localhost', 8123, login_click, password_click)
 
-# Инициализация
-# monitoring = Monitoring(host='localhost', port=8123, username='default', password='')
-
-
-# example use monitoring:
+# example use database:
 columns = {
     'order_id': 'String',
     'symbol': 'String',
@@ -45,4 +41,4 @@ columns = {
 columns = ['orderId', 'exchange', 'symbol', 'price', 'qty', 'executedQty', 'totalCost', 'side', 'orderType',
                         'orderStatus', 'createdTime', 'updatedTime', 'commission']
 
-monitoring.create_table('orders', columns)
+database.create_table('orders', columns)

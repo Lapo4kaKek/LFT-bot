@@ -58,7 +58,7 @@ class BybitExchange(BaseExchange):
         # print(order)
         # order_stm = self.parse_order_to_clickhouse_format(order)
         # if order_stm:
-        #     self.monitoring.insert_single_order_to_db(order_stm)
+        #     self.database.insert_single_order_to_db(order_stm)
         # else:
         #     return None
 

@@ -94,7 +94,7 @@ class MACDStrategy(BaseStrategy):
         while True:
             print(self.settings['strategy_name'] + ": ", end='')
             signal = await self.get_signal()
-            if signal == 1:
+            if signal == 0:
                 order = self.exchange.create_market_buy_order_native(symbol=self.symbol, order_size=self.balance, testnet=True)
                 self.open_positions = True
                 # order = await self.exchange.create_order(coin=self.symbol, type='market', side='sell',
