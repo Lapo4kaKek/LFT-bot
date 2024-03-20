@@ -42,3 +42,4 @@ columns = ['orderId', 'exchange', 'symbol', 'price', 'qty', 'executedQty', 'tota
                         'orderStatus', 'createdTime', 'updatedTime', 'commission']
 
 database.create_table('orders', columns)
+
