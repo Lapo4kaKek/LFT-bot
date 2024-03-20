@@ -28,3 +28,10 @@ CREATE TABLE IF NOT EXISTS strategies (
     createdTime DateTime
 ) ENGINE = MergeTree()
 ORDER BY (createdTime);
+
+CREATE TABLE order_strategy_link
+(
+    orderId String,
+    strategyId String
+) ENGINE = MergeTree()
+ORDER BY (order_id, strategy_id);

@@ -68,6 +68,19 @@ class Monitoring:
         table_name = 'orders'
         self.database.insert_data(table_name, data, column_names=column_names)
 
+    def link_order_with_strategy(self, order_id, strategy_id):
+        """
+        Связывает ордер с стратегией в clickhouse.
+
+        :param order_id: Идентификатор ордера.
+        :param strategy_id: Идентификатор стратегии.
+        """
+        data = [(order_id, strategy_id)]
+
+        column_names = ['orderId', 'strategyId']
+
+        self.database.insert_data('order_strategy_link', data, column_names)
+
     # нужно еще поработать над этим
     def calculate_and_insert_daily_pnl(self, orders_data, starting_capital):
         pnl_data = {}

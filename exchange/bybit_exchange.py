@@ -18,8 +18,8 @@ class BybitExchange(BaseExchange):
     def __init__(self, api_key, api_secret, monitoring):
         """
         Инициализирует экземпляр BinanceExchange с использованием предоставленных API key и API secret.
-        :param api_key: API ключ пользователя для доступа к Binance.
-        :param api_secret: Секретный ключ пользователя для доступа к Binance.
+        :param api_key: API ключ пользователя для доступа к Bybit.
+        :param api_secret: Секретный ключ пользователя для доступа к Bybit.
         """
         super().__init__(api_key, api_secret)
         self.exchange = ccxt.bybit({
@@ -132,13 +132,6 @@ class BybitExchange(BaseExchange):
         )
         return result
 
-    # def find_order_by_id(self, order_id):
-    #     order_history = self.get_order_history()
-    #     for order in order_history['result']['list']:
-    #         if order['orderId'] == order_id:
-    #             return order
-    #     return None
-
     def format_time_to_datetime(self, timestamp_str):
         return datetime.fromtimestamp(int(timestamp_str) / 1000) if timestamp_str else None
 
@@ -174,7 +167,8 @@ class BybitExchange(BaseExchange):
 
         return data_for_insertion
 
-    def create_market_buy_order_native(self, symbol, order_size, testnet=False):
+    def create_market_buy_order_native(self, symbol, order_size, testnet=False, **kwargs):
+        strategy_id = kwargs.get('strategy_id', '0')
         if testnet == True:
             self.session = HTTP(
                 testnet=True,
@@ -203,6 +197,7 @@ class BybitExchange(BaseExchange):
             order_stm = self.parse_order_to_clickhouse_format(order)
             print(order_stm)
             self.monitoring.insert_single_order_to_db(order_stm[0])
+            self.monitoring.link_order_with_strategy(f'{order_id}', strategy_id)
             return order
         else:
             Exception
@@ -216,7 +211,8 @@ class BybitExchange(BaseExchange):
         )
         return order
 
-    def create_market_sell_order_native(self, symbol, order_size, testnet=False):
+    def create_market_sell_order_native(self, symbol, order_size, testnet=False, **kwargs):
+        strategy_id = kwargs.get('strategy_id', '0')
         if testnet == True:
             self.session = HTTP(
                 testnet=True,
@@ -245,6 +241,7 @@ class BybitExchange(BaseExchange):
             order_stm = self.parse_order_to_clickhouse_format(order)
             print(order_stm)
             self.monitoring.insert_single_order_to_db(order_stm[0])
+            self.monitoring.link_order_with_strategy(f'{order_id}', strategy_id)
             return order
         else:
             Exception

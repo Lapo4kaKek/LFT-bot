@@ -10,7 +10,7 @@ from strategy.base_strategy import BaseStrategy
 
 
 class MACDStrategy(BaseStrategy):
-    def __init__(self, exchange, balance, symbol, settings):
+    def __init__(self, exchange, balance, symbol, settings, strategy_id):
         """
         Конструктор.
         :param exchange: Биржа, на которой будет осуществляться торговля.
@@ -19,6 +19,7 @@ class MACDStrategy(BaseStrategy):
         :param settings: Настройки стратегии, включающие в себя следующие пункты:
             - limit: Целое число, количество фреймов в запрашиваемом графике.
             - filter_days: Целое число, количество дней, в которые должен сохраняться тренд индикатора MACD для определения устойчивого тренда.
+        :param strategy_id: Уникальный идентификатор стратегии.
         """
         self.exchange = exchange
         self.balance = balance
@@ -29,6 +30,8 @@ class MACDStrategy(BaseStrategy):
         self.technical_indicators = TechnicalAnalysis(exchange, symbol)
         # Флаг, отвечающий за наличие открытой позиции на рынке.
         self.open_positions = False
+        # strategy_id для связи в clickhouse
+        self.strategy_id = strategy_id
 
     async def calculate_moving_averages(self):
         """
@@ -95,7 +98,8 @@ class MACDStrategy(BaseStrategy):
             print(self.settings['strategy_name'] + ": ", end='')
             signal = await self.get_signal()
             if signal == 0:
-                order = self.exchange.create_market_buy_order_native(symbol=self.symbol, order_size=self.balance, testnet=True)
+                order = self.exchange.create_market_buy_order_native(symbol=self.symbol, order_size=self.balance,
+                                                                     testnet=True, strategy_id=self.strategy_id)
                 self.open_positions = True
                 # order = await self.exchange.create_order(coin=self.symbol, type='market', side='sell',
                 #                                          amount=self.balance / price, price=None, params={
@@ -106,7 +110,7 @@ class MACDStrategy(BaseStrategy):
                 print('Buy')
             elif signal == -1:
                 order = self.exchange.create_market_sell_order_native(symbol=self.symbol, order_size=0.02,
-                                                                     testnet=True)
+                                                                      testnet=True, strategy_id=self.strategy_id)
                 self.open_positions = False
                 print('Sell')
             else:
