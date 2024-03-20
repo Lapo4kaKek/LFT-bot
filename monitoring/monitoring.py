@@ -81,6 +81,28 @@ class Monitoring:
 
         self.database.insert_data('order_strategy_link', data, column_names)
 
+    def insert_strategy_info(self, strategy_info):
+        """
+        Добавляет информацию о стратегии в ClickHouse.
+        :param strategy_info: Информация о стратегии в виде словаря.
+        """
+        data = [(
+            strategy_info['strategyId'],
+            strategy_info['name'],
+            strategy_info['exchange'],
+            strategy_info['symbol'],
+            float(strategy_info['balance']),
+            float(strategy_info['activeTokens']),
+            float(strategy_info['assetsNumber']),
+            strategy_info['status'],
+            self.database.format_time_to_datetime(strategy_info['createdTime'])
+        )]
+
+        column_names = ['strategyId', 'name', 'exchange', 'symbol', 'balance', 'activeTokens', 'assetsNumber', 'status',
+                        'createdTime']
+
+        self.database.insert_data('strategies', data, column_names)
+
     # нужно еще поработать над этим
     def calculate_and_insert_daily_pnl(self, orders_data, starting_capital):
         pnl_data = {}
@@ -106,3 +128,56 @@ class Monitoring:
                 # starting_capital - это наш баланс
                 ['date', 'daily_pnl', 'pnl_percentage']
             )
+
+    def delete_all_data(self, table_name):
+        return self.database.delete_all_data(table_name)
+
+    def calculate_pnl_by_strategy(self, strategy_id):
+        """
+        Вычисляет PnL для заданной стратегии.
+        """
+        query = f"""
+        SELECT 
+            orderId, 
+            exchange, 
+            symbol, 
+            price, 
+            qty, 
+            executedQty, 
+            totalCost, 
+            side, 
+            orderType, 
+            orderStatus, 
+            createdTime, 
+            updatedTime, 
+            commission 
+        FROM orders 
+        INNER JOIN order_strategy_link ON orders.orderId = order_strategy_link.orderId 
+        WHERE order_strategy_link.strategyId = '{strategy_id}'
+        """
+
+        orders = self.database.execute_query(query)
+
+        total_cost = 0
+        total_sell = 0
+        total_qty = 0
+
+        for order in orders:
+            # Используйте индексы вместо ключей
+            price = float(order[3])  # Индекс для 'price'
+            qty = float(order[4])  # Индекс для 'qty'
+            if order[7].lower() == 'buy':  # Индекс для 'side'
+                total_cost += price * qty
+                total_qty += qty
+            elif order[7].lower() == 'sell':  # Индекс для 'side'
+                total_sell += price * qty
+                total_qty -= qty
+
+        pnl = total_sell - total_cost
+
+        return {
+            'total_cost': total_cost,
+            'total_sell': total_sell,
+            'total_qty': total_qty,
+            'pnl': pnl
+        }
