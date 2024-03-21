@@ -1,8 +1,6 @@
 import os
-
 import uuid
 from _decimal import Decimal
-
 from database.database import Database
 from monitoring.monitoring import Monitoring
 from dotenv import load_dotenv
@@ -40,14 +38,14 @@ async def example_binance_work():
 
     print(order)
 
-async def macd_trading(bybit):
+async def macd_trading(bybit, monitoring):
     strategy_id = str(uuid.uuid4())
 
     # bybit.exchange.verbose = True
     strategy1 = macd_strategy.MACDStrategy(exchange=bybit, balance=Decimal(1000.0), symbol="BTCUSDT",
                              settings={'strategy_name': 'Strategy 1',
                                        'filter_days': 3, 'limit': 100, 'loss_coef': 0.95},
-                                           strategy_id=strategy_id)
+                                           strategy_id=strategy_id, monitoring=monitoring)
 
     # Запуск торговли для всех стратегий
     await asyncio.gather(
@@ -60,26 +58,12 @@ async def main():
     monitoring = Monitoring(database)
     bybit = BybitExchange(api_key_bybit, api_secret_bybit, monitoring)
     bybit.exchange.set_sandbox_mode(True)
-    # binance = BinanceExchange(api_key_binance, api_secret_binance, monitoring)
 
-    await macd_trading(bybit)
-
-    # order1 = bybit.create_market_buy_order("STRK/USDT", 2)
-    # print(order1)
-    #
-    # order2 = binance.create_market_buy_order("STRK/USDT", 2.3)
-    # order3 = bybit.create_market_sell_order("STRK/USDT", 2)
-    #
-    # order4 = binance.create_market_sell_order("STRK/USDT", 2.3)
-    # print(order2)
-    # print(order3)
-    # print(order4)
-
-
-
-
-    return
-
-
+    # await macd_trading(bybit, monitoring)
+    pnl_result = monitoring.calculate_pnl_by_strategy("d99ac788-8b7e-4061-8a50-cc1b06fe0754")
+    print(f"{pnl_result['pnl']}")
+    # monitoring.delete_all_data("strategies")
+    # monitoring.delete_all_data("order_strategy_link")
+    await macd_trading(bybit, monitoring)
 
 run(main())

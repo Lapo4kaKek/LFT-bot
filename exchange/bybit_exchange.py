@@ -32,6 +32,8 @@ class BybitExchange(BaseExchange):
             api_secret=self.api_secret,
         )
         self.monitoring = monitoring
+        # добавил это поле для добавления в стратегию параметры 'exchange'
+        self.exchange_name = 'bybit'
 
     def get_order_book(self, coin, limit=None):
         return super().get_order_book(coin, limit)
@@ -259,3 +261,13 @@ class BybitExchange(BaseExchange):
         )
 
         return result
+
+    async def close(self):
+        """
+        Закрывает все ресурсы, связанные с экземпляром BybitExchange.
+        """
+        if hasattr(self.session, 'close'):
+            await self.session.close()
+
+        if hasattr(self.exchange, 'close'):
+            await self.exchange.close()

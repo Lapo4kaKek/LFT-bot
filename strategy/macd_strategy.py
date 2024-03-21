@@ -1,16 +1,16 @@
 import asyncio
 import os
 from dotenv import load_dotenv
-
+from datetime import datetime
 from analysis.technical_analysis import TechnicalAnalysis
 from decimal import *
 from exchange.binance_exchange import BinanceExchange
 from exchange.bybit_exchange import BybitExchange
 from strategy.base_strategy import BaseStrategy
-
+import time
 
 class MACDStrategy(BaseStrategy):
-    def __init__(self, exchange, balance, symbol, settings, strategy_id):
+    def __init__(self, exchange, balance, symbol, settings, strategy_id, monitoring):
         """
         Конструктор.
         :param exchange: Биржа, на которой будет осуществляться торговля.
@@ -20,6 +20,7 @@ class MACDStrategy(BaseStrategy):
             - limit: Целое число, количество фреймов в запрашиваемом графике.
             - filter_days: Целое число, количество дней, в которые должен сохраняться тренд индикатора MACD для определения устойчивого тренда.
         :param strategy_id: Уникальный идентификатор стратегии.
+        :param monitoring: инстанс мониторинга для добавления в clickhouse
         """
         self.exchange = exchange
         self.balance = balance
@@ -32,6 +33,46 @@ class MACDStrategy(BaseStrategy):
         self.open_positions = False
         # strategy_id для связи в clickhouse
         self.strategy_id = strategy_id
+        # класс мониторинга для добавления в clickhouse
+        self.monitoring = monitoring
+
+    async def register_strategy(self):
+        """
+        Регистрирует стратегию в ClickHouse
+        """
+        current_time = int(time.time() * 1000)
+
+        strategy_info = {
+            'strategyId': self.strategy_id,
+            'name': self.settings.get('strategy_name', 'Unnamed Strategy'),
+            'exchange': self.exchange.exchange_name,
+            'symbol': self.symbol,
+            'balance': self.balance,
+            'activeTokens': 1,
+            'assetsNumber': 0,
+            'status': self.is_active,
+            'createdTime': current_time
+        }
+
+        self.monitoring.insert_strategy_info(strategy_info)
+
+    async def update_strategy_info(self):
+        """
+        Обновляет стратегию в clickhouse
+        """
+        strategy_info = {
+            'strategyId': self.strategy_id,
+            'name': self.settings.get('strategy_name', 'Unnamed Strategy'),
+            'exchange': self.exchange.name,
+            'symbol': self.symbol,
+            'balance': self.balance,
+            'activeTokens': 1,
+            'assetsNumber': 0,
+            'status': self.is_active,
+            'createdTime': datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        }
+        self.monitoring.insert_strategy_info(strategy_info)
+
 
     async def calculate_moving_averages(self):
         """
@@ -94,6 +135,7 @@ class MACDStrategy(BaseStrategy):
             'price': price * Decimal(self.settings['loss_coef'])
         }}
         """
+        await self.register_strategy()
         while True:
             print(self.settings['strategy_name'] + ": ", end='')
             signal = await self.get_signal()
@@ -107,18 +149,20 @@ class MACDStrategy(BaseStrategy):
                 #         }
                 # )
                 # print(order)
-                print('Buy')
+                print('Buy\n----------------------')
             elif signal == -1:
                 order = self.exchange.create_market_sell_order_native(symbol=self.symbol, order_size=0.02,
                                                                       testnet=True, strategy_id=self.strategy_id)
                 self.open_positions = False
-                print('Sell')
+                print('Sell\n----------------------')
             else:
                 print('Hold')
             await asyncio.sleep(10)  # Пауза в 10 секунд
 
-    def stop_strategy(self):
+
+    async def stop_strategy(self):
         """
         Остановка стратегии.
         """
+        self.update_strategy_info()
         self.is_active = False

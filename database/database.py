@@ -30,3 +30,13 @@ class Database:
 
     def format_time_to_datetime(self, timestamp_str):
         return datetime.fromtimestamp(int(timestamp_str) / 1000)
+
+    def execute_query(self, query):
+        """
+        Выполняет SQL-запрос к ClickHouse и возвращает результаты.
+
+        :param query: Текст SQL-запроса.
+        :return: Результаты запроса.
+        """
+        result = self.client.query(query)
+        return result.result_rows
