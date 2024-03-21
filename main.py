@@ -1,4 +1,7 @@
 import os
+
+import telebot
+
 from database.database import Database
 from dotenv import load_dotenv
 import ccxt
@@ -41,5 +44,7 @@ columns = {
 columns = ['orderId', 'exchange', 'symbol', 'price', 'qty', 'executedQty', 'totalCost', 'side', 'orderType',
                         'orderStatus', 'createdTime', 'updatedTime', 'commission']
 
-database.create_table('orders', columns)
+# database.create_table('orders', columns)
 
+telegram_bot_token = os.getenv('TELEGRAM_BOT_TOKEN')
+bot = telebot.TeleBot(telegram_bot_token)

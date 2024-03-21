@@ -22,7 +22,6 @@ CREATE TABLE IF NOT EXISTS strategies (
     exchange String,
     symbol String,
     balance Decimal(38, 20),
-    activeTokens Decimal(38, 20),
     assetsNumber Decimal(38, 20),
     status Boolean,
     createdTime DateTime

@@ -1,5 +1,11 @@
 from abc import ABC, abstractmethod
 
+strategies_types = {
+    'macd': '',
+    'example1': '',
+    'example2': ''
+}
+
 
 class BaseStrategy(ABC):
     """
