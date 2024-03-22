@@ -28,23 +28,35 @@ password_click = os.getenv('CLICKHOUSE_PASSWORD')
 
 database = Database('localhost', 8123, login_click, password_click)
 
-# example use database:
-columns = {
+orders_columns = {
     'order_id': 'String',
+    'exchange': 'String',
     'symbol': 'String',
+    'price': 'Decimal(38, 20)',
+    'qty': 'Decimal(38, 20)',
+    'executedQty': 'Decimal(38, 20)',
+    'totalCost': 'Decimal(38, 20)',
     'side': 'String',
-    'order_type': 'String',
-    'price': 'Float32',
-    'amount': 'Float32',
-    'cost': 'Float32',
-    'fee': 'Float32',
-    'created_time': 'DateTime'
+    'orderType': 'String',
+    'orderStatus': 'String',
+    'createdTime': 'DateTime',
+    'updatedTime': 'DateTime',
+    'commission': 'Decimal(38, 20)'
 }
+database.create_table('orders', orders_columns)
 
-columns = ['orderId', 'exchange', 'symbol', 'price', 'qty', 'executedQty', 'totalCost', 'side', 'orderType',
-                        'orderStatus', 'createdTime', 'updatedTime', 'commission']
-
-# database.create_table('orders', columns)
+strategies_columns = {
+    'strategyId': 'String',
+    'name': 'String',
+    'type': 'String',
+    'exchange': 'String',
+    'symbol': 'String',
+    'balance': 'Decimal(38, 20)',
+    'assetsNumber': 'Decimal(38, 20)',
+    'status': 'Boolean',
+    'createdTime': 'DateTime'
+}
+database.create_table('strategies', strategies_columns)
 
 telegram_bot_token = os.getenv('TELEGRAM_BOT_TOKEN')
 bot = telebot.TeleBot(telegram_bot_token)

@@ -19,6 +19,7 @@ ORDER BY (createdTime, orderId);
 CREATE TABLE IF NOT EXISTS strategies (
     strategyId String,
     name String,
+    type String,
     exchange String,
     symbol String,
     balance Decimal(38, 20),

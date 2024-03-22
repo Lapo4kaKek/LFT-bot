@@ -6,6 +6,7 @@
 from telebot.types import InlineKeyboardButton, InlineKeyboardMarkup, ReplyKeyboardMarkup, KeyboardButton
 
 import strategy.base_strategy
+from main import database
 
 
 def menu_static():
@@ -84,7 +85,13 @@ def all_strategies():
         back_button = InlineKeyboardButton(text='Back to Actions ⬅️',
                                            callback_data='strategy_back')
         keyboard.add(back_button)
-        columns = numbers('strategy_entity_', 1)
+
+        query = f"""
+                    SELECT count(*)
+                    FROM strategies 
+                    """
+        data = database.execute_query(query)
+        columns = numbers('strategy_entity_', data[0][0])
         for i in range(len(columns[0])):
             line = []
             for j in range(5):

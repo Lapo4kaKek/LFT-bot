@@ -3,7 +3,8 @@
 
 """
 import strategy.base_strategy
-
+from main import database
+import texttable as table
 
 def greeting():
     """
@@ -43,5 +44,24 @@ def all_strategies():
     Вывод всех созданных стратегий.
     :return: Str.
     """
-    text = '<b>Select a strategy from the following:</b>\n'
-    return text
+    try:
+        text = '<b>Select a strategy from the following:</b>\n'
+        query = f"""
+                SELECT 
+                    name, type
+                FROM strategies 
+                """
+        data = database.execute_query(query)
+        strategies_table = table.Texttable()
+        strategies_table.set_deco(table.Texttable.HEADER)
+        strategies_table.set_cols_align(["l", "c", "c"])
+        strategies_table.set_cols_valign(["m", "m", "m"])
+        strategies_table.set_cols_dtype(['i', 't', 't'])
+        strategies_table.add_row([" \n", "Name\n", "Type\n"])
+        for i in range(len(data)):
+            strategies_table.add_row([i + 1, data[i][0], data[i][1]])
+        text += '<code>' + strategies_table.draw() + '</code>'
+        return text
+    except Exception as err:
+        print(str(err))
+        return None
