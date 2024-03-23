@@ -31,12 +31,18 @@ class Database:
     def format_time_to_datetime(self, timestamp_str):
         return datetime.fromtimestamp(int(timestamp_str) / 1000)
 
-    def execute_query(self, query):
+    def execute_query(self, query, params={}, columns=False):
         """
         Выполняет SQL-запрос к ClickHouse и возвращает результаты.
 
         :param query: Текст SQL-запроса.
         :return: Результаты запроса.
         """
-        result = self.client.query(query)
+        result = self.client.query(query, params)
+        if columns:
+            columns_names = result.column_names
+            result_with_columns = []
+            for row in result.result_rows:
+                result_with_columns.append(dict(zip(columns_names, row)))
+            return result_with_columns
         return result.result_rows

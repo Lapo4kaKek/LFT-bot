@@ -65,3 +65,37 @@ def all_strategies():
     except Exception as err:
         print(str(err))
         return None
+
+
+def strategy_info(strategy_id):
+    """
+    Информация о созданной стратегии.
+    :param strategy_id: Id стратегии.
+    :return: Str.
+    """
+    try:
+        query = f"""
+                SELECT 
+                    *
+                FROM strategies 
+                WHERE strategyId == %(strategy_id)s
+                """
+        data = database.execute_query(query, params={'strategy_id': strategy_id}, columns=True)
+        text = ""
+        if data is None:
+            text = 'Sorry, something went wrong.'
+            return text
+        strategy_data = data[0]
+        text = '<b>Title:</b> ' + strategy_data['name'] + '\n'
+        text += '<b>Type:</b> ' + strategy_data['type'] + '\n'
+        text += '<b>Exchange:</b> ' + strategy_data['exchange'] + '\n'
+        text += '<b>Symbol:</b> ' + strategy_data['symbol'] + '\n'
+        text += '<b>Balance:</b> ' + str(strategy_data['balance']) + '\n'
+        text += '<b>AssetsNumber:</b> ' + str(strategy_data['assetsNumber']) + '\n'
+        text += '<b>Status:</b> ' + str(strategy_data['status']) + '\n'
+        text += '<b>Date:</b> ' + str(strategy_data['createdTime']) + '\n'
+        return text
+    except Exception as err:
+        print(err)
+        # admin.error(error_admin_text='Не получилось содздать описание текста' + str(err))
+        return None
