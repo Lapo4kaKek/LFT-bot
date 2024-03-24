@@ -17,7 +17,7 @@ ORDER BY (createdTime, orderId);
 
 
 CREATE TABLE IF NOT EXISTS strategies (
-    strategyId String,
+    strategyId UUID DEFAULT generateUUIDv4(),
     name String,
     type String,
     exchange String,
