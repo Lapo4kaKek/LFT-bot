@@ -17,12 +17,12 @@ ORDER BY (createdTime, orderId);
 
 
 CREATE TABLE IF NOT EXISTS strategies (
-    strategyId String,
+    strategyId UUID DEFAULT generateUUIDv4(),
     name String,
+    type String,
     exchange String,
     symbol String,
     balance Decimal(38, 20),
-    activeTokens Decimal(38, 20),
     assetsNumber Decimal(38, 20),
     status Boolean,
     createdTime DateTime
