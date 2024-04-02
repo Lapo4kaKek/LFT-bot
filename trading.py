@@ -44,7 +44,7 @@ async def macd_trading(bybit, monitoring):
     # bybit.exchange.verbose = True
     strategy1 = macd_strategy.MACDStrategy(exchange=bybit, balance=Decimal(1000.0), symbol="BTCUSDT",
                              settings={'strategy_name': 'Strategy 1',
-                                       'filter_days': 3, 'limit': 100, 'loss_coef': 0.95},
+                                       'filter_days': 3, 'limit': 100, 'loss_coef': 0.8},
                                            strategy_id=strategy_id, monitoring=monitoring)
 
     # Запуск торговли для всех стратегий

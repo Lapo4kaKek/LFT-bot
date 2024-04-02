@@ -9,6 +9,7 @@ from exchange.bybit_exchange import BybitExchange
 from strategy.base_strategy import BaseStrategy
 import time
 
+
 class MACDStrategy(BaseStrategy):
     def __init__(self, exchange, balance, symbol, settings, strategy_id, monitoring):
         """
@@ -27,6 +28,7 @@ class MACDStrategy(BaseStrategy):
         self.symbol = symbol
         self.settings = settings
         self.is_active = True
+        self.assets_number = 0
         # Экземпляр для получения технических индикаторов заданного токена.
         self.technical_indicators = TechnicalAnalysis(exchange, symbol)
         # Флаг, отвечающий за наличие открытой позиции на рынке.
@@ -48,7 +50,6 @@ class MACDStrategy(BaseStrategy):
             'exchange': self.exchange.exchange_name,
             'symbol': self.symbol,
             'balance': self.balance,
-            'activeTokens': 1,
             'assetsNumber': 0,
             'status': self.is_active,
             'createdTime': current_time
@@ -72,7 +73,6 @@ class MACDStrategy(BaseStrategy):
             'createdTime': datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         }
         self.monitoring.insert_strategy_info(strategy_info)
-
 
     async def calculate_moving_averages(self):
         """
@@ -128,27 +128,24 @@ class MACDStrategy(BaseStrategy):
         """
         Осуществление асинхронной торговли в соответствии с заданными настройками.
         """
-        """
-        params={
-        'stopLoss': {
-            'type': 'market',
-            'price': price * Decimal(self.settings['loss_coef'])
-        }}
-        """
         await self.register_strategy()
         while True:
             print(self.settings['strategy_name'] + ": ", end='')
             signal = await self.get_signal()
+            print("Signal: " + str(signal))
             if signal == 0:
-                order = self.exchange.create_market_buy_order_native(symbol=self.symbol, order_size=self.balance,
-                                                                     testnet=True, strategy_id=self.strategy_id)
+                ticker = await self.exchange.get_ticker(self.symbol, 'buy')
+                order = await self.exchange.create_market_buy_order(symbol=self.symbol,
+                                                                    order_size=Decimal(self.balance) / Decimal(ticker[0]))
+                self.assets_number = order['filled']
                 self.open_positions = True
-                # order = await self.exchange.create_order(coin=self.symbol, type='market', side='sell',
-                #                                          amount=self.balance / price, price=None, params={
-                #         'stopLossPrice': price * Decimal(self.settings['loss_coef']),
-                #         }
-                # )
-                # print(order)
+
+                order = await self.exchange.create_market_stop_loss_order(symbol=self.symbol, order_size=Decimal(self.balance) / Decimal(ticker[0]), params={
+                    'triggerPrice': Decimal(ticker[0]) * Decimal(self.settings['loss_coef']),
+                    'triggerDirection': 'below'
+                })
+
+                print("STOP LOSS: ", order)
                 print('Buy\n----------------------')
             elif signal == -1:
                 order = self.exchange.create_market_sell_order_native(symbol=self.symbol, order_size=0.02,
@@ -157,8 +154,10 @@ class MACDStrategy(BaseStrategy):
                 print('Sell\n----------------------')
             else:
                 print('Hold')
-            await asyncio.sleep(10)  # Пауза в 10 секунд
+            print(self.exchange.get_trade_history())
+            print(self.exchange.get_order_history())
 
+            await asyncio.sleep(10)  # Пауза в 10 секунд
 
     async def stop_strategy(self):
         """

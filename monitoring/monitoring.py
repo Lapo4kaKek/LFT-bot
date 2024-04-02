@@ -39,7 +39,7 @@ class Monitoring:
         """
         required_keys = ['orderId', 'exchange', 'symbol', 'price', 'qty', 'executedQty', 'totalCost', 'side',
                          'orderType',
-                         'orderStatus', 'createdTime', 'updatedTime', 'commission']
+                         'orderStatus', 'createdTime', 'updatedTime', 'commission', 'stopPrice']
         if not all(key in order for key in required_keys):
             print("Some required fields are missing in the order")
             return
@@ -50,6 +50,7 @@ class Monitoring:
             order['exchange'],  # exchange (binance or bybit)
             order['symbol'],  # symbol
             float(order['price']),  # price
+            float(order['stopPrice']), # stop loss price
             float(order['qty']),  # amount
             float(order['executedQty']),  # executedQty
             float(order['totalCost']),  # cost
@@ -61,7 +62,7 @@ class Monitoring:
             float(order['commission'])  # commission
         )]
 
-        column_names = ['orderId', 'exchange', 'symbol', 'price', 'qty', 'executedQty', 'totalCost', 'side',
+        column_names = ['orderId', 'exchange', 'symbol', 'price', 'stopPrice', 'qty', 'executedQty', 'totalCost', 'side',
                         'orderType',
                         'orderStatus', 'createdTime', 'updatedTime', 'commission']
 
@@ -92,13 +93,12 @@ class Monitoring:
             strategy_info['exchange'],
             strategy_info['symbol'],
             float(strategy_info['balance']),
-            float(strategy_info['activeTokens']),
             float(strategy_info['assetsNumber']),
             strategy_info['status'],
             self.database.format_time_to_datetime(strategy_info['createdTime'])
         )]
 
-        column_names = ['strategyId', 'name', 'exchange', 'symbol', 'balance', 'activeTokens', 'assetsNumber', 'status',
+        column_names = ['strategyId', 'name', 'exchange', 'symbol', 'balance', 'assetsNumber', 'status',
                         'createdTime']
 
         self.database.insert_data('strategies', data, column_names)

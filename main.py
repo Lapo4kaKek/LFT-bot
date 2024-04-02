@@ -29,10 +29,11 @@ password_click = os.getenv('CLICKHOUSE_PASSWORD')
 database = Database('localhost', 8123, login_click, password_click)
 
 orders_columns = {
-    'order_id': 'String',
+    'orderId': 'String',
     'exchange': 'String',
     'symbol': 'String',
     'price': 'Decimal(38, 20)',
+    'stopPrice': 'Decimal(38, 20)',
     'qty': 'Decimal(38, 20)',
     'executedQty': 'Decimal(38, 20)',
     'totalCost': 'Decimal(38, 20)',
@@ -57,6 +58,12 @@ strategies_columns = {
     'createdTime': 'DateTime'
 }
 database.create_table('strategies', strategies_columns)
+
+order_strategy_link_columns = {
+    'orderId': 'String',
+    'strategyId': 'String'
+}
+database.create_table('order_strategy_link', order_strategy_link_columns)
 
 telegram_bot_token = os.getenv('TELEGRAM_BOT_TOKEN')
 bot = telebot.TeleBot(telegram_bot_token)

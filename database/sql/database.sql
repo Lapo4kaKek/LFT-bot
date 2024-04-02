@@ -3,6 +3,7 @@ CREATE TABLE IF NOT EXISTS orders (
     exchange String,
     symbol String,
     price Decimal(38, 20),
+    stopPrice Decimal(38, 20),
     qty Decimal(38, 20),
     executedQty Decimal(38, 20),
     totalCost Decimal(38, 20),
