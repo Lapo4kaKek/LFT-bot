@@ -78,7 +78,7 @@ def strategy_info(strategy_id):
                 SELECT 
                     *
                 FROM strategies 
-                WHERE strategyId == %(strategy_id)s
+                WHERE strategyId == '{strategy_id}'
                 """
         data = database.execute_query(query, params={'strategy_id': strategy_id}, columns=True)
         text = ""

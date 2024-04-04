@@ -1,4 +1,7 @@
+import time
 from abc import ABC, abstractmethod
+
+from analysis.technical_analysis import TechnicalAnalysis
 
 strategies_types = {
     'macd': '',
@@ -11,6 +14,46 @@ class BaseStrategy(ABC):
     """
     Интерфейс для реализации стратегий.
     """
+
+    def __init__(self, exchange, symbol, strategy_id, monitoring, settings, balance):
+        self.exchange = exchange
+        self.symbol = symbol
+        self.settings = settings
+        # Экземпляр для получения технических индикаторов заданного токена.
+        self.technical_indicators = TechnicalAnalysis(exchange, symbol)
+        # strategy_id для связи в clickhouse.
+        self.strategy_id = strategy_id
+        # Класс мониторинга для добавления в clickhouse.
+        self.monitoring = monitoring
+        self.register_strategy(balance)
+        self.info = None
+
+    def register_strategy(self, balance):
+        """
+        Регистрирует стратегию в ClickHouse
+        """
+        current_time = int(time.time() * 1000)
+
+        strategy_info = {
+            'strategyId': self.strategy_id,
+            'name': self.settings.get('strategy_name', 'Unnamed Strategy'),
+            'exchange': self.exchange.exchange_name,
+            'symbol': self.symbol,
+            'balance': balance,
+            'assetsNumber': 0,
+            'openPositions': False,
+            'status': False,
+            'createdTime': current_time
+        }
+
+        self.monitoring.insert_strategy_info(strategy_info)
+
+    async def create_strategy(self):
+        await self.update_info()
+
+    async def update_info(self):
+        self.info = await self.monitoring.get_strategy_info(self.strategy_id)
+
 
     @abstractmethod
     def get_signal(self):

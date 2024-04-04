@@ -25,6 +25,7 @@ CREATE TABLE IF NOT EXISTS strategies (
     symbol String,
     balance Decimal(38, 20),
     assetsNumber Decimal(38, 20),
+    openPositions Boolean,
     status Boolean,
     createdTime DateTime
 ) ENGINE = MergeTree()

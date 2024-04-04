@@ -54,6 +54,7 @@ strategies_columns = {
     'symbol': 'String',
     'balance': 'Decimal(38, 20)',
     'assetsNumber': 'Decimal(38, 20)',
+    'openPositions': 'Boolean',
     'status': 'Boolean',
     'createdTime': 'DateTime'
 }
