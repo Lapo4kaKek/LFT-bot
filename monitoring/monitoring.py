@@ -50,7 +50,7 @@ class Monitoring:
             order['exchange'],  # exchange (binance or bybit)
             order['symbol'],  # symbol
             float(order['price']),  # price
-            float(order['stopPrice']), # stop loss price
+            float(order['stopPrice']),  # stop loss price
             float(order['qty']),  # amount
             float(order['executedQty']),  # executedQty
             float(order['totalCost']),  # cost
@@ -62,7 +62,8 @@ class Monitoring:
             float(order['commission'])  # commission
         )]
 
-        column_names = ['orderId', 'exchange', 'symbol', 'price', 'stopPrice', 'qty', 'executedQty', 'totalCost', 'side',
+        column_names = ['orderId', 'exchange', 'symbol', 'price', 'stopPrice', 'qty', 'executedQty', 'totalCost',
+                        'side',
                         'orderType',
                         'orderStatus', 'createdTime', 'updatedTime', 'commission']
 
@@ -90,6 +91,7 @@ class Monitoring:
         data = [(
             strategy_info['strategyId'],
             strategy_info['name'],
+            strategy_info['type'],
             strategy_info['exchange'],
             strategy_info['symbol'],
             float(strategy_info['balance']),
@@ -99,11 +101,11 @@ class Monitoring:
             self.database.format_time_to_datetime(strategy_info['createdTime'])
         )]
 
-        column_names = ['strategyId', 'name', 'exchange', 'symbol', 'balance', 'assetsNumber', 'openPositions', 'status',
+        column_names = ['strategyId', 'name', 'type', 'exchange', 'symbol', 'balance', 'assetsNumber', 'openPositions',
+                        'status',
                         'createdTime']
 
         self.database.insert_data('strategies', data, column_names)
-
 
     async def get_strategy_info(self, strategy_id):
         """
@@ -129,7 +131,6 @@ class Monitoring:
         condition = ', '.join([f"{key} = {data[key]}" for key in data])
         query = f"ALTER TABLE strategies UPDATE {condition} WHERE strategyId = '{strategy_id}'"
         self.database.execute_query(query, {'strategy_id': strategy_id})
-
 
     # нужно еще поработать над этим
     def calculate_and_insert_daily_pnl(self, orders_data, starting_capital):

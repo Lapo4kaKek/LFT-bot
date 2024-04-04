@@ -65,7 +65,8 @@ def create_strategy():
         back_button = InlineKeyboardButton(text='Back to Actions ⬅️',
                                            callback_data='strategy_back')
         keyboard.add(back_button)
-        columns = numbers('strategy_create_type_', len(strategy.base_strategy.strategies_types))
+        columns = numbers('strategy_create_type_', len(strategy.base_strategy.strategies_types),
+                          custom_ids=[str(key) for key in strategy.base_strategy.strategies_types])
 
         for i in range(len(columns[0])):
             line = []

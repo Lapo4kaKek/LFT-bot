@@ -66,5 +66,6 @@ order_strategy_link_columns = {
 }
 database.create_table('order_strategy_link', order_strategy_link_columns)
 
+
 telegram_bot_token = os.getenv('TELEGRAM_BOT_TOKEN')
 bot = telebot.TeleBot(telegram_bot_token)

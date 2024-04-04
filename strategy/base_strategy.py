@@ -4,7 +4,7 @@ from abc import ABC, abstractmethod
 from analysis.technical_analysis import TechnicalAnalysis
 
 strategies_types = {
-    'macd': '',
+    'MACD': '',
     'example1': '',
     'example2': ''
 }
@@ -15,7 +15,7 @@ class BaseStrategy(ABC):
     Интерфейс для реализации стратегий.
     """
 
-    def __init__(self, exchange, symbol, strategy_id, monitoring, settings, balance):
+    def __init__(self, exchange, symbol, strategy_id, monitoring, settings, balance, type):
         self.exchange = exchange
         self.symbol = symbol
         self.settings = settings
@@ -25,6 +25,7 @@ class BaseStrategy(ABC):
         self.strategy_id = strategy_id
         # Класс мониторинга для добавления в clickhouse.
         self.monitoring = monitoring
+        self.type = type
         self.register_strategy(balance)
         self.info = None
 
@@ -36,6 +37,7 @@ class BaseStrategy(ABC):
 
         strategy_info = {
             'strategyId': self.strategy_id,
+            'type': self.type,
             'name': self.settings.get('strategy_name', 'Unnamed Strategy'),
             'exchange': self.exchange.exchange_name,
             'symbol': self.symbol,

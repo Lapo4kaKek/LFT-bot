@@ -14,10 +14,19 @@ def strategy(text_data):
 
     if re.match('create', command):
         # Запрос на создание новой стратегии.
-
+        command = re.split('create_', text_data.data, maxsplit=1)[1]
         if re.match('type_', command):
             # Создание стратегии определенного типа.
-            command = re.split('type_', text_data.data, maxsplit=1)[1]
+            type = re.split('type_', text_data.data, maxsplit=1)[1]
+            try:
+                message_id = bot.edit_message_text(chat_id=chat_id,
+                                                   message_id=text_data.message.message_id,
+                                                   text=texts.create_strategy(),
+                                                   reply_markup=keyboards.create_strategy(),
+                                                   parse_mode='html').message_id
+            except Exception as err:
+                print(str(err))
+                # admin.error('Create new text callback ' + str(err))
         else:
             try:
                 message_id = bot.edit_message_text(chat_id=chat_id,

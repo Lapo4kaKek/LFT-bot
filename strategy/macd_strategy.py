@@ -19,7 +19,7 @@ class MACDStrategy(BaseStrategy):
         Целое число, количество фреймов в запрашиваемом графике. - filter_days: Целое число, количество дней,
         в которые должен сохраняться тренд индикатора MACD для определения устойчивого тренда.
         """
-        super().__init__(exchange, symbol, strategy_id, monitoring, settings, balance)
+        super().__init__(exchange, symbol, strategy_id, monitoring, settings, balance, 'MACD')
 
     async def calculate_moving_averages(self):
         """
