@@ -2,6 +2,9 @@
 Тексты для сообщений.
 
 """
+import json
+import pprint
+
 import strategy.base_strategy
 from main import database
 import texttable as table
@@ -36,6 +39,21 @@ def create_strategy():
         text += str(num) + ". " + type + '\n'
         num += 1
     text += '</code>'
+
+    return text
+
+
+def create_strategy_type(type):
+    """
+    Вывод сообщения для создания определённой стратегии.
+    :param type Тип создаваемой стратегии.
+    :return: Str.
+    """
+    text = '<b>To create a strategy, send the following message with modified parameters:</b>\n'
+    text += '<pre>'
+    text += f"#CREATE_STRATEGY\n"
+    text += json.dumps(strategy.base_strategy.strategies_types[type], indent=4)
+    text += '</pre>'
     return text
 
 

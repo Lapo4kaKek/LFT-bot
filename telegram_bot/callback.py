@@ -17,17 +17,24 @@ def strategy(text_data):
         command = re.split('create_', text_data.data, maxsplit=1)[1]
         if re.match('type_', command):
             # Создание стратегии определенного типа.
-            type = re.split('type_', text_data.data, maxsplit=1)[1]
+            command = re.split('type_', text_data.data, maxsplit=1)[1]
             try:
-                message_id = bot.edit_message_text(chat_id=chat_id,
-                                                   message_id=text_data.message.message_id,
-                                                   text=texts.create_strategy(),
-                                                   reply_markup=keyboards.create_strategy(),
-                                                   parse_mode='html').message_id
+                if re.match('back', command):
+                    message_id = bot.edit_message_text(chat_id=chat_id,
+                                                       message_id=text_data.message.message_id,
+                                                       text=texts.create_strategy(),
+                                                       reply_markup=keyboards.create_strategy(),
+                                                       parse_mode='html').message_id
+                else:
+                    message_id = bot.edit_message_text(chat_id=chat_id,
+                                                       message_id=text_data.message.message_id,
+                                                       text=texts.create_strategy_type(command),
+                                                       reply_markup=keyboards.create_strategy_type(),
+                                                       parse_mode='html').message_id
             except Exception as err:
                 print(str(err))
                 # admin.error('Create new text callback ' + str(err))
-        else:
+        elif re.match('menu', command):
             try:
                 message_id = bot.edit_message_text(chat_id=chat_id,
                                                    message_id=text_data.message.message_id,

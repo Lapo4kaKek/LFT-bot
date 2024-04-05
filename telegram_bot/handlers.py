@@ -42,6 +42,8 @@ def continue_chat(text_data):
                                  parse_mode='html')
             elif message == 'PnL 💲':
                 pass
+            elif re.match(message, '#CREATE_STRATEGY'):
+                print(message)
     except Exception as err:
         print(str(err))
         # admin.error(error_admin_text='Обработка сообщения от пользователя ' + str(err))

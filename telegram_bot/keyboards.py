@@ -24,7 +24,7 @@ def strategy_actions():
     """
     Inline клавиатура с действиями над стратегиями.
     """
-    create_strategy_button = InlineKeyboardButton(text="Create Strategy 🆕", callback_data='strategy_create')
+    create_strategy_button = InlineKeyboardButton(text="Create Strategy 🆕", callback_data='strategy_create_menu')
     all_strategies_button = InlineKeyboardButton(text="All Strategies 📋", callback_data='strategy_all')
     keyboard = InlineKeyboardMarkup(row_width=1)
     keyboard.add(create_strategy_button, all_strategies_button)
@@ -79,6 +79,20 @@ def create_strategy():
         # admin.error(error_admin_text='Создание клавиатуры my_texts ' + str(err))
         return None
 
+def create_strategy_type():
+    """
+    Inline клавиатура для возврата к видам стратегий.
+    """
+    try:
+        keyboard = InlineKeyboardMarkup()
+        back_button = InlineKeyboardButton(text='Back to strategy types ⬅️',
+                                           callback_data='strategy_create_type_back')
+        keyboard.add(back_button)
+        return keyboard
+    except Exception as err:
+        print(str(err))
+        # admin.error(error_admin_text='Создание клавиатуры my_texts ' + str(err))
+        return None
 
 def all_strategies():
     """

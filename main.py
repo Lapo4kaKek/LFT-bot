@@ -56,7 +56,8 @@ strategies_columns = {
     'assetsNumber': 'Decimal(38, 20)',
     'openPositions': 'Boolean',
     'status': 'Boolean',
-    'createdTime': 'DateTime'
+    'createdTime': 'DateTime',
+    'settings': 'Map(String, Double)'
 }
 database.create_table('strategies', strategies_columns)
 

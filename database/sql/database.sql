@@ -18,7 +18,7 @@ ORDER BY (createdTime, orderId);
 
 
 CREATE TABLE IF NOT EXISTS strategies (
-    strategyId UUID DEFAULT generateUUIDv4(),
+    strategyId String,
     name String,
     type String,
     exchange String,
@@ -27,7 +27,8 @@ CREATE TABLE IF NOT EXISTS strategies (
     assetsNumber Decimal(38, 20),
     openPositions Boolean,
     status Boolean,
-    createdTime DateTime
+    createdTime DateTime,
+    settings Map(String, Double)
 ) ENGINE = MergeTree()
 ORDER BY (createdTime);
 

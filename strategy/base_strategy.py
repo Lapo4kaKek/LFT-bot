@@ -4,7 +4,18 @@ from abc import ABC, abstractmethod
 from analysis.technical_analysis import TechnicalAnalysis
 
 strategies_types = {
-    'MACD': '',
+    'MACD': {
+        'type': 'macd',
+        'exchange': 'bybit',
+        'symbol': 'BTCUSDT',
+        'strategy_name': 'Strategy 1',
+        'balance': 1000,
+        'settings': {
+            'filter_days': 3,
+            'limit': 100,
+            'loss_coef': 0.8
+        }
+    },
     'example1': '',
     'example2': ''
 }
