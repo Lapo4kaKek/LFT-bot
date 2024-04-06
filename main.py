@@ -2,13 +2,15 @@ import os
 
 import telebot
 
+import telegram_bot
 from database.database import Database
 from dotenv import load_dotenv
 import ccxt
 from datetime import datetime
-
 from exchange.bybit_exchange import BybitExchange
 from monitoring.monitoring import Monitoring
+from multiprocessing import Process
+from telegram_bot.handlers import TelegramBotHandlers
 
 # import ccxt
 # from exchange.binance_exchange import BinanceExchange
@@ -69,7 +71,18 @@ order_strategy_link_columns = {
 }
 database.create_table('order_strategy_link', order_strategy_link_columns)
 
-monitoring = Monitoring(database)
+def func():
+    while True:
+        print(1)
 
+monitoring = Monitoring(database)
 telegram_bot_token = os.getenv('TELEGRAM_BOT_TOKEN')
-bot = telebot.TeleBot(telegram_bot_token)
+bot = TelegramBotHandlers(monitoring, database, telegram_bot_token)
+processes = []
+process_1 = Process(target=bot.start_bot, args=())
+process_2 = Process(target=func, args=())
+print(111)
+process_1.start()
+process_2.start()
+process_1.join()
+process_2.join()

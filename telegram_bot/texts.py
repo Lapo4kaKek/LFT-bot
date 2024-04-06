@@ -4,9 +4,7 @@
 """
 import json
 import pprint
-
 import strategy.manager
-from main import database
 import texttable as table
 
 def greeting():
@@ -57,7 +55,7 @@ def create_strategy_type(type):
     return text
 
 
-def all_strategies():
+def all_strategies(database):
     """
     Вывод всех созданных стратегий.
     :return: Str.
@@ -85,7 +83,7 @@ def all_strategies():
         return None
 
 
-def strategy_info(strategy_id):
+def strategy_info(database, strategy_id):
     """
     Информация о созданной стратегии.
     :param strategy_id: Id стратегии.

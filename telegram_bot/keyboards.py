@@ -4,10 +4,7 @@
 """
 
 from telebot.types import InlineKeyboardButton, InlineKeyboardMarkup, ReplyKeyboardMarkup, KeyboardButton
-
 import strategy.manager
-from main import database
-
 
 def menu_static():
     """
@@ -94,7 +91,7 @@ def create_strategy_type():
         # admin.error(error_admin_text='Создание клавиатуры my_texts ' + str(err))
         return None
 
-def all_strategies():
+def all_strategies(database):
     """
     Inline клавиатура для выбора созданной стратегии.
     """

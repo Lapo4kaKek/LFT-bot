@@ -40,5 +40,5 @@ def register_strategy(monitoring, name, strategy_type, exchange, symbol, balance
     }
 
     monitoring.insert_strategy_info(strategy_info)
-
+    return strategy_id
 
