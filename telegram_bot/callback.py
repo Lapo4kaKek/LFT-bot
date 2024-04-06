@@ -1,7 +1,23 @@
+import json
 import re
 
 from main import bot
+from strategy.manager import register_strategy
 from telegram_bot import texts, keyboards
+from main import monitoring
+
+
+def create_new_strategy(text_data):
+    """
+    Создание новой стратегии по заданному JSON.
+    :param text_data: json для создания стратегии.
+    """
+    chat_id = str(text_data.from_user.id)
+    command = re.split('#CREATE_STRATEGY', text_data.text, maxsplit=1)[1]
+    data = json.loads(command)
+    register_strategy(monitoring=monitoring, name=data['strategy_name'], strategy_type=data['type'],
+                                       exchange=data['exchange'], symbol=data['symbol'], balance=data['balance'],
+                                       settings=data['settings'])
 
 
 def strategy(text_data):

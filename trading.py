@@ -41,19 +41,19 @@ async def example_binance_work():
 
 
 async def macd_trading(bybit, monitoring):
-    strategy_id = str(uuid.uuid4())
 
+    pass
     # bybit.exchange.verbose = True
-    strategy1 = macd_strategy.MACDStrategy(exchange=bybit, balance=Decimal(1000.0), symbol="BTCUSDT",
-                                                 settings={'strategy_name': 'Strategy 1',
-                                                           'filter_days': 3, 'limit': 100, 'loss_coef': 0.8},
-                                                 strategy_id=strategy_id, monitoring=monitoring)
-    await strategy1.create_strategy()
-
-    # Запуск торговли для всех стратегий
-    await asyncio.gather(
-        strategy1.trading(),
-    )
+    # strategy1 = macd_strategy.MACDStrategy(exchange=bybit, balance=Decimal(1000.0), symbol="BTCUSDT",
+    #                                              settings={'strategy_name': 'Strategy 1',
+    #                                                        'filter_days': 3, 'limit': 100, 'loss_coef': 0.8},
+    #                                              strategy_id=strategy_id, monitoring=monitoring)
+    # await strategy1.create_strategy()
+    #
+    # # Запуск торговли для всех стратегий
+    # await asyncio.gather(
+    #     strategy1.trading(),
+    # )
 
 
 async def main():

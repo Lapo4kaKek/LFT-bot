@@ -8,6 +8,8 @@ import ccxt
 from datetime import datetime
 
 from exchange.bybit_exchange import BybitExchange
+from monitoring.monitoring import Monitoring
+
 # import ccxt
 # from exchange.binance_exchange import BinanceExchange
 # from exchange.hyperliquid_exchange import HyperLiquidExchange
@@ -67,6 +69,7 @@ order_strategy_link_columns = {
 }
 database.create_table('order_strategy_link', order_strategy_link_columns)
 
+monitoring = Monitoring(database)
 
 telegram_bot_token = os.getenv('TELEGRAM_BOT_TOKEN')
 bot = telebot.TeleBot(telegram_bot_token)
