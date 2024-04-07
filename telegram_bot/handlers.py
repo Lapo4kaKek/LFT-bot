@@ -4,6 +4,8 @@
 """
 
 import re
+from multiprocessing import Process
+
 import telebot
 from telegram_bot import keyboards, texts, callback
 from telegram_bot.callback import TelegramBotCallback

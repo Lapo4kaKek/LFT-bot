@@ -1,4 +1,6 @@
+import asyncio
 import os
+import threading
 
 import telebot
 
@@ -71,18 +73,26 @@ order_strategy_link_columns = {
 }
 database.create_table('order_strategy_link', order_strategy_link_columns)
 
+
 def func():
     while True:
         print(1)
 
-monitoring = Monitoring(database)
-telegram_bot_token = os.getenv('TELEGRAM_BOT_TOKEN')
-bot = TelegramBotHandlers(monitoring, database, telegram_bot_token)
-processes = []
-process_1 = Process(target=bot.start_bot, args=())
-process_2 = Process(target=func, args=())
-print(111)
-process_1.start()
-process_2.start()
-process_1.join()
-process_2.join()
+if __name__ == '__main__':
+    monitoring = Monitoring(database)
+    telegram_bot_token = os.getenv('TELEGRAM_BOT_TOKEN')
+    bot = TelegramBotHandlers(monitoring, database, telegram_bot_token)
+
+    # thread1 = threading.Thread(target=func)
+    thread2 = threading.Thread(target=bot.start_bot)
+
+    # Запуск потоков
+    #thread1.start()
+    thread2.start()
+
+    # Ожидание завершения обоих потоков
+    # thread1.join()
+    thread2.join()
+
+
+
