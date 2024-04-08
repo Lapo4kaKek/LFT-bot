@@ -103,7 +103,7 @@ class TelegramBotCallback:
             # Нажатие на кнопку запуска.
             try:
                 strategy_id = re.split('start_', text_data.data, maxsplit=1)[1]
-                strategy.strategy_manager.start_strategy(strategy_id, self.monitoring)
+                strategy.strategy_manager.start_strategy(strategy_id)
                 message_id = self.bot.edit_message_text(chat_id=chat_id,
                                                         message_id=text_data.message.message_id,
                                                         text=texts.strategy_info(self.database, strategy_id),

@@ -71,32 +71,38 @@ class MACDStrategy(BaseStrategy):
 
         return 0
 
-    def trading(self):
+    async def trading(self):
         """
         Осуществление асинхронной торговли в соответствии с заданными настройками.
         """
         while True:
-            asyncio.run(self.update_info())
+            await self.update_info()
             try:
                 print(self.info)
                 print(self.info['name'] + ": ", end='')
-                signal = asyncio.run(self.get_signal())
+                signal = await self.get_signal()
                 print("Signal: " + str(signal))
                 if signal == 0:
-                    ticker = asyncio.run(self.exchange.get_ticker(self.symbol, 'buy'))
-                    order = asyncio.run(self.exchange.create_market_buy_order(symbol=self.symbol,
-                                                                        order_size=Decimal(self.info['balance']) / Decimal(ticker[0])))
-                    asyncio.run(self.monitoring.update_strategy_info(strategy_id=self.strategy_id, data={'assetsNumber': order['filled'], 'openPositions': True}))
-                    order = asyncio.run(self.exchange.create_market_stop_loss_order(symbol=self.symbol, order_size=order['filled'], params={
-                        'triggerPrice': Decimal(ticker[0]) * Decimal(self.info['settings']['loss_coef']),
-                        'triggerDirection': 'below'
-                    }))
+                    ticker = await self.exchange.get_ticker(self.symbol, 'buy')
+                    order = await self.exchange.create_market_buy_order(symbol=self.symbol,
+                                                                              order_size=Decimal(
+                                                                                  self.info['balance']) / Decimal(
+                                                                                  ticker[0]))
+                    await self.monitoring.update_strategy_info(strategy_id=self.strategy_id,
+                                                                     data={'assetsNumber': order['filled'],
+                                                                           'openPositions': True})
+                    order = await self.exchange.create_market_stop_loss_order(symbol=self.symbol, order_size=order['filled'],
+                                                                    params={
+                                                                        'triggerPrice': Decimal(ticker[0]) * Decimal(
+                                                                            self.info['settings']['loss_coef']),
+                                                                        'triggerDirection': 'below'
+                                                                    })
 
                     print("STOP LOSS: ", order)
                     print('Buy\n----------------------')
                 elif signal == -1:
-                    order = self.exchange.create_market_sell_order_native(symbol=self.symbol, order_size=0.02,
-                                                                          testnet=True, strategy_id=self.strategy_id)
+                    # order = self.exchange.create_market_sell_order_native(symbol=self.symbol, order_size=0.02,
+                    #                                                       testnet=True, strategy_id=self.strategy_id)
                     self.open_positions = False
                     print('Sell\n----------------------')
                 else:
@@ -106,7 +112,7 @@ class MACDStrategy(BaseStrategy):
             except Exception as err:
                 print(err)
 
-            asyncio.run(asyncio.sleep(10))  # Пауза в 10 секунд
+            await asyncio.sleep(10)  # Пауза в 10 секунд
 
     async def stop_strategy(self):
         """
