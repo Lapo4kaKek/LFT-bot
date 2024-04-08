@@ -39,7 +39,7 @@ class Monitoring:
         """
         required_keys = ['orderId', 'exchange', 'symbol', 'price', 'qty', 'executedQty', 'totalCost', 'side',
                          'orderType',
-                         'orderStatus', 'createdTime', 'updatedTime', 'commission']
+                         'orderStatus', 'createdTime', 'updatedTime', 'commission', 'stopPrice']
         if not all(key in order for key in required_keys):
             print("Some required fields are missing in the order")
             return
@@ -50,6 +50,7 @@ class Monitoring:
             order['exchange'],  # exchange (binance or bybit)
             order['symbol'],  # symbol
             float(order['price']),  # price
+            float(order['stopPrice']),  # stop loss price
             float(order['qty']),  # amount
             float(order['executedQty']),  # executedQty
             float(order['totalCost']),  # cost
@@ -61,7 +62,8 @@ class Monitoring:
             float(order['commission'])  # commission
         )]
 
-        column_names = ['orderId', 'exchange', 'symbol', 'price', 'qty', 'executedQty', 'totalCost', 'side',
+        column_names = ['orderId', 'exchange', 'symbol', 'price', 'stopPrice', 'qty', 'executedQty', 'totalCost',
+                        'side',
                         'orderType',
                         'orderStatus', 'createdTime', 'updatedTime', 'commission']
 
@@ -89,19 +91,47 @@ class Monitoring:
         data = [(
             strategy_info['strategyId'],
             strategy_info['name'],
+            strategy_info['type'],
             strategy_info['exchange'],
             strategy_info['symbol'],
             float(strategy_info['balance']),
-            float(strategy_info['activeTokens']),
             float(strategy_info['assetsNumber']),
+            strategy_info['openPositions'],
             strategy_info['status'],
-            self.database.format_time_to_datetime(strategy_info['createdTime'])
+            self.database.format_time_to_datetime(strategy_info['createdTime']),
+            strategy_info['settings']
         )]
 
-        column_names = ['strategyId', 'name', 'exchange', 'symbol', 'balance', 'activeTokens', 'assetsNumber', 'status',
-                        'createdTime']
+        column_names = ['strategyId', 'name', 'type', 'exchange', 'symbol', 'balance', 'assetsNumber', 'openPositions',
+                        'status',
+                        'createdTime', 'settings']
 
         self.database.insert_data('strategies', data, column_names)
+
+    async def get_strategy_info(self, strategy_id):
+        """
+        Ищет стратегию в ClickHouse.
+        :param strategy_id: id стратегии.
+        :return Dict, стратегия.
+        """
+        query = f"""
+                SELECT * FROM strategies WHERE strategyId == '{strategy_id}' 
+                """
+        strategy = self.database.execute_query(query, params={'strategy_id': strategy_id}, columns=True)
+        if strategy is not None:
+            return strategy[0]
+        return strategy
+
+    async def update_strategy_info(self, strategy_id, data):
+        """
+        Обновляет строку в таблице strategies по её id.
+        :param strategy_id: id стратегии.
+        :param data: Dict, данные для обновления нужных столбцов.
+        :return Dict, стратегия.
+        """
+        condition = ', '.join([f"{key} = {data[key]}" for key in data])
+        query = f"ALTER TABLE strategies UPDATE {condition} WHERE strategyId = '{strategy_id}'"
+        self.database.execute_query(query, {'strategy_id': strategy_id})
 
     # нужно еще поработать над этим
     def calculate_and_insert_daily_pnl(self, orders_data, starting_capital):

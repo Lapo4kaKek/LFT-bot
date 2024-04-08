@@ -9,70 +9,17 @@ from exchange.bybit_exchange import BybitExchange
 from strategy.base_strategy import BaseStrategy
 import time
 
+
 class MACDStrategy(BaseStrategy):
-    def __init__(self, exchange, balance, symbol, settings, strategy_id, monitoring):
+    def __init__(self, exchange, symbol, strategy_id, monitoring):
         """
-        Конструктор.
-        :param exchange: Биржа, на которой будет осуществляться торговля.
-        :param balance: Выделенный на стратегию баланс.
-        :param symbol: Символ торговой пары.
-        :param settings: Настройки стратегии, включающие в себя следующие пункты:
-            - limit: Целое число, количество фреймов в запрашиваемом графике.
-            - filter_days: Целое число, количество дней, в которые должен сохраняться тренд индикатора MACD для определения устойчивого тренда.
-        :param strategy_id: Уникальный идентификатор стратегии.
-        :param monitoring: инстанс мониторинга для добавления в clickhouse
+        Конструктор. :param exchange: Биржа, на которой будет осуществляться торговля. :param symbol: Символ торговой
+        пары. :param strategy_id: Уникальный идентификатор стратегии. :param monitoring: инстанс мониторинга для
+        добавления в clickhouse. :param settings: Настройки стратегии, включающие в себя следующие пункты: - limit:
+        Целое число, количество фреймов в запрашиваемом графике. - filter_days: Целое число, количество дней,
+        в которые должен сохраняться тренд индикатора MACD для определения устойчивого тренда.
         """
-        self.exchange = exchange
-        self.balance = balance
-        self.symbol = symbol
-        self.settings = settings
-        self.is_active = True
-        # Экземпляр для получения технических индикаторов заданного токена.
-        self.technical_indicators = TechnicalAnalysis(exchange, symbol)
-        # Флаг, отвечающий за наличие открытой позиции на рынке.
-        self.open_positions = False
-        # strategy_id для связи в clickhouse
-        self.strategy_id = strategy_id
-        # класс мониторинга для добавления в clickhouse
-        self.monitoring = monitoring
-
-    async def register_strategy(self):
-        """
-        Регистрирует стратегию в ClickHouse
-        """
-        current_time = int(time.time() * 1000)
-
-        strategy_info = {
-            'strategyId': self.strategy_id,
-            'name': self.settings.get('strategy_name', 'Unnamed Strategy'),
-            'exchange': self.exchange.exchange_name,
-            'symbol': self.symbol,
-            'balance': self.balance,
-            'activeTokens': 1,
-            'assetsNumber': 0,
-            'status': self.is_active,
-            'createdTime': current_time
-        }
-
-        self.monitoring.insert_strategy_info(strategy_info)
-
-    async def update_strategy_info(self):
-        """
-        Обновляет стратегию в clickhouse
-        """
-        strategy_info = {
-            'strategyId': self.strategy_id,
-            'name': self.settings.get('strategy_name', 'Unnamed Strategy'),
-            'exchange': self.exchange.name,
-            'symbol': self.symbol,
-            'balance': self.balance,
-            'activeTokens': 1,
-            'assetsNumber': 0,
-            'status': self.is_active,
-            'createdTime': datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        }
-        self.monitoring.insert_strategy_info(strategy_info)
-
+        super().__init__(exchange, symbol, strategy_id, monitoring)
 
     async def calculate_moving_averages(self):
         """
@@ -84,7 +31,7 @@ class MACDStrategy(BaseStrategy):
         :return: Число, указывающее на тип пересечения и его значимость (чем выше абсолютное значение, тем выше значимость):
         -2 или -1 для пересечения вниз, 2 или 1 для пересечения вверх, 0 если пересечений не обнаружено.
         """
-        await self.technical_indicators.get_ohlcv(limit=self.settings['limit'])
+        await self.technical_indicators.get_ohlcv(limit=int(self.info['settings']['limit']))
         macd, signal = self.technical_indicators.get_macd()
         cross_upward = cross_downward = False
         cross_pos = -1
@@ -97,11 +44,11 @@ class MACDStrategy(BaseStrategy):
                 cross_downward = True
                 break
         if cross_downward:
-            if cross_pos + self.settings['filter_days'] < self.settings['limit']:
+            if cross_pos + self.info['settings']['filter_days'] < self.info['settings']['limit']:
                 return -2
             return -1
         if cross_upward:
-            if cross_pos + self.settings['filter_days'] < self.settings['limit']:
+            if cross_pos + self.info['settings']['filter_days'] < self.info['settings']['limit']:
                 return 2
             else:
                 return 1
@@ -116,10 +63,10 @@ class MACDStrategy(BaseStrategy):
         1 для покупки (открытия позиции), 0 для отсутствия действий.
         """
         result = await self.calculate_moving_averages()
-        if self.open_positions and result < 0:
+        if self.info['openPositions'] and result < 0:
             return -1
 
-        if not self.open_positions and result == 2:
+        if not self.info['openPositions'] and result == 2:
             return 1
 
         return 0
@@ -128,37 +75,44 @@ class MACDStrategy(BaseStrategy):
         """
         Осуществление асинхронной торговли в соответствии с заданными настройками.
         """
-        """
-        params={
-        'stopLoss': {
-            'type': 'market',
-            'price': price * Decimal(self.settings['loss_coef'])
-        }}
-        """
-        await self.register_strategy()
         while True:
-            print(self.settings['strategy_name'] + ": ", end='')
-            signal = await self.get_signal()
-            if signal == 0:
-                order = self.exchange.create_market_buy_order_native(symbol=self.symbol, order_size=self.balance,
-                                                                     testnet=True, strategy_id=self.strategy_id)
-                self.open_positions = True
-                # order = await self.exchange.create_order(coin=self.symbol, type='market', side='sell',
-                #                                          amount=self.balance / price, price=None, params={
-                #         'stopLossPrice': price * Decimal(self.settings['loss_coef']),
-                #         }
-                # )
-                # print(order)
-                print('Buy\n----------------------')
-            elif signal == -1:
-                order = self.exchange.create_market_sell_order_native(symbol=self.symbol, order_size=0.02,
-                                                                      testnet=True, strategy_id=self.strategy_id)
-                self.open_positions = False
-                print('Sell\n----------------------')
-            else:
-                print('Hold')
-            await asyncio.sleep(10)  # Пауза в 10 секунд
+            await self.update_info()
+            try:
+                print(self.info)
+                print(self.info['name'] + ": ", end='')
+                signal = await self.get_signal()
+                print("Signal: " + str(signal))
+                if signal == 0:
+                    ticker = await self.exchange.get_ticker(self.symbol, 'buy')
+                    order = await self.exchange.create_market_buy_order(symbol=self.symbol,
+                                                                              order_size=Decimal(
+                                                                                  self.info['balance']) / Decimal(
+                                                                                  ticker[0]))
+                    await self.monitoring.update_strategy_info(strategy_id=self.strategy_id,
+                                                                     data={'assetsNumber': order['filled'],
+                                                                           'openPositions': True})
+                    order = await self.exchange.create_market_stop_loss_order(symbol=self.symbol, order_size=order['filled'],
+                                                                    params={
+                                                                        'triggerPrice': Decimal(ticker[0]) * Decimal(
+                                                                            self.info['settings']['loss_coef']),
+                                                                        'triggerDirection': 'below'
+                                                                    })
 
+                    print("STOP LOSS: ", order)
+                    print('Buy\n----------------------')
+                elif signal == -1:
+                    # order = self.exchange.create_market_sell_order_native(symbol=self.symbol, order_size=0.02,
+                    #                                                       testnet=True, strategy_id=self.strategy_id)
+                    self.open_positions = False
+                    print('Sell\n----------------------')
+                else:
+                    print('Hold')
+                print(self.exchange.get_trade_history())
+                print(self.exchange.get_order_history())
+            except Exception as err:
+                print(err)
+
+            await asyncio.sleep(10)  # Пауза в 10 секунд
 
     async def stop_strategy(self):
         """

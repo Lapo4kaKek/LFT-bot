@@ -7,7 +7,7 @@ from dotenv import load_dotenv
 import ccxt
 from pprint import pprint
 from asyncio import run
-#import ccxt.async_support as ccxt
+# import ccxt.async_support as ccxt
 from exchange.bybit_exchange import BybitExchange
 import asyncio
 from pybit.unified_trading import HTTP
@@ -17,8 +17,8 @@ from loguru import logger
 
 load_dotenv()
 
-#api_key_bybit = os.getenv('BYBIT_API_KEY')
-#api_secret_bybit = os.getenv('BYBIT_API_SECRET')
+# api_key_bybit = os.getenv('BYBIT_API_KEY')
+# api_secret_bybit = os.getenv('BYBIT_API_SECRET')
 
 api_key_bybit = os.getenv('BYBIT_API_TESTNET')
 api_secret_bybit = os.getenv('BYBIT_API_SECRET_TESTNET')
@@ -30,6 +30,7 @@ login_click = os.getenv('CLICKHOUSE_LOGIN')
 password_click = os.getenv('CLICKHOUSE_PASSWORD')
 port = os.getenv('CLICKHOUSE_PORT')
 
+
 async def example_binance_work():
     monitoring = Monitoring('localhost', 8123, login_click, password_click)
 
@@ -39,15 +40,9 @@ async def example_binance_work():
 
     print(order)
 
-async def macd_trading(bybit, monitoring):
-    strategy_id = str(uuid.uuid4())
 
+async def macd_trading(bybit, monitoring):
     logger.info("Init strategy MACD")
-    # bybit.exchange.verbose = True
-    strategy1 = macd_strategy.MACDStrategy(exchange=bybit, balance=Decimal(1000.0), symbol="BTCUSDT",
-                             settings={'strategy_name': 'Strategy 1',
-                                       'filter_days': 3, 'limit': 100, 'loss_coef': 0.95},
-                                           strategy_id=strategy_id, monitoring=monitoring)
 
     logger.info(f"Strategy with ID: {strategy_id} and parameters: {strategy1.settings} ready and running!")
 
@@ -55,6 +50,7 @@ async def macd_trading(bybit, monitoring):
     await asyncio.gather(
         strategy1.trading(),
     )
+
 
 async def main():
     print("Start:")
@@ -69,5 +65,6 @@ async def main():
     # monitoring.delete_all_data("strategies")
     # monitoring.delete_all_data("order_strategy_link")
     await macd_trading(bybit, monitoring)
+
 
 run(main())
