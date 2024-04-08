@@ -4,7 +4,7 @@
 """
 
 from telebot.types import InlineKeyboardButton, InlineKeyboardMarkup, ReplyKeyboardMarkup, KeyboardButton
-import strategy.manager
+import strategy.strategy_manager
 
 def menu_static():
     """
@@ -62,8 +62,8 @@ def create_strategy():
         back_button = InlineKeyboardButton(text='Back to Actions ⬅️',
                                            callback_data='strategy_back')
         keyboard.add(back_button)
-        columns = numbers('strategy_create_type_', len(strategy.manager.strategies_types),
-                          custom_ids=[str(key) for key in strategy.manager.strategies_types])
+        columns = numbers('strategy_create_type_', len(strategy.strategy_manager.strategies_types),
+                          custom_ids=[str(key) for key in strategy.strategy_manager.strategies_types])
 
         for i in range(len(columns[0])):
             line = []
@@ -128,17 +128,16 @@ def strategy_info(strategy_id):
     try:
         strategy_id = str(strategy_id)
         keyboard = InlineKeyboardMarkup()
-        title = InlineKeyboardButton(text="Title 🏷",
-                                     callback_data="strategy_title_" + strategy_id)
+        start = InlineKeyboardButton(text="START 📈",
+                                     callback_data="strategy_start_" + strategy_id)
+        stop = InlineKeyboardButton(text="STOP 🛑",
+                                     callback_data="strategy_stop_" + strategy_id)
         delete = InlineKeyboardButton(text="Delete ❌️",
                                       callback_data="strategy_delete_" + strategy_id)
-        edit = InlineKeyboardButton(text="Edit 📝",
-                                    callback_data="strategy_edit_" + strategy_id)
-
         back_button = InlineKeyboardButton(text='Back ⬅️',
                                            callback_data='strategy_all')
         keyboard.add(back_button)
-        keyboard.add(title, edit)
+        keyboard.add(start, stop)
         keyboard.add(delete)
         return keyboard
     except Exception as err:

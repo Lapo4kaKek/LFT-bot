@@ -1,7 +1,8 @@
 import json
 import re
 
-from strategy.manager import register_strategy
+import strategy.strategy_manager
+from strategy.strategy_manager import register_strategy
 from telegram_bot import texts, keyboards
 
 
@@ -19,7 +20,7 @@ class TelegramBotCallback:
         chat_id = str(text_data.from_user.id)
         command = re.split('#CREATE_STRATEGY', text_data.text, maxsplit=1)[1]
         data = json.loads(command)
-        strategy_id = register_strategy(monitoring=monitoring, name=data['strategy_name'], strategy_type=data['type'],
+        strategy_id = register_strategy(monitoring=self.monitoring, name=data['strategy_name'], strategy_type=data['type'],
                                         exchange=data['exchange'], symbol=data['symbol'], balance=data['balance'],
                                         settings=data['settings'])
         self.bot.delete_message(chat_id=chat_id, message_id=text_data.message_id)
@@ -95,6 +96,30 @@ class TelegramBotCallback:
                                                         message_id=text_data.message.message_id,
                                                         text=texts.strategy_actions(),
                                                         reply_markup=keyboards.strategy_actions(),
+                                                        parse_mode='html').message_id
+            except Exception as err:
+                print(str(err))
+        elif re.match('start', command):
+            # Нажатие на кнопку запуска.
+            try:
+                strategy_id = re.split('start_', text_data.data, maxsplit=1)[1]
+                strategy.strategy_manager.start_strategy(strategy_id, self.monitoring)
+                message_id = self.bot.edit_message_text(chat_id=chat_id,
+                                                        message_id=text_data.message.message_id,
+                                                        text=texts.strategy_info(self.database, strategy_id),
+                                                        reply_markup=keyboards.strategy_info(strategy_id),
+                                                        parse_mode='html').message_id
+            except Exception as err:
+                print(str(err))
+        elif re.match('stop', command):
+            # Нажатие на кнопку остановки.
+            try:
+                strategy_id = re.split('stop_', text_data.data, maxsplit=1)[1]
+                strategy.strategy_manager.stop_strategy(strategy_id, self.monitoring)
+                message_id = self.bot.edit_message_text(chat_id=chat_id,
+                                                        message_id=text_data.message.message_id,
+                                                        text=texts.strategy_info(self.database, strategy_id),
+                                                        reply_markup=keyboards.strategy_info(strategy_id),
                                                         parse_mode='html').message_id
             except Exception as err:
                 print(str(err))

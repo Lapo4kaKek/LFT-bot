@@ -8,21 +8,16 @@ class BaseStrategy(ABC):
     Интерфейс для реализации стратегий.
     """
 
-    def __init__(self, exchange, symbol, strategy_id, monitoring, settings, type):
+    def __init__(self, exchange, symbol, strategy_id, monitoring):
         self.exchange = exchange
         self.symbol = symbol
-        self.settings = settings
         # Экземпляр для получения технических индикаторов заданного токена.
         self.technical_indicators = TechnicalAnalysis(exchange, symbol)
         # strategy_id для связи в clickhouse.
         self.strategy_id = strategy_id
         # Класс мониторинга для добавления в clickhouse.
         self.monitoring = monitoring
-        self.type = type
         self.info = None
-
-    async def create_strategy(self):
-        await self.update_info()
 
     async def update_info(self):
         self.info = await self.monitoring.get_strategy_info(self.strategy_id)

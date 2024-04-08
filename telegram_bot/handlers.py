@@ -2,9 +2,7 @@
 Обработчики сообщений.
 
 """
-
 import re
-from multiprocessing import Process
 
 import telebot
 from telegram_bot import keyboards, texts, callback
@@ -38,6 +36,7 @@ class TelegramBotHandlers:
 
         @self.bot.message_handler(content_types=["text"])
         def continue_chat(text_data):
+            print(text_data)
             """
             :param text_data: Информация о сообщении.
             """
@@ -60,6 +59,7 @@ class TelegramBotHandlers:
 
         @self.bot.callback_query_handler(func=lambda text_data: True)
         def callback_text(text_data):
+            print(text_data)
             """
             :param text_data: Информация о сообщении.
             """

@@ -4,7 +4,7 @@
 """
 import json
 import pprint
-import strategy.manager
+import strategy.strategy_manager
 import texttable as table
 
 def greeting():
@@ -33,7 +33,7 @@ def create_strategy():
     text = '<b>Select a strategy type from the following:</b>\n'
     num = 1
     text += '<code>'
-    for type in strategy.manager.strategies_types:
+    for type in strategy.strategy_manager.strategies_types:
         text += str(num) + ". " + type + '\n'
         num += 1
     text += '</code>'
@@ -50,7 +50,7 @@ def create_strategy_type(type):
     text = '<b>To create a strategy, send the following message with modified parameters:</b>\n'
     text += '<pre>'
     text += f"#CREATE_STRATEGY\n"
-    text += json.dumps(strategy.manager.strategies_types[type], indent=4)
+    text += json.dumps(strategy.strategy_manager.strategies_types[type], indent=4)
     text += '</pre>'
     return text
 

@@ -98,12 +98,13 @@ class Monitoring:
             float(strategy_info['assetsNumber']),
             strategy_info['openPositions'],
             strategy_info['status'],
-            self.database.format_time_to_datetime(strategy_info['createdTime'])
+            self.database.format_time_to_datetime(strategy_info['createdTime']),
+            strategy_info['settings']
         )]
 
         column_names = ['strategyId', 'name', 'type', 'exchange', 'symbol', 'balance', 'assetsNumber', 'openPositions',
                         'status',
-                        'createdTime']
+                        'createdTime', 'settings']
 
         self.database.insert_data('strategies', data, column_names)
 
