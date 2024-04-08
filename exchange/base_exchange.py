@@ -17,6 +17,7 @@ class BaseExchange(ABC):
 
     @abstractmethod
     async def get_ticker(self, coin, side=None):
+        print(1)
         ticker = await self.exchange.fetch_ticker(coin)
         if side == 'buy':
             return ticker["ask"], ticker["askVolume"]

@@ -5,7 +5,9 @@ import uuid
 import os
 from dotenv import load_dotenv
 
+from database.database import Database
 from exchange.bybit_exchange import BybitExchange
+from monitoring.monitoring import Monitoring
 from strategy.macd_strategy import MACDStrategy
 
 strategies_types = {
@@ -50,8 +52,14 @@ def register_strategy(monitoring, name, strategy_type, exchange, symbol, balance
     return strategy_id
 
 
-def start_strategy(strategy_id, monitoring):
+def start_strategy(strategy_id):
     load_dotenv()
+
+    login_click = os.getenv('CLICKHOUSE_LOGIN')
+    password_click = os.getenv('CLICKHOUSE_PASSWORD')
+
+    database = Database('localhost', 8123, login_click, password_click)
+    monitoring = Monitoring(database)
 
     info = asyncio.run(monitoring.get_strategy_info(strategy_id))
     exchange = None
@@ -69,7 +77,12 @@ def start_strategy(strategy_id, monitoring):
         'status': True
     }))
 
-    thread = threading.Thread(target=strategy.trading)
+    def start_new_event_loop():
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
+        loop.run_until_complete(strategy.trading())
+
+    thread = threading.Thread(target=start_new_event_loop)
     thread.start()
     print("START: ", info)
 

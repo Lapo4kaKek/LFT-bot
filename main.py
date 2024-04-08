@@ -73,11 +73,6 @@ order_strategy_link_columns = {
 }
 database.create_table('order_strategy_link', order_strategy_link_columns)
 
-
-def func():
-    while True:
-        print(1)
-
 if __name__ == '__main__':
     monitoring = Monitoring(database)
     telegram_bot_token = os.getenv('TELEGRAM_BOT_TOKEN')
