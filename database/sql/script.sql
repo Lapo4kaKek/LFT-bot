@@ -32,7 +32,7 @@ INNER JOIN order_strategy_link AS osl ON o.orderId = osl.orderId
 WHERE osl.strategyId = '{strategy_id}';
 
 
-INSERT INTO strategies (name, type, exchange, symbol, balance, assetsNumber, status, createdTime) VALUES
-('Trend Following', 'macd', 'Binance', 'BTC/USDT', 1000.000000000000000000, 2.000000000000000000, 1, '2022-01-01 00:00:00'),
-('Mean Reversion', 'example1', 'Coinbase', 'ETH/USD', 500.000000000000000000, 10.000000000000000000, 1, '2022-01-02 00:00:00'),
-('Arbitrage', 'example2', 'Kraken', 'XRP/USD', 200.000000000000000000, 100.000000000000000000, 0, '2022-01-03 00:00:00');
+INSERT INTO strategies (name, type, exchange, symbol, balance, assetsNumber, status, createdTime, settings) VALUES
+('Trend Following', 'macd', 'Binance', 'BTC/USDT', 1000.000000000000000000, 2.000000000000000000, 1, '2022-01-01 00:00:00', {'loss': 0.95}),
+('Mean Reversion', 'example1', 'Coinbase', 'ETH/USD', 500.000000000000000000, 10.000000000000000000, 1, '2022-01-02 00:00:00', {'loss': 0.95}),
+('Arbitrage', 'example2', 'Kraken', 'XRP/USD', 200.000000000000000000, 100.000000000000000000, 0, '2022-01-03 00:00:00', {'loss': 0.95});

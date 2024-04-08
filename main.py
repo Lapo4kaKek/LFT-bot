@@ -1,13 +1,19 @@
+import asyncio
 import os
+import threading
 
 import telebot
 
+import telegram_bot
 from database.database import Database
 from dotenv import load_dotenv
 import ccxt
 from datetime import datetime
-
 from exchange.bybit_exchange import BybitExchange
+from monitoring.monitoring import Monitoring
+from multiprocessing import Process
+from telegram_bot.handlers import TelegramBotHandlers
+
 # import ccxt
 # from exchange.binance_exchange import BinanceExchange
 # from exchange.hyperliquid_exchange import HyperLiquidExchange
@@ -29,10 +35,11 @@ password_click = os.getenv('CLICKHOUSE_PASSWORD')
 database = Database('localhost', 8123, login_click, password_click)
 
 orders_columns = {
-    'order_id': 'String',
+    'orderId': 'String',
     'exchange': 'String',
     'symbol': 'String',
     'price': 'Decimal(38, 20)',
+    'stopPrice': 'Decimal(38, 20)',
     'qty': 'Decimal(38, 20)',
     'executedQty': 'Decimal(38, 20)',
     'totalCost': 'Decimal(38, 20)',
@@ -53,10 +60,39 @@ strategies_columns = {
     'symbol': 'String',
     'balance': 'Decimal(38, 20)',
     'assetsNumber': 'Decimal(38, 20)',
+    'openPositions': 'Boolean',
     'status': 'Boolean',
-    'createdTime': 'DateTime'
+    'createdTime': 'DateTime',
+    'settings': 'Map(String, Double)'
 }
 database.create_table('strategies', strategies_columns)
 
-telegram_bot_token = os.getenv('TELEGRAM_BOT_TOKEN')
-bot = telebot.TeleBot(telegram_bot_token)
+order_strategy_link_columns = {
+    'orderId': 'String',
+    'strategyId': 'String'
+}
+database.create_table('order_strategy_link', order_strategy_link_columns)
+
+
+def func():
+    while True:
+        print(1)
+
+if __name__ == '__main__':
+    monitoring = Monitoring(database)
+    telegram_bot_token = os.getenv('TELEGRAM_BOT_TOKEN')
+    bot = TelegramBotHandlers(monitoring, database, telegram_bot_token)
+
+    # thread1 = threading.Thread(target=func)
+    thread2 = threading.Thread(target=bot.start_bot)
+
+    # Запуск потоков
+    #thread1.start()
+    thread2.start()
+
+    # Ожидание завершения обоих потоков
+    # thread1.join()
+    thread2.join()
+
+
+

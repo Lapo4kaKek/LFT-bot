@@ -21,7 +21,7 @@ class Database:
         self.client.command(create_table_query)
 
     def insert_data(self, table_name, data, column_names=None):
-        self.client.insert(table_name, data, column_names=column_names)
+        return self.client.insert(table_name, data, column_names=column_names)
 
     def fetch_and_print_table_data(self, table_name):
         result = self.client.query(f'SELECT * FROM {table_name}')

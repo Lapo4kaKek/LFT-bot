@@ -3,6 +3,7 @@ CREATE TABLE IF NOT EXISTS orders (
     exchange String,
     symbol String,
     price Decimal(38, 20),
+    stopPrice Decimal(38, 20),
     qty Decimal(38, 20),
     executedQty Decimal(38, 20),
     totalCost Decimal(38, 20),
@@ -17,15 +18,17 @@ ORDER BY (createdTime, orderId);
 
 
 CREATE TABLE IF NOT EXISTS strategies (
-    strategyId UUID DEFAULT generateUUIDv4(),
+    strategyId String,
     name String,
     type String,
     exchange String,
     symbol String,
     balance Decimal(38, 20),
     assetsNumber Decimal(38, 20),
+    openPositions Boolean,
     status Boolean,
-    createdTime DateTime
+    createdTime DateTime,
+    settings Map(String, Double)
 ) ENGINE = MergeTree()
 ORDER BY (createdTime);
 

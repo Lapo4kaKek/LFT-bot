@@ -1,3 +1,5 @@
+import asyncio
+
 from .base_exchange import BaseExchange
 
 import ccxt.async_support as ccxt
@@ -27,7 +29,7 @@ class BybitExchange(BaseExchange):
             'secret': api_secret,
         })
         self.session = HTTP(
-            testnet=False,
+            testnet=True,
             api_key=self.api_key,
             api_secret=self.api_secret,
         )
@@ -47,9 +49,9 @@ class BybitExchange(BaseExchange):
     # you need add a parameters checker
     async def create_order(self, coin, type, side, amount, price=None, params={}):
         if price is not None:
-            result = await self.exchange.create_order(coin, type, side, amount, price)
+            result = await self.exchange.create_order(coin, type, side, amount, price, params=params)
         else:
-            result = await self.exchange.create_order(coin, type, side, amount)
+            result = await self.exchange.create_order(coin, type, side, amount, params=params)
 
         # print(result)
         # if not result:
@@ -79,29 +81,60 @@ class BybitExchange(BaseExchange):
         """
         return self.exchange.set_leverage(level, coin)
 
-    async def create_market_buy_order(self, symbol, order_size):
-        response_data = await self.create_order(symbol, 'market', 'buy', order_size)
-        order_id = response_data['info']['orderId']
-        print("Order id:" + order_id)
-        order = self.session.get_executions(
-            category="spot",
-            orderId=f'{order_id}',
-            limit=1,
-        )
-        print("Order:")
-        print(order)
-
+    async def create_market_buy_order(self, symbol, order_size, params={}):
+        response_data = await self.create_order(symbol, 'market', 'buy', order_size, params=params)
+        await asyncio.sleep(1)
+        closed_orders = await self.exchange.fetch_closed_orders(symbol)
+        sorted_by_timestamp = self.exchange.sort_by(closed_orders, 'timestamp', True)
+        order = sorted_by_timestamp[0]
         if order is not None:
-            order_stm = self.parse_order_to_clickhouse_format(order)
-            print(order_stm)
-            self.monitoring.insert_single_order_to_db(order_stm[0])
+            order_stm = self.parse_order_to_clickhouse_format_ccxt(order)
+            print("Order_stm: ", order_stm)
+            self.monitoring.insert_single_order_to_db(order_stm)
             return order
         else:
             Exception
 
+    async def create_market_stop_loss_order(self, symbol, order_size, params={}):
+        response_data = await self.create_order(symbol, 'market', 'sell', order_size, params=params)
+        await asyncio.sleep(1)
+        open_orders = await self.exchange.fetch_open_orders(symbol)
+        sorted_by_timestamp = self.exchange.sort_by(open_orders, 'timestamp', True)
+        order = sorted_by_timestamp[0]
+        if order is not None:
+            order_stm = self.parse_order_to_clickhouse_format_ccxt(order)
+            print("Order_stm: ", order_stm)
+            self.monitoring.insert_single_order_to_db(order_stm)
+            return order
+        else:
+            Exception
+
+    def parse_order_to_clickhouse_format_ccxt(self, order):
+        # created_time = self.format_time_to_datetime(str(response.get('time')))
+        # updated_time = self.format_time_to_datetime(str(order.get('execTime', response.get('time'))))
+        order_data = {
+            'orderId': order.get('id'),
+            'exchange': 'bybit',
+            'symbol': order.get('symbol'),
+            'orderType': order.get('type'),
+            'side': order.get('side'),
+            'price': float(0 if order.get('price', 0) is None else order.get('price', 0)),
+            'stopPrice': float(0 if order.get('stopPrice', 0) is None else order.get('stopPrice', 0)),
+            'executedQty': float(order.get('filled', 0)),
+            'qty': float(order.get('amount', 0)),
+            'totalCost': float(order.get('cost', 0)),
+            'orderStatus': order.get('status'),
+            'createdTime': order.get('timestamp'),
+            'updatedTime': order.get('lastTradeTimestamp'),
+            'commission': float( order.get('fee', {}).get('cost', 0))
+        }
+
+        return order_data
+
     def create_market_sell_order(self, symbol, order_size):
         response_data = self.create_order(symbol, 'market', 'sell', order_size)
         time.sleep(1)
+
         order_id = response_data['result']['orderId']
         print("Order id:" + order_id)
         order = self.session.get_executions(
@@ -170,6 +203,7 @@ class BybitExchange(BaseExchange):
         return data_for_insertion
 
     def create_market_buy_order_native(self, symbol, order_size, testnet=False, **kwargs):
+        params = kwargs.get('params', {})
         strategy_id = kwargs.get('strategy_id', '0')
         if testnet == True:
             self.session = HTTP(
@@ -183,6 +217,7 @@ class BybitExchange(BaseExchange):
             side="Buy",
             orderType="Market",
             qty=order_size,
+            params=params
         )
         time.sleep(1)
         order_id = response_data['result']['orderId']

@@ -2,8 +2,9 @@
 Тексты для сообщений.
 
 """
-import strategy.base_strategy
-from main import database
+import json
+import pprint
+import strategy.manager
 import texttable as table
 
 def greeting():
@@ -32,14 +33,29 @@ def create_strategy():
     text = '<b>Select a strategy type from the following:</b>\n'
     num = 1
     text += '<code>'
-    for type in strategy.base_strategy.strategies_types:
+    for type in strategy.manager.strategies_types:
         text += str(num) + ". " + type + '\n'
         num += 1
     text += '</code>'
+
     return text
 
 
-def all_strategies():
+def create_strategy_type(type):
+    """
+    Вывод сообщения для создания определённой стратегии.
+    :param type Тип создаваемой стратегии.
+    :return: Str.
+    """
+    text = '<b>To create a strategy, send the following message with modified parameters:</b>\n'
+    text += '<pre>'
+    text += f"#CREATE_STRATEGY\n"
+    text += json.dumps(strategy.manager.strategies_types[type], indent=4)
+    text += '</pre>'
+    return text
+
+
+def all_strategies(database):
     """
     Вывод всех созданных стратегий.
     :return: Str.
@@ -67,7 +83,7 @@ def all_strategies():
         return None
 
 
-def strategy_info(strategy_id):
+def strategy_info(database, strategy_id):
     """
     Информация о созданной стратегии.
     :param strategy_id: Id стратегии.
@@ -78,7 +94,7 @@ def strategy_info(strategy_id):
                 SELECT 
                     *
                 FROM strategies 
-                WHERE strategyId == %(strategy_id)s
+                WHERE strategyId == '{strategy_id}'
                 """
         data = database.execute_query(query, params={'strategy_id': strategy_id}, columns=True)
         text = ""

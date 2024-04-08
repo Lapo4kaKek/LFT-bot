@@ -4,10 +4,7 @@
 """
 
 from telebot.types import InlineKeyboardButton, InlineKeyboardMarkup, ReplyKeyboardMarkup, KeyboardButton
-
-import strategy.base_strategy
-from main import database
-
+import strategy.manager
 
 def menu_static():
     """
@@ -24,7 +21,7 @@ def strategy_actions():
     """
     Inline клавиатура с действиями над стратегиями.
     """
-    create_strategy_button = InlineKeyboardButton(text="Create Strategy 🆕", callback_data='strategy_create')
+    create_strategy_button = InlineKeyboardButton(text="Create Strategy 🆕", callback_data='strategy_create_menu')
     all_strategies_button = InlineKeyboardButton(text="All Strategies 📋", callback_data='strategy_all')
     keyboard = InlineKeyboardMarkup(row_width=1)
     keyboard.add(create_strategy_button, all_strategies_button)
@@ -65,7 +62,8 @@ def create_strategy():
         back_button = InlineKeyboardButton(text='Back to Actions ⬅️',
                                            callback_data='strategy_back')
         keyboard.add(back_button)
-        columns = numbers('strategy_create_type_', len(strategy.base_strategy.strategies_types))
+        columns = numbers('strategy_create_type_', len(strategy.manager.strategies_types),
+                          custom_ids=[str(key) for key in strategy.manager.strategies_types])
 
         for i in range(len(columns[0])):
             line = []
@@ -78,8 +76,22 @@ def create_strategy():
         # admin.error(error_admin_text='Создание клавиатуры my_texts ' + str(err))
         return None
 
+def create_strategy_type():
+    """
+    Inline клавиатура для возврата к видам стратегий.
+    """
+    try:
+        keyboard = InlineKeyboardMarkup()
+        back_button = InlineKeyboardButton(text='Back to strategy types ⬅️',
+                                           callback_data='strategy_create_type_back')
+        keyboard.add(back_button)
+        return keyboard
+    except Exception as err:
+        print(str(err))
+        # admin.error(error_admin_text='Создание клавиатуры my_texts ' + str(err))
+        return None
 
-def all_strategies():
+def all_strategies(database):
     """
     Inline клавиатура для выбора созданной стратегии.
     """
