@@ -13,6 +13,7 @@ import asyncio
 from pybit.unified_trading import HTTP
 from exchange.binance_exchange import BinanceExchange
 from strategy import macd_strategy
+from loguru import logger
 
 load_dotenv()
 
@@ -41,11 +42,14 @@ async def example_binance_work():
 async def macd_trading(bybit, monitoring):
     strategy_id = str(uuid.uuid4())
 
+    logger.info("Init strategy MACD")
     # bybit.exchange.verbose = True
     strategy1 = macd_strategy.MACDStrategy(exchange=bybit, balance=Decimal(1000.0), symbol="BTCUSDT",
                              settings={'strategy_name': 'Strategy 1',
                                        'filter_days': 3, 'limit': 100, 'loss_coef': 0.95},
                                            strategy_id=strategy_id, monitoring=monitoring)
+
+    logger.info(f"Strategy with ID: {strategy_id} and parameters: {strategy1.settings} ready and running!")
 
     # Запуск торговли для всех стратегий
     await asyncio.gather(
@@ -60,8 +64,8 @@ async def main():
     bybit.exchange.set_sandbox_mode(True)
 
     # await macd_trading(bybit, monitoring)
-    pnl_result = monitoring.calculate_pnl_by_strategy("d99ac788-8b7e-4061-8a50-cc1b06fe0754")
-    print(f"{pnl_result['pnl']}")
+    #pnl_result = monitoring.calculate_pnl_by_strategy("d99ac788-8b7e-4061-8a50-cc1b06fe0754")
+    #print(f"{pnl_result['pnl']}")
     # monitoring.delete_all_data("strategies")
     # monitoring.delete_all_data("order_strategy_link")
     await macd_trading(bybit, monitoring)
