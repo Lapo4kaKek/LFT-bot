@@ -35,3 +35,11 @@ CREATE TABLE order_strategy_link
     strategyId String
 ) ENGINE = MergeTree()
 ORDER BY (order_id, strategy_id);
+
+
+CREATE TABLE pnl_data (
+    strategyId String,
+    createdTime DateTime,
+    pnl Float64
+) ENGINE = MergeTree()
+ORDER BY createdTime;

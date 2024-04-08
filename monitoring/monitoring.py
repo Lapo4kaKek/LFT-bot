@@ -1,3 +1,4 @@
+from datetime import datetime, timedelta
 class Monitoring:
     def __init__(self, database):
         self.database = database
@@ -181,3 +182,80 @@ class Monitoring:
             'total_qty': total_qty,
             'pnl': pnl
         }
+
+    def calculate_pnl_by_timeframe(self, strategy_id, start_time, end_time):
+        """
+        Вычисляет PnL для заданной стратегии в заданном временном интервале.
+        """
+        query = f"""
+        SELECT 
+            orderId, 
+            exchange, 
+            symbol, 
+            price, 
+            qty, 
+            executedQty, 
+            totalCost, 
+            side, 
+            orderType, 
+            orderStatus, 
+            createdTime, 
+            updatedTime, 
+            commission 
+        FROM orders 
+        INNER JOIN order_strategy_link ON orders.orderId = order_strategy_link.orderId 
+        WHERE order_strategy_link.strategyId = '{strategy_id}'
+        AND createdTime >= '{start_time}'
+        AND createdTime <= '{end_time}'
+        """
+
+        orders = self.database.execute_query(query)
+
+        total_cost = 0
+        total_sell = 0
+        total_qty = 0
+
+        for order in orders:
+            price = float(order[3])  # Индекс для 'price'
+            qty = float(order[4])  # Индекс для 'qty'
+            if order[7].lower() == 'buy':  # Индекс для 'side'
+                total_cost += price * qty
+                total_qty += qty
+            elif order[7].lower() == 'sell':  # Индекс для 'side'
+                total_sell += price * qty
+                total_qty -= qty
+
+        pnl = total_sell - total_cost
+
+        return {
+            'total_cost': total_cost,
+            'total_sell': total_sell,
+            'total_qty': total_qty,
+            'pnl': pnl
+        }
+
+    def calculate_pnl_in_intervals(self, strategy_id, interval_minutes=1, start_hour=22, start_minute=50, end_hour=23,
+                                   end_minute=0):
+        """
+        Вычисляет PnL для заданной стратегии в заданных временных интервалах.
+        """
+        start_date = datetime.now().replace(hour=start_hour, minute=start_minute, second=0, microsecond=0)
+        end_date = datetime.now().replace(hour=end_hour, minute=end_minute, second=0, microsecond=0)
+
+        while start_date < end_date:
+            next_date = start_date + timedelta(minutes=interval_minutes)
+
+            start_time_str = start_date.strftime('%Y-%m-%d %H:%M:%S')
+            end_time_str = next_date.strftime('%Y-%m-%d %H:%M:%S')
+
+            pnl_result = self.calculate_pnl_by_timeframe(strategy_id, start_time_str, end_time_str)
+
+            if pnl_result:
+                insert_query = f"""
+                INSERT INTO pnl_data (strategyId, createdTime, pnl) 
+                VALUES ('{strategy_id}', '{end_time_str}', {pnl_result['pnl']});
+                """
+                self.database.execute_query(insert_query)
+
+            start_date = next_date
+

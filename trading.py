@@ -13,7 +13,7 @@ import asyncio
 from pybit.unified_trading import HTTP
 from exchange.binance_exchange import BinanceExchange
 from strategy import macd_strategy
-
+import time
 load_dotenv()
 
 #api_key_bybit = os.getenv('BYBIT_API_KEY')
@@ -53,17 +53,24 @@ async def macd_trading(bybit, monitoring):
     )
 
 async def main():
-    print("Start:")
+    print("Start INSERT ORDERS:")
     database = Database('localhost', port, login_click, password_click)
     monitoring = Monitoring(database)
     bybit = BybitExchange(api_key_bybit, api_secret_bybit, monitoring)
     bybit.exchange.set_sandbox_mode(True)
 
-    # await macd_trading(bybit, monitoring)
-    pnl_result = monitoring.calculate_pnl_by_strategy("d99ac788-8b7e-4061-8a50-cc1b06fe0754")
-    print(f"{pnl_result['pnl']}")
+    start_time = time.time()
+    orders = database.execute_query("SELECT * FROM orders")
+    print(orders)
+
+    print("The insert into the clickhouse was succesfull " + str(time.time() - start_time) + " seconds")
+    #await macd_trading(bybit, monitoring)
+
+    #pnl_result = monitoring.calculate_pnl_by_strategy("d99ac788-8b7e-4061-8a50-cc1b06fe0754")
+    #print(f"{pnl_result['pnl']}")
     # monitoring.delete_all_data("strategies")
     # monitoring.delete_all_data("order_strategy_link")
-    await macd_trading(bybit, monitoring)
+    #await macd_trading(bybit, monitoring)
+    #monitoring.calculate_pnl_in_intervals("7ccc2d65-facb-41cd-ac1c-1601d3e022a1", 1, 19, 51, 20, 2)
 
 run(main())
