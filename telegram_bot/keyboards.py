@@ -132,13 +132,36 @@ def strategy_info(strategy_id):
                                      callback_data="strategy_start_" + strategy_id)
         stop = InlineKeyboardButton(text="STOP 🛑",
                                      callback_data="strategy_stop_" + strategy_id)
+        update = InlineKeyboardButton(text="Update 🔄",
+                                     callback_data="strategy_entity_" + strategy_id)
         delete = InlineKeyboardButton(text="Delete ❌️",
                                       callback_data="strategy_delete_" + strategy_id)
         back_button = InlineKeyboardButton(text='Back ⬅️',
                                            callback_data='strategy_all')
         keyboard.add(back_button)
         keyboard.add(start, stop)
+        keyboard.add(update)
         keyboard.add(delete)
+        return keyboard
+    except Exception as err:
+        str(err)
+        # admin.error(error_admin_text='Не получилось создать клавиатуру ' + str(err))
+        return None
+
+
+def delete_strategy(strategy_id):
+    """
+    Подтверждение удаления стратегии.
+    :param strategy_id: Id стратегии.
+    """
+    try:
+        strategy_id = str(strategy_id)
+        keyboard = InlineKeyboardMarkup()
+        yes = InlineKeyboardButton(text="YES 👍",
+                                     callback_data="strategy_delete_yes_" + strategy_id)
+        no = InlineKeyboardButton(text="NO 👎",
+                                     callback_data="strategy_entity_" + strategy_id)
+        keyboard.add(no, yes)
         return keyboard
     except Exception as err:
         str(err)

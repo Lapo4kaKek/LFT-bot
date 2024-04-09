@@ -1,3 +1,6 @@
+from decimal import *
+
+
 class Monitoring:
     def __init__(self, database):
         self.database = database
@@ -108,7 +111,7 @@ class Monitoring:
 
         self.database.insert_data('strategies', data, column_names)
 
-    async def get_strategy_info(self, strategy_id):
+    def get_strategy_info(self, strategy_id):
         """
         Ищет стратегию в ClickHouse.
         :param strategy_id: id стратегии.
@@ -122,7 +125,29 @@ class Monitoring:
             return strategy[0]
         return strategy
 
-    async def get_order_info(self, order_id):
+    def get_launched_strategies(self):
+        """
+        Ищет запущенные стратегии в ClickHouse.
+        :return List, хранящий id стратегий.
+        """
+        query = f"""
+                SELECT strategyId FROM strategies WHERE status == True 
+                """
+        strategies = self.database.execute_query(query, columns=True)
+        return strategies
+
+    def delete_strategy(self, strategy_id):
+        """
+        Удаляет стратегию по Id.
+        :param strategy_id Id стратегии.
+        :return List, хранящий id стратегий.
+        """
+        query = f"""
+                DELETE FROM strategies WHERE strategyId = '{strategy_id}';
+                """
+        self.database.execute_query(query)
+
+    def get_order_info(self, order_id):
         """
         Ищет ордер в ClickHouse.
         :param order_id: id ордера.
@@ -136,7 +161,7 @@ class Monitoring:
             return order[0]
         return order
 
-    async def update_strategy_info(self, strategy_id, data):
+    def update_strategy_info(self, strategy_id, data):
         """
         Обновляет строку в таблице strategies по её id.
         :param strategy_id: id стратегии.
@@ -147,7 +172,7 @@ class Monitoring:
         query = f"ALTER TABLE strategies UPDATE {condition} WHERE strategyId = '{strategy_id}'"
         self.database.execute_query(query)
 
-    async def update_order_info(self, order_id, data):
+    def update_order_info(self, order_id, data):
         """
         Обновляет строку в таблице orders по её id.
         :param order_id: id ордера.
@@ -187,7 +212,7 @@ class Monitoring:
     def delete_all_data(self, table_name):
         return self.database.delete_all_data(table_name)
 
-    async def get_loss_order(self, strategy_id):
+    def get_loss_order(self, strategy_id):
         try:
             query = f"""
                     SELECT TOP 1 orders.orderId
@@ -211,6 +236,7 @@ class Monitoring:
             exchange, 
             symbol, 
             price, 
+            stopPrice,
             qty, 
             executedQty, 
             totalCost, 
@@ -230,18 +256,18 @@ class Monitoring:
         total_cost = 0
         total_sell = 0
         total_qty = 0
-
         for order in orders:
             # Используйте индексы вместо ключей
-            price = float(order[3])  # Индекс для 'price'
-            qty = float(order[4])  # Индекс для 'qty'
-            if order[7].lower() == 'buy':  # Индекс для 'side'
-                total_cost += price * qty
+            cost = float(order[7])  # Индекс для 'totalCost'
+            qty = float(order[5])  # Индекс для 'qty'
+            if order[4] != Decimal(0):  # Индекс для 'stopPrice'
+                continue
+            if order[8].lower() == 'buy':  # Индекс для 'side'
+                total_cost += cost
                 total_qty += qty
-            elif order[7].lower() == 'sell':  # Индекс для 'side'
-                total_sell += price * qty
+            elif order[8].lower() == 'sell':  # Индекс для 'side'
+                total_sell += cost
                 total_qty -= qty
-
         pnl = total_sell - total_cost
 
         return {

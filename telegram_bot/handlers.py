@@ -50,7 +50,9 @@ class TelegramBotHandlers:
                                               reply_markup=keyboards.strategy_actions(),
                                               parse_mode='html')
                     elif message == 'PnL 💲':
-                        pass
+                        self.bot.send_message(chat_id=chat_id,
+                                              text=texts.pnl(database, monitoring),
+                                              parse_mode='html')
                     elif re.match('#CREATE_STRATEGY', message):
                         self.callback.create_new_strategy(text_data)
             except Exception as err:

@@ -52,7 +52,7 @@ def register_strategy(monitoring, name, strategy_type, exchange, symbol, balance
     return strategy_id
 
 
-def start_strategy(strategy_id):
+def start_strategy(strategy_id, first_launch=False):
     load_dotenv()
 
     login_click = os.getenv('CLICKHOUSE_LOGIN')
@@ -61,8 +61,8 @@ def start_strategy(strategy_id):
     database = Database('localhost', 8123, login_click, password_click)
     monitoring = Monitoring(database)
 
-    info = asyncio.run(monitoring.get_strategy_info(strategy_id))
-    if info['status']:
+    info = monitoring.get_strategy_info(strategy_id)
+    if info['status'] and not first_launch:
         print('The strategy has already been launched.')
         return
     exchange = None
@@ -76,9 +76,9 @@ def start_strategy(strategy_id):
     if info['type'] == 'macd':
         strategy = MACDStrategy(exchange, info['symbol'], strategy_id, monitoring)
 
-    asyncio.run(monitoring.update_strategy_info(strategy_id=strategy_id, data={
+    monitoring.update_strategy_info(strategy_id=strategy_id, data={
         'status': True
-    }))
+    })
 
     def start_new_event_loop():
         loop = asyncio.new_event_loop()
@@ -90,11 +90,11 @@ def start_strategy(strategy_id):
 
 
 def stop_strategy(strategy_id, monitoring):
-    info = asyncio.run(monitoring.get_strategy_info(strategy_id))
+    info = monitoring.get_strategy_info(strategy_id)
     if not info['status']:
         print('The strategy has already been stopped.')
         return
 
-    asyncio.run(monitoring.update_strategy_info(strategy_id=strategy_id, data={
+    monitoring.update_strategy_info(strategy_id=strategy_id, data={
         'status': False
-    }))
+    })

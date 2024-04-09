@@ -1,3 +1,4 @@
+import asyncio
 import json
 import re
 
@@ -25,7 +26,7 @@ class TelegramBotCallback:
                                         settings=data['settings'])
         self.bot.delete_message(chat_id=chat_id, message_id=text_data.message_id)
         message_id = self.bot.send_message(chat_id=chat_id,
-                                           text=texts.strategy_info(self.database, strategy_id),
+                                           text=texts.strategy_info(self.database, self.monitoring, strategy_id),
                                            reply_markup=keyboards.strategy_info(strategy_id),
                                            parse_mode='html').message_id
 
@@ -84,7 +85,7 @@ class TelegramBotCallback:
                 strategy_id = re.split('entity_', text_data.data, maxsplit=1)[1]
                 message_id = self.bot.edit_message_text(chat_id=chat_id,
                                                         message_id=text_data.message.message_id,
-                                                        text=texts.strategy_info(self.database, strategy_id),
+                                                        text=texts.strategy_info(self.database, self.monitoring, strategy_id),
                                                         reply_markup=keyboards.strategy_info(strategy_id),
                                                         parse_mode='html').message_id
             except Exception as err:
@@ -106,7 +107,7 @@ class TelegramBotCallback:
                 strategy.strategy_manager.start_strategy(strategy_id)
                 message_id = self.bot.edit_message_text(chat_id=chat_id,
                                                         message_id=text_data.message.message_id,
-                                                        text=texts.strategy_info(self.database, strategy_id),
+                                                        text=texts.strategy_info(self.database, self.monitoring, strategy_id),
                                                         reply_markup=keyboards.strategy_info(strategy_id),
                                                         parse_mode='html').message_id
             except Exception as err:
@@ -118,8 +119,29 @@ class TelegramBotCallback:
                 strategy.strategy_manager.stop_strategy(strategy_id, self.monitoring)
                 message_id = self.bot.edit_message_text(chat_id=chat_id,
                                                         message_id=text_data.message.message_id,
-                                                        text=texts.strategy_info(self.database, strategy_id),
+                                                        text=texts.strategy_info(self.database, self.monitoring, strategy_id),
                                                         reply_markup=keyboards.strategy_info(strategy_id),
                                                         parse_mode='html').message_id
+            except Exception as err:
+                print(str(err))
+        elif re.match('delete', command):
+            # Нажатие на кнопку удаления стратегии.
+            try:
+                if re.match('delete_yes', command):
+                    strategy_id = re.split('delete_yes_', text_data.data, maxsplit=1)[1]
+                    strategy.strategy_manager.stop_strategy(strategy_id, self.monitoring)
+                    self.monitoring.delete_strategy(strategy_id)
+                    message_id = self.bot.edit_message_text(chat_id=chat_id,
+                                                            message_id=text_data.message.message_id,
+                                                            text=texts.all_strategies(self.database),
+                                                            reply_markup=keyboards.all_strategies(self.database),
+                                                            parse_mode='html').message_id
+                else:
+                    strategy_id = re.split('delete_', text_data.data, maxsplit=1)[1]
+                    message_id = self.bot.edit_message_text(chat_id=chat_id,
+                                                            message_id=text_data.message.message_id,
+                                                            text=texts.delete_strategy(),
+                                                            reply_markup=keyboards.delete_strategy(strategy_id),
+                                                            parse_mode='html').message_id
             except Exception as err:
                 print(str(err))

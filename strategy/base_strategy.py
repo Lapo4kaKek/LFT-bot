@@ -19,9 +19,8 @@ class BaseStrategy(ABC):
         self.monitoring = monitoring
         self.info = None
 
-    async def update_info(self):
-        self.info = await self.monitoring.get_strategy_info(self.strategy_id)
-
+    def update_info(self):
+        self.info = self.monitoring.get_strategy_info(self.strategy_id)
 
     @abstractmethod
     def get_signal(self):

@@ -24,7 +24,7 @@ class MACDStrategy(BaseStrategy):
 
     async def calculate_moving_averages(self):
         """
-        Асинхронно рассчитывает индикаторы MACD и сигнальную линию для определения
+        Рассчитывает индикаторы MACD и сигнальную линию для определения
         моментов пересечения, что может указывать на потенциальные точки входа или выхода из рынка.
 
         Использует настройки стратегии, такие как 'limit' и 'filter_days'.
@@ -84,16 +84,14 @@ class MACDStrategy(BaseStrategy):
         """
         Осуществление асинхронной торговли в соответствии с заданными настройками.
         """
-        await self.update_info()
-        while self.info['status']:
-            await self.update_info()
+        while True:
+            self.update_info()
             if not self.info['status']:
                 break
             await OrderManager.check_loss_order(self.strategy_id, self.monitoring, self.exchange, self.symbol, Decimal(self.info['balance']))
             try:
-                print(self.info['name'] + ": ")
                 signal = await self.get_signal()
-                print("Signal: " + str(signal))
+                print(self.info['name'] + ":\nSignal: " + str(signal))
                 if signal == 1:
                     await OrderManager.place_buy_order(strategy_id=self.strategy_id, monitoring=self.monitoring,
                                                        exchange=self.exchange,
@@ -115,11 +113,3 @@ class MACDStrategy(BaseStrategy):
                 print(err)
 
             await asyncio.sleep(10)  # Пауза в 10 секунд
-            await self.update_info()
-
-    async def stop_strategy(self):
-        """
-        Остановка стратегии.
-        """
-        self.update_strategy_info()
-        self.is_active = False
