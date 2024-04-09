@@ -113,3 +113,5 @@ class MACDStrategy(BaseStrategy):
                 print(err)
 
             await asyncio.sleep(10)  # Пауза в 10 секунд
+
+        await self.exchange.close()

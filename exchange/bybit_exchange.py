@@ -46,6 +46,9 @@ class BybitExchange(BaseExchange):
     async def get_ticker(self, coin, side=None):
         return await super().get_ticker(coin, side)
 
+    async def close(self):
+        await self.exchange.close()
+
     # you need add a parameters checker
     async def create_order(self, coin, type, side, amount, price=None, params={}):
         if price is not None:
@@ -89,7 +92,6 @@ class BybitExchange(BaseExchange):
         order = sorted_by_timestamp[0]
         if order is not None:
             order_stm = self.parse_order_to_clickhouse_format_ccxt(order)
-            print("Order_stm: ", order_stm)
             self.monitoring.insert_single_order_to_db(order_stm)
             self.monitoring.link_order_with_strategy(order_stm['orderId'], strategy_id)
             return order
@@ -104,7 +106,6 @@ class BybitExchange(BaseExchange):
         order = sorted_by_timestamp[0]
         if order is not None:
             order_stm = self.parse_order_to_clickhouse_format_ccxt(order)
-            print("Order_stm: ", order_stm)
             self.monitoring.insert_single_order_to_db(order_stm)
             self.monitoring.link_order_with_strategy(order_stm['orderId'], strategy_id)
             return order
@@ -119,7 +120,6 @@ class BybitExchange(BaseExchange):
         order = sorted_by_timestamp[0]
         if order is not None:
             order_stm = self.parse_order_to_clickhouse_format_ccxt(order)
-            print("Order_stm: ", order_stm)
             self.monitoring.insert_single_order_to_db(order_stm)
             self.monitoring.link_order_with_strategy(order_stm['orderId'], strategy_id)
             return order
