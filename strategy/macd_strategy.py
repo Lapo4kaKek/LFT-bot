@@ -82,27 +82,19 @@ class MACDStrategy(BaseStrategy):
                 print(self.info['name'] + ": ")
                 signal = await self.get_signal()
                 print("Signal: " + str(signal))
-                if signal == 0:
-                    ticker = await self.exchange.get_ticker(self.symbol, 'buy')
+                if signal == 1:
                     await OrderManager.place_buy_order(strategy_id=self.strategy_id, monitoring=self.monitoring,
-                                                       base_exchange=self.exchange,
+                                                       exchange=self.exchange,
                                                        token_symbol=self.symbol,
-                                                       order_size=Decimal(
-                                                           self.info['balance']) / Decimal(
-                                                           ticker[0]),
-                                                       stop_loss={
-                                                           'triggerPrice': Decimal(
-                                                               ticker[0]) * Decimal(
-                                                               self.info['settings'][
-                                                                   'loss_coef']),
-                                                           'triggerDirection': 'below'
-                                                       })
+                                                       balance=Decimal(self.info['balance']),
+                                                       stop_loss=Decimal(self.info['settings']['loss_coef']))
                     print('Buy\n----------------------')
                 elif signal == -1:
                     await OrderManager.place_sell_order(
                         strategy_id=self.strategy_id, monitoring=self.monitoring,
-                        base_exchange=self.exchange,
+                        exchange=self.exchange,
                         token_symbol=self.symbol,
+                        balance=Decimal(self.info['balance']),
                         order_size=self.info['assetsNumber'])
                     print('Sell\n----------------------')
                 else:

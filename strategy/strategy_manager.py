@@ -14,7 +14,7 @@ strategies_types = {
     'MACD': {
         'type': 'macd',
         'exchange': 'bybit',
-        'symbol': 'BTCUSDT',
+        'symbol': 'BTC/USDT',
         'strategy_name': 'Strategy 1',
         'balance': 1000,
         'settings': {
