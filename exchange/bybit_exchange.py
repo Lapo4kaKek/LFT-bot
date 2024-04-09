@@ -46,6 +46,9 @@ class BybitExchange(BaseExchange):
     async def get_ticker(self, coin, side=None):
         return await super().get_ticker(coin, side)
 
+    async def close(self):
+        await self.exchange.close()
+
     # you need add a parameters checker
     async def create_order(self, coin, type, side, amount, price=None, params={}):
         if price is not None:
@@ -89,7 +92,6 @@ class BybitExchange(BaseExchange):
         order = sorted_by_timestamp[0]
         if order is not None:
             order_stm = self.parse_order_to_clickhouse_format_ccxt(order)
-            print("Order_stm: ", order_stm)
             self.monitoring.insert_single_order_to_db(order_stm)
             self.monitoring.link_order_with_strategy(order_stm['orderId'], strategy_id)
             return order
@@ -104,7 +106,6 @@ class BybitExchange(BaseExchange):
         order = sorted_by_timestamp[0]
         if order is not None:
             order_stm = self.parse_order_to_clickhouse_format_ccxt(order)
-            print("Order_stm: ", order_stm)
             self.monitoring.insert_single_order_to_db(order_stm)
             self.monitoring.link_order_with_strategy(order_stm['orderId'], strategy_id)
             return order
@@ -119,12 +120,27 @@ class BybitExchange(BaseExchange):
         order = sorted_by_timestamp[0]
         if order is not None:
             order_stm = self.parse_order_to_clickhouse_format_ccxt(order)
-            print("Order_stm: ", order_stm)
             self.monitoring.insert_single_order_to_db(order_stm)
             self.monitoring.link_order_with_strategy(order_stm['orderId'], strategy_id)
             return order
         else:
             Exception
+
+    async def cancel_order(self, order_id, symbol):
+        try:
+            await self.exchange.cancel_order(order_id, symbol)
+        except Exception as err:
+            print("Error in cancel_order: " + str(err))
+
+    async def fetch_loss_order(self, order_id, symbol):
+        try:
+            return await self.exchange.fetch_closed_order(order_id, symbol, params={'trigger': True})
+        except Exception:
+            try:
+                return await self.exchange.fetch_open_order(order_id, symbol, params={'trigger': True})
+            except Exception:
+                print("No order found in fetch_loss_order")
+            return None
 
     def parse_order_to_clickhouse_format_ccxt(self, order):
         # created_time = self.format_time_to_datetime(str(response.get('time')))
@@ -143,7 +159,7 @@ class BybitExchange(BaseExchange):
             'orderStatus': order.get('status'),
             'createdTime': order.get('timestamp'),
             'updatedTime': order.get('lastTradeTimestamp'),
-            'commission': float( order.get('fee', {}).get('cost', 0))
+            'commission': float(order.get('fee', {}).get('cost', 0))
         }
 
         return order_data
@@ -234,8 +250,7 @@ class BybitExchange(BaseExchange):
         else:
             Exception
 
-
-    def get_executions(self, order_id, category="spot", limit = 1):
+    def get_executions(self, order_id, category="spot", limit=1):
         order = self.session.get_executions(
             category=category,
             order_id=f'{order_id}',

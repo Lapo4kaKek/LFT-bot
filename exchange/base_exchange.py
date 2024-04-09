@@ -17,7 +17,6 @@ class BaseExchange(ABC):
 
     @abstractmethod
     async def get_ticker(self, coin, side=None):
-        print(1)
         ticker = await self.exchange.fetch_ticker(coin)
         if side == 'buy':
             return ticker["ask"], ticker["askVolume"]
@@ -52,6 +51,12 @@ class BaseExchange(ABC):
 
     # futures
     def update_leverage(self, coin, level):
+        pass
+
+    async def cancel_order(self, order_id, symbol):
+        pass
+
+    async def fetch_order(self, order_id, symbol):
         pass
 
     async def create_market_buy_order(self, strategy_id, symbol, order_size):

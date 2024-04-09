@@ -12,6 +12,8 @@ from datetime import datetime
 from exchange.bybit_exchange import BybitExchange
 from monitoring.monitoring import Monitoring
 from multiprocessing import Process
+
+from strategy import strategy_manager
 from telegram_bot.handlers import TelegramBotHandlers
 
 # import ccxt
@@ -75,6 +77,10 @@ database.create_table('order_strategy_link', order_strategy_link_columns)
 
 if __name__ == '__main__':
     monitoring = Monitoring(database)
+    strategies = monitoring.get_launched_strategies()
+    for strategy in strategies:
+        strategy_manager.start_strategy(strategy['strategyId'], first_launch=True)
+
     telegram_bot_token = os.getenv('TELEGRAM_BOT_TOKEN')
     bot = TelegramBotHandlers(monitoring, database, telegram_bot_token)
 

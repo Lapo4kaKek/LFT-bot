@@ -2,10 +2,12 @@
 Тексты для сообщений.
 
 """
+from datetime import datetime
 import json
 import pprint
 import strategy.strategy_manager
 import texttable as table
+
 
 def greeting():
     """
@@ -83,9 +85,11 @@ def all_strategies(database):
         return None
 
 
-def strategy_info(database, strategy_id):
+def strategy_info(database, monitoring, strategy_id):
     """
     Информация о созданной стратегии.
+    :param database: Клиент базы данных.
+    :param monitoring: Экземпляр мониторинга.
     :param strategy_id: Id стратегии.
     :return: Str.
     """
@@ -96,7 +100,7 @@ def strategy_info(database, strategy_id):
                 FROM strategies 
                 WHERE strategyId == '{strategy_id}'
                 """
-        data = database.execute_query(query, params={'strategy_id': strategy_id}, columns=True)
+        data = database.execute_query(query, columns=True)
         text = ""
         if data is None:
             text = 'Sorry, something went wrong.'
@@ -111,8 +115,56 @@ def strategy_info(database, strategy_id):
         text += '<b>Assets Number:</b> <i>' + str(round(strategy_data['assetsNumber'], 5)) + '</i>\n'
         text += '<b>Status:</b> <i>' + ('launched' if strategy_data['status'] else 'stopped') + '</i>\n'
         text += '<b>Created:</b> <i>' + str(strategy_data['createdTime']) + '</i>\n'
+        text += '<b>PnL:</b> <i>' + str(monitoring.calculate_pnl_by_strategy(strategy_id)['pnl']) + '</i>\n'
+        text += '\n<i>Current time:</i> <i>' + str(datetime.now().strftime("%Y-%m-%d %H:%M:%S")) + '</i>\n'
         return text
     except Exception as err:
         print(err)
         # admin.error(error_admin_text='Не получилось содздать описание текста' + str(err))
+        return None
+
+
+def pnl(database, monitoring):
+    """
+    Информация об общем PnL.
+    :param database: Клиент базы данных.
+    :param monitoring: Экземпляр мониторинга.
+    :return: Str.
+    """
+    try:
+        query = f"""
+                            SELECT strategyId, name, symbol
+                            FROM strategies 
+                            """
+        data = database.execute_query(query)
+        strategies = [(el[0], el[1], el[2]) for el in data]
+
+        text = "<b>💵 Profit and Loss 💵</b>\n\n"
+        pnl_table = table.Texttable()
+        pnl_table.set_deco(table.Texttable.HEADER)
+        pnl_table.set_cols_align(["l", "c", "c", "c", "c"])
+        pnl_table.set_cols_valign(["m", "m", "m", "m", "m"])
+        pnl_table.set_cols_dtype(['i', 't', "t", 'f', 'f'])
+        pnl_table.add_row([" \n", "Name\n", "Symbol", "Assets\n", "P&L"])
+        for i in range(len(strategies)):
+            strategy_id, strategy_name, strategy_symbol = strategies[i]
+            strategy_info = monitoring.calculate_pnl_by_strategy(strategy_id)
+            pnl_table.add_row([i + 1, strategy_name, strategy_symbol, strategy_info['total_qty'], strategy_info['pnl']])
+        text += '<code>' + pnl_table.draw() + '</code>'
+        return text
+    except Exception as err:
+        print(err)
+        return None
+
+
+def delete_strategy():
+    """
+       Запрос на подтверждение удаления стратегии.
+       :return: Str.
+       """
+    try:
+        text = '<b>Confirm delete</b>\n'
+        return text
+    except Exception as err:
+        print(str(err))
         return None
