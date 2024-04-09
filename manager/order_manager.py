@@ -1,29 +1,38 @@
 import requests
 import logging
 
+
 class OrderManager:
     @staticmethod
-    async def place_buy_order(base_exchange, token_symbol, order_type, quantity, price=None):
+    async def place_buy_order(strategy_id, monitoring, base_exchange, token_symbol, order_size, stop_loss=None):
         """
-        Asynchronously places a buy order through the BaseExchange interface.
+        Создаёт ордер на покупку.
         """
         try:
-            order_result = await base_exchange.place_order(token_symbol, "buy", order_type, quantity, price)
-            return order_result
+            order = await base_exchange.create_market_buy_order(strategy_id=strategy_id, symbol=token_symbol, order_size=order_size)
+            await monitoring.update_strategy_info(strategy_id=strategy_id,
+                                                  data={'assetsNumber': order['filled'], 'openPositions': True})
+            if stop_loss:
+                stop_loss_order = await base_exchange.create_market_stop_loss_order(strategy_id=strategy_id, symbol=token_symbol,
+                                                                                    order_size=order['filled'],
+                                                                                    params=stop_loss)
+            return order
         except Exception as e:
-            # Handle exceptions or errors from the BaseExchange
             print(f"Error placing buy order: {e}")
             return None
 
     @staticmethod
-    async def place_sell_order(base_exchange, token_symbol, order_type, quantity, price=None):
+    async def place_sell_order(strategy_id, monitoring, base_exchange, token_symbol, order_size):
         """
-        Asynchronously places a sell order through the BaseExchange interface.
+        Создаёт ордер на продажу.
         """
         try:
-            order_result = await base_exchange.place_order(token_symbol, "sell", order_type, quantity, price)
-            return order_result
+            order = await base_exchange.create_market_sell_order(strategy_id=strategy_id, symbol=token_symbol, order_size=order_size)
+            await monitoring.update_strategy_info(strategy_id=strategy_id,
+                                                  data={'assetsNumber': order['filled'],
+                                                        'openPositions': False})
+
+            return order
         except Exception as e:
-            # Handle exceptions or errors from the BaseExchange
             print(f"Error placing sell order: {e}")
             return None

@@ -6,6 +6,7 @@ from analysis.technical_analysis import TechnicalAnalysis
 from decimal import *
 from exchange.binance_exchange import BinanceExchange
 from exchange.bybit_exchange import BybitExchange
+from manager.order_manager import OrderManager
 from strategy.base_strategy import BaseStrategy
 import time
 
@@ -75,44 +76,42 @@ class MACDStrategy(BaseStrategy):
         """
         Осуществление асинхронной торговли в соответствии с заданными настройками.
         """
-        while True:
-            await self.update_info()
+        await self.update_info()
+        while self.info['status']:
             try:
-                print(self.info)
-                print(self.info['name'] + ": ", end='')
+                print(self.info['name'] + ": ")
                 signal = await self.get_signal()
                 print("Signal: " + str(signal))
                 if signal == 0:
                     ticker = await self.exchange.get_ticker(self.symbol, 'buy')
-                    order = await self.exchange.create_market_buy_order(symbol=self.symbol,
-                                                                              order_size=Decimal(
-                                                                                  self.info['balance']) / Decimal(
-                                                                                  ticker[0]))
-                    await self.monitoring.update_strategy_info(strategy_id=self.strategy_id,
-                                                                     data={'assetsNumber': order['filled'],
-                                                                           'openPositions': True})
-                    order = await self.exchange.create_market_stop_loss_order(symbol=self.symbol, order_size=order['filled'],
-                                                                    params={
-                                                                        'triggerPrice': Decimal(ticker[0]) * Decimal(
-                                                                            self.info['settings']['loss_coef']),
-                                                                        'triggerDirection': 'below'
-                                                                    })
-
-                    print("STOP LOSS: ", order)
+                    await OrderManager.place_buy_order(strategy_id=self.strategy_id, monitoring=self.monitoring,
+                                                       base_exchange=self.exchange,
+                                                       token_symbol=self.symbol,
+                                                       order_size=Decimal(
+                                                           self.info['balance']) / Decimal(
+                                                           ticker[0]),
+                                                       stop_loss={
+                                                           'triggerPrice': Decimal(
+                                                               ticker[0]) * Decimal(
+                                                               self.info['settings'][
+                                                                   'loss_coef']),
+                                                           'triggerDirection': 'below'
+                                                       })
                     print('Buy\n----------------------')
                 elif signal == -1:
-                    # order = self.exchange.create_market_sell_order_native(symbol=self.symbol, order_size=0.02,
-                    #                                                       testnet=True, strategy_id=self.strategy_id)
-                    self.open_positions = False
+                    await OrderManager.place_sell_order(
+                        strategy_id=self.strategy_id, monitoring=self.monitoring,
+                        base_exchange=self.exchange,
+                        token_symbol=self.symbol,
+                        order_size=self.info['assetsNumber'])
                     print('Sell\n----------------------')
                 else:
                     print('Hold')
-                print(self.exchange.get_trade_history())
-                print(self.exchange.get_order_history())
             except Exception as err:
                 print(err)
 
             await asyncio.sleep(10)  # Пауза в 10 секунд
+            await self.update_info()
 
     async def stop_strategy(self):
         """

@@ -81,7 +81,7 @@ class BybitExchange(BaseExchange):
         """
         return self.exchange.set_leverage(level, coin)
 
-    async def create_market_buy_order(self, symbol, order_size, params={}):
+    async def create_market_buy_order(self, strategy_id, symbol, order_size, params={}):
         response_data = await self.create_order(symbol, 'market', 'buy', order_size, params=params)
         await asyncio.sleep(1)
         closed_orders = await self.exchange.fetch_closed_orders(symbol)
@@ -91,11 +91,27 @@ class BybitExchange(BaseExchange):
             order_stm = self.parse_order_to_clickhouse_format_ccxt(order)
             print("Order_stm: ", order_stm)
             self.monitoring.insert_single_order_to_db(order_stm)
+            self.monitoring.link_order_with_strategy(order_stm['orderId'], strategy_id)
             return order
         else:
             Exception
 
-    async def create_market_stop_loss_order(self, symbol, order_size, params={}):
+    async def create_market_sell_order(self, strategy_id, symbol, order_size, params={}):
+        response_data = await self.create_order(symbol, 'market', 'sell', order_size, params=params)
+        await asyncio.sleep(1)
+        closed_orders = await self.exchange.fetch_closed_orders(symbol)
+        sorted_by_timestamp = self.exchange.sort_by(closed_orders, 'timestamp', True)
+        order = sorted_by_timestamp[0]
+        if order is not None:
+            order_stm = self.parse_order_to_clickhouse_format_ccxt(order)
+            print("Order_stm: ", order_stm)
+            self.monitoring.insert_single_order_to_db(order_stm)
+            self.monitoring.link_order_with_strategy(order_stm['orderId'], strategy_id)
+            return order
+        else:
+            Exception
+
+    async def create_market_stop_loss_order(self, strategy_id, symbol, order_size, params={}):
         response_data = await self.create_order(symbol, 'market', 'sell', order_size, params=params)
         await asyncio.sleep(1)
         open_orders = await self.exchange.fetch_open_orders(symbol)
@@ -105,6 +121,7 @@ class BybitExchange(BaseExchange):
             order_stm = self.parse_order_to_clickhouse_format_ccxt(order)
             print("Order_stm: ", order_stm)
             self.monitoring.insert_single_order_to_db(order_stm)
+            self.monitoring.link_order_with_strategy(order_stm['orderId'], strategy_id)
             return order
         else:
             Exception
@@ -130,28 +147,6 @@ class BybitExchange(BaseExchange):
         }
 
         return order_data
-
-    def create_market_sell_order(self, symbol, order_size):
-        response_data = self.create_order(symbol, 'market', 'sell', order_size)
-        time.sleep(1)
-
-        order_id = response_data['result']['orderId']
-        print("Order id:" + order_id)
-        order = self.session.get_executions(
-            category="spot",
-            orderId=f'{order_id}',
-            limit=1,
-        )
-        print("Order:")
-        print(order)
-
-        if order is not None:
-            order_stm = self.parse_order_to_clickhouse_format(order)
-            print(order_stm)
-            self.monitoring.insert_single_order_to_db(order_stm[0])
-            return order
-        else:
-            Exception
 
     def get_order_history(self, limit=5):
         result = self.session.get_order_history(

@@ -62,6 +62,9 @@ def start_strategy(strategy_id):
     monitoring = Monitoring(database)
 
     info = asyncio.run(monitoring.get_strategy_info(strategy_id))
+    if info['status']:
+        print('The strategy has already been launched.')
+        return
     exchange = None
     if info['exchange'] == 'bybit':
         api_key_bybit = os.getenv('BYBIT_API_TESTNET')
@@ -84,9 +87,14 @@ def start_strategy(strategy_id):
 
     thread = threading.Thread(target=start_new_event_loop)
     thread.start()
-    print("START: ", info)
 
 
 def stop_strategy(strategy_id, monitoring):
     info = asyncio.run(monitoring.get_strategy_info(strategy_id))
-    print("STOP: ", info)
+    if not info['status']:
+        print('The strategy has already been stopped.')
+        return
+
+    asyncio.run(monitoring.update_strategy_info(strategy_id=strategy_id, data={
+        'status': False
+    }))
