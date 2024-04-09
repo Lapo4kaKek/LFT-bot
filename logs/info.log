@@ -1,0 +1,216 @@
+2024-04-09 00:48:46.947 | INFO     | monitoring.monitoring:insert_strategy_info:107 - Inserting strategy info: Strategy 1
+2024-04-09 00:48:46.988 | INFO     | database.database:insert_data:28 - Inserted data into table strategies: [('70220851-ec01-47fa-bdbc-05b574a6324d', 'Strategy 1', 'macd', 'bybit', 'BTCUSDT', 1000.0, 0.0, False, False, datetime.datetime(2024, 4, 9, 0, 48, 46, 947000), {'filter_days': 3, 'limit': 100, 'loss_coef': 0.8})] with result: <clickhouse_connect.driver.summary.QuerySummary object at 0x1691a1550>
+2024-04-09 00:48:46.989 | INFO     | monitoring.monitoring:insert_strategy_info:129 - Successfully inserted strategy info for Strategy 1
+2024-04-09 00:48:47.070 | INFO     | database.database:execute_query:53 - Executed query: 
+                SELECT 
+                    *
+                FROM strategies 
+                WHERE strategyId == '70220851-ec01-47fa-bdbc-05b574a6324d'
+                 with params: {'strategy_id': '70220851-ec01-47fa-bdbc-05b574a6324d'}. Columns included.
+2024-04-09 00:48:49.772 | INFO     | database.database:__init__:8 - ClickHouse client initialized with host=localhost, port=8123, username=admin
+2024-04-09 00:48:49.772 | INFO     | monitoring.monitoring:__init__:6 - Monitoring initialized with database <clickhouse_connect.driver.httpclient.HttpClient object at 0x1691a2540>
+2024-04-09 00:48:49.787 | INFO     | database.database:execute_query:53 - Executed query: 
+                SELECT * FROM strategies WHERE strategyId == '70220851-ec01-47fa-bdbc-05b574a6324d' 
+                 with params: {'strategy_id': '70220851-ec01-47fa-bdbc-05b574a6324d'}. Columns included.
+2024-04-09 00:48:49.832 | INFO     | database.database:execute_query:55 - Executed query: ALTER TABLE strategies UPDATE status = True WHERE strategyId = '70220851-ec01-47fa-bdbc-05b574a6324d' with params: {'strategy_id': '70220851-ec01-47fa-bdbc-05b574a6324d'}.
+2024-04-09 00:48:49.842 | INFO     | database.database:execute_query:53 - Executed query: 
+                SELECT 
+                    *
+                FROM strategies 
+                WHERE strategyId == '70220851-ec01-47fa-bdbc-05b574a6324d'
+                 with params: {'strategy_id': '70220851-ec01-47fa-bdbc-05b574a6324d'}. Columns included.
+2024-04-09 00:48:49.844 | INFO     | database.database:execute_query:53 - Executed query: 
+                SELECT * FROM strategies WHERE strategyId == '70220851-ec01-47fa-bdbc-05b574a6324d' 
+                 with params: {'strategy_id': '70220851-ec01-47fa-bdbc-05b574a6324d'}. Columns included.
+2024-04-09 00:48:57.013 | INFO     | exchange.bybit_exchange:create_market_buy_order:94 - Order_stm: {'orderId': '7e4dde56-bb60-4049-a2c0-523cfbe5062f', 'exchange': 'bybit', 'symbol': 'BTC/USDT:USDT', 'orderType': 'market', 'side': 'buy', 'price': 74980.9, 'stopPrice': 0.0, 'executedQty': 0.014, 'qty': 0.014, 'totalCost': 999.7512, 'orderStatus': 'closed', 'createdTime': 1712623735868, 'updatedTime': 1712623735876, 'commission': 0.54986316}
+2024-04-09 00:48:57.027 | ERROR    | monitoring.monitoring:insert_single_order_to_db:82 - Failed to insert order: Unrecognized column 'stopPrice' in table orders
+Traceback (most recent call last):
+
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/threading.py", line 1030, in _bootstrap
+    self._bootstrap_inner()
+    │    └ <function Thread._bootstrap_inner at 0x10524b9c0>
+    └ <Thread(Thread-2 (start_new_event_loop), started daemon 6173667328)>
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/threading.py", line 1073, in _bootstrap_inner
+    self.run()
+    │    └ <function Thread.run at 0x10524b6a0>
+    └ <Thread(Thread-2 (start_new_event_loop), started daemon 6173667328)>
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/threading.py", line 1010, in run
+    self._target(*self._args, **self._kwargs)
+    │    │        │    │        │    └ {}
+    │    │        │    │        └ <Thread(Thread-2 (start_new_event_loop), started daemon 6173667328)>
+    │    │        │    └ ()
+    │    │        └ <Thread(Thread-2 (start_new_event_loop), started daemon 6173667328)>
+    │    └ <function start_strategy.<locals>.start_new_event_loop at 0x169154b80>
+    └ <Thread(Thread-2 (start_new_event_loop), started daemon 6173667328)>
+
+  File "/Users/vasilijlazarev/python/hse/LFT-bot/strategy/strategy_manager.py", line 83, in start_new_event_loop
+    loop.run_until_complete(strategy.trading())
+    │    │                  │        └ <function MACDStrategy.trading at 0x1690ec180>
+    │    │                  └ <strategy.macd_strategy.MACDStrategy object at 0x16866b620>
+    │    └ <function BaseEventLoop.run_until_complete at 0x1056eff60>
+    └ <_UnixSelectorEventLoop running=True closed=False debug=False>
+
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/asyncio/base_events.py", line 672, in run_until_complete
+    self.run_forever()
+    │    └ <function BaseEventLoop.run_forever at 0x1056efec0>
+    └ <_UnixSelectorEventLoop running=True closed=False debug=False>
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/asyncio/base_events.py", line 639, in run_forever
+    self._run_once()
+    │    └ <function BaseEventLoop._run_once at 0x1056fdd00>
+    └ <_UnixSelectorEventLoop running=True closed=False debug=False>
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/asyncio/base_events.py", line 1985, in _run_once
+    handle._run()
+    │      └ <function Handle._run at 0x10563b7e0>
+    └ <Handle Task.task_wakeup(<Future finished result=None>)>
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/asyncio/events.py", line 88, in _run
+    self._context.run(self._callback, *self._args)
+    │    │            │    │           │    └ <member '_args' of 'Handle' objects>
+    │    │            │    │           └ <Handle Task.task_wakeup(<Future finished result=None>)>
+    │    │            │    └ <member '_callback' of 'Handle' objects>
+    │    │            └ <Handle Task.task_wakeup(<Future finished result=None>)>
+    │    └ <member '_context' of 'Handle' objects>
+    └ <Handle Task.task_wakeup(<Future finished result=None>)>
+
+  File "/Users/vasilijlazarev/python/hse/LFT-bot/strategy/macd_strategy.py", line 87, in trading
+    order = await self.exchange.create_market_buy_order(symbol=self.symbol,
+                  │    │        │                              │    └ 'BTCUSDT'
+                  │    │        │                              └ <strategy.macd_strategy.MACDStrategy object at 0x16866b620>
+                  │    │        └ <function BybitExchange.create_market_buy_order at 0x1690d9620>
+                  │    └ <exchange.bybit_exchange.BybitExchange object at 0x16912e420>
+                  └ <strategy.macd_strategy.MACDStrategy object at 0x16866b620>
+
+  File "/Users/vasilijlazarev/python/hse/LFT-bot/exchange/bybit_exchange.py", line 95, in create_market_buy_order
+    self.monitoring.insert_single_order_to_db(order_stm)
+    │    │          │                         └ {'orderId': '7e4dde56-bb60-4049-a2c0-523cfbe5062f', 'exchange': 'bybit', 'symbol': 'BTC/USDT:USDT', 'orderType': 'market', 's...
+    │    │          └ <function Monitoring.insert_single_order_to_db at 0x1690da160>
+    │    └ <monitoring.monitoring.Monitoring object at 0x126c33ce0>
+    └ <exchange.bybit_exchange.BybitExchange object at 0x16912e420>
+
+> File "/Users/vasilijlazarev/python/hse/LFT-bot/monitoring/monitoring.py", line 78, in insert_single_order_to_db
+    self.database.insert_data('orders', data, column_names=column_names)
+    │    │        │                     │                  └ ['orderId', 'exchange', 'symbol', 'price', 'stopPrice', 'qty', 'executedQty', 'totalCost', 'side', 'orderType', 'orderStatus'...
+    │    │        │                     └ [('7e4dde56-bb60-4049-a2c0-523cfbe5062f', 'bybit', 'BTC/USDT:USDT', 74980.9, 0.0, 0.014, 0.014, 999.7512, 'buy', 'market', 'c...
+    │    │        └ <function Database.insert_data at 0x124a11f80>
+    │    └ <database.database.Database object at 0x16917d280>
+    └ <monitoring.monitoring.Monitoring object at 0x126c33ce0>
+
+  File "/Users/vasilijlazarev/python/hse/LFT-bot/database/database.py", line 27, in insert_data
+    result = self.client.insert(table_name, data, column_names=column_names)
+             │    │      │      │           │                  └ ['orderId', 'exchange', 'symbol', 'price', 'stopPrice', 'qty', 'executedQty', 'totalCost', 'side', 'orderType', 'orderStatus'...
+             │    │      │      │           └ [('7e4dde56-bb60-4049-a2c0-523cfbe5062f', 'bybit', 'BTC/USDT:USDT', 74980.9, 0.0, 0.014, 0.014, 999.7512, 'buy', 'market', 'c...
+             │    │      │      └ 'orders'
+             │    │      └ <function Client.insert at 0x12496b4c0>
+             │    └ <clickhouse_connect.driver.httpclient.HttpClient object at 0x1691a2540>
+             └ <database.database.Database object at 0x16917d280>
+
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/clickhouse_connect/driver/client.py", line 543, in insert
+    context = self.create_insert_context(table,
+              │    │                     └ 'orders'
+              │    └ <function Client.create_insert_context at 0x12496b6a0>
+              └ <clickhouse_connect.driver.httpclient.HttpClient object at 0x1691a2540>
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/clickhouse_connect/driver/client.py", line 658, in create_insert_context
+    raise ProgrammingError(f'Unrecognized column {ex} in table {table}') from None
+          │                                                     └ 'orders'
+          └ <class 'clickhouse_connect.driver.exceptions.ProgrammingError'>
+
+clickhouse_connect.driver.exceptions.ProgrammingError: Unrecognized column 'stopPrice' in table orders
+2024-04-09 00:48:57.054 | INFO     | database.database:execute_query:55 - Executed query: ALTER TABLE strategies UPDATE assetsNumber = 0.014, openPositions = True WHERE strategyId = '70220851-ec01-47fa-bdbc-05b574a6324d' with params: {'strategy_id': '70220851-ec01-47fa-bdbc-05b574a6324d'}.
+2024-04-09 00:48:58.711 | INFO     | exchange.bybit_exchange:create_market_stop_loss_order:112 - Order_stm: {'orderId': 'a2772a14-24f5-44af-9769-0c4eb5c68329', 'exchange': 'bybit', 'symbol': 'BTC/USDT:USDT', 'orderType': 'market', 'side': 'sell', 'price': 0.0, 'stopPrice': 57134.2, 'executedQty': 0.0, 'qty': 0.014, 'totalCost': 0.0, 'orderStatus': 'open', 'createdTime': 1712623737562, 'updatedTime': 1712623737562, 'commission': 0.0}
+2024-04-09 00:48:58.723 | ERROR    | monitoring.monitoring:insert_single_order_to_db:82 - Failed to insert order: Unrecognized column 'stopPrice' in table orders
+Traceback (most recent call last):
+
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/threading.py", line 1030, in _bootstrap
+    self._bootstrap_inner()
+    │    └ <function Thread._bootstrap_inner at 0x10524b9c0>
+    └ <Thread(Thread-2 (start_new_event_loop), started daemon 6173667328)>
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/threading.py", line 1073, in _bootstrap_inner
+    self.run()
+    │    └ <function Thread.run at 0x10524b6a0>
+    └ <Thread(Thread-2 (start_new_event_loop), started daemon 6173667328)>
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/threading.py", line 1010, in run
+    self._target(*self._args, **self._kwargs)
+    │    │        │    │        │    └ {}
+    │    │        │    │        └ <Thread(Thread-2 (start_new_event_loop), started daemon 6173667328)>
+    │    │        │    └ ()
+    │    │        └ <Thread(Thread-2 (start_new_event_loop), started daemon 6173667328)>
+    │    └ <function start_strategy.<locals>.start_new_event_loop at 0x169154b80>
+    └ <Thread(Thread-2 (start_new_event_loop), started daemon 6173667328)>
+
+  File "/Users/vasilijlazarev/python/hse/LFT-bot/strategy/strategy_manager.py", line 83, in start_new_event_loop
+    loop.run_until_complete(strategy.trading())
+    │    │                  │        └ <function MACDStrategy.trading at 0x1690ec180>
+    │    │                  └ <strategy.macd_strategy.MACDStrategy object at 0x16866b620>
+    │    └ <function BaseEventLoop.run_until_complete at 0x1056eff60>
+    └ <_UnixSelectorEventLoop running=True closed=False debug=False>
+
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/asyncio/base_events.py", line 672, in run_until_complete
+    self.run_forever()
+    │    └ <function BaseEventLoop.run_forever at 0x1056efec0>
+    └ <_UnixSelectorEventLoop running=True closed=False debug=False>
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/asyncio/base_events.py", line 639, in run_forever
+    self._run_once()
+    │    └ <function BaseEventLoop._run_once at 0x1056fdd00>
+    └ <_UnixSelectorEventLoop running=True closed=False debug=False>
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/asyncio/base_events.py", line 1985, in _run_once
+    handle._run()
+    │      └ <function Handle._run at 0x10563b7e0>
+    └ <Handle Task.task_wakeup(<Future finished result=None>)>
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/asyncio/events.py", line 88, in _run
+    self._context.run(self._callback, *self._args)
+    │    │            │    │           │    └ <member '_args' of 'Handle' objects>
+    │    │            │    │           └ <Handle Task.task_wakeup(<Future finished result=None>)>
+    │    │            │    └ <member '_callback' of 'Handle' objects>
+    │    │            └ <Handle Task.task_wakeup(<Future finished result=None>)>
+    │    └ <member '_context' of 'Handle' objects>
+    └ <Handle Task.task_wakeup(<Future finished result=None>)>
+
+  File "/Users/vasilijlazarev/python/hse/LFT-bot/strategy/macd_strategy.py", line 94, in trading
+    order = await self.exchange.create_market_stop_loss_order(symbol=self.symbol, order_size=order['filled'],
+                  │    │        │                                    │    │                  └ {'info': {'symbol': 'BTCUSDT', 'orderType': 'Market', 'orderLinkId': '', 'slLimitPrice': '0', 'orderId': '7e4dde56-bb60-4049-...
+                  │    │        │                                    │    └ 'BTCUSDT'
+                  │    │        │                                    └ <strategy.macd_strategy.MACDStrategy object at 0x16866b620>
+                  │    │        └ <function BybitExchange.create_market_stop_loss_order at 0x1690d96c0>
+                  │    └ <exchange.bybit_exchange.BybitExchange object at 0x16912e420>
+                  └ <strategy.macd_strategy.MACDStrategy object at 0x16866b620>
+
+  File "/Users/vasilijlazarev/python/hse/LFT-bot/exchange/bybit_exchange.py", line 113, in create_market_stop_loss_order
+    self.monitoring.insert_single_order_to_db(order_stm)
+    │    │          │                         └ {'orderId': 'a2772a14-24f5-44af-9769-0c4eb5c68329', 'exchange': 'bybit', 'symbol': 'BTC/USDT:USDT', 'orderType': 'market', 's...
+    │    │          └ <function Monitoring.insert_single_order_to_db at 0x1690da160>
+    │    └ <monitoring.monitoring.Monitoring object at 0x126c33ce0>
+    └ <exchange.bybit_exchange.BybitExchange object at 0x16912e420>
+
+> File "/Users/vasilijlazarev/python/hse/LFT-bot/monitoring/monitoring.py", line 78, in insert_single_order_to_db
+    self.database.insert_data('orders', data, column_names=column_names)
+    │    │        │                     │                  └ ['orderId', 'exchange', 'symbol', 'price', 'stopPrice', 'qty', 'executedQty', 'totalCost', 'side', 'orderType', 'orderStatus'...
+    │    │        │                     └ [('a2772a14-24f5-44af-9769-0c4eb5c68329', 'bybit', 'BTC/USDT:USDT', 0.0, 57134.2, 0.014, 0.0, 0.0, 'sell', 'market', 'open', ...
+    │    │        └ <function Database.insert_data at 0x124a11f80>
+    │    └ <database.database.Database object at 0x16917d280>
+    └ <monitoring.monitoring.Monitoring object at 0x126c33ce0>
+
+  File "/Users/vasilijlazarev/python/hse/LFT-bot/database/database.py", line 27, in insert_data
+    result = self.client.insert(table_name, data, column_names=column_names)
+             │    │      │      │           │                  └ ['orderId', 'exchange', 'symbol', 'price', 'stopPrice', 'qty', 'executedQty', 'totalCost', 'side', 'orderType', 'orderStatus'...
+             │    │      │      │           └ [('a2772a14-24f5-44af-9769-0c4eb5c68329', 'bybit', 'BTC/USDT:USDT', 0.0, 57134.2, 0.014, 0.0, 0.0, 'sell', 'market', 'open', ...
+             │    │      │      └ 'orders'
+             │    │      └ <function Client.insert at 0x12496b4c0>
+             │    └ <clickhouse_connect.driver.httpclient.HttpClient object at 0x1691a2540>
+             └ <database.database.Database object at 0x16917d280>
+
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/clickhouse_connect/driver/client.py", line 543, in insert
+    context = self.create_insert_context(table,
+              │    │                     └ 'orders'
+              │    └ <function Client.create_insert_context at 0x12496b6a0>
+              └ <clickhouse_connect.driver.httpclient.HttpClient object at 0x1691a2540>
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/clickhouse_connect/driver/client.py", line 658, in create_insert_context
+    raise ProgrammingError(f'Unrecognized column {ex} in table {table}') from None
+          │                                                     └ 'orders'
+          └ <class 'clickhouse_connect.driver.exceptions.ProgrammingError'>
+
+clickhouse_connect.driver.exceptions.ProgrammingError: Unrecognized column 'stopPrice' in table orders
+2024-04-09 00:49:09.424 | INFO     | database.database:execute_query:53 - Executed query: 
+                SELECT * FROM strategies WHERE strategyId == '70220851-ec01-47fa-bdbc-05b574a6324d' 
+                 with params: {'strategy_id': '70220851-ec01-47fa-bdbc-05b574a6324d'}. Columns included.
+2024-04-09 00:49:21.012 | INFO     | database.database:execute_query:53 - Executed query: 
+                SELECT * FROM strategies WHERE strategyId == '70220851-ec01-47fa-bdbc-05b574a6324d' 
+                 with params: {'strategy_id': '70220851-ec01-47fa-bdbc-05b574a6324d'}. Columns included.

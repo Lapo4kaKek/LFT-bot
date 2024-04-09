@@ -1,9 +1,10 @@
 from decimal import *
-
+from loguru import logger
 
 class Monitoring:
     def __init__(self, database):
         self.database = database
+        logger.info(f"Monitoring initialized with database {database.client}")
 
     def insert_orders_history_to_db(self, order_history):
         """
@@ -11,6 +12,7 @@ class Monitoring:
         :param order_history: work in bybit only
         """
         data = []
+        logger.info("Preparing to insert order history")
         # print("Check:")
         # print(order_history['result']['list'])
         # Extract relevant data from each order
@@ -34,6 +36,7 @@ class Monitoring:
             # Insert data into the database
             table_name = 'orders'  # Change this to your actual table name
             self.database.insert_data(table_name, data, column_names)
+        logger.info(f"Inserting the following order history to database: {order_history}")
 
     def insert_single_order_to_db(self, order):
         """
@@ -44,34 +47,41 @@ class Monitoring:
                          'orderType',
                          'orderStatus', 'createdTime', 'updatedTime', 'commission', 'stopPrice']
         if not all(key in order for key in required_keys):
-            print("Some required fields are missing in the order")
+            logger.warning(f"Missing required fields in order: {order}")
             return
 
-        # Preparing data for insertion
-        data = [(
-            order['orderId'],  # order_id
-            order['exchange'],  # exchange (binance or bybit)
-            order['symbol'],  # symbol
-            float(order['price']),  # price
-            float(order['stopPrice']),  # stop loss price
-            float(order['qty']),  # amount
-            float(order['executedQty']),  # executedQty
-            float(order['totalCost']),  # cost
-            order['side'],  # side
-            order['orderType'],  # order_type
-            order['orderStatus'],  # order_status
-            self.database.format_time_to_datetime(order['createdTime']),  # created_time
-            self.database.format_time_to_datetime(order['updatedTime']),  # updated_time
-            float(order['commission'])  # commission
-        )]
+        logger.debug("Inserting the following order into the database: {}", order)
 
-        column_names = ['orderId', 'exchange', 'symbol', 'price', 'stopPrice', 'qty', 'executedQty', 'totalCost',
-                        'side',
-                        'orderType',
-                        'orderStatus', 'createdTime', 'updatedTime', 'commission']
+        try:
+            # Preparing data for insertion
+            data = [(
+                order['orderId'],  # order_id
+                order['exchange'],  # exchange (binance or bybit)
+                order['symbol'],  # symbol
+                float(order['price']),  # price
+                float(order['stopPrice']),  # stop loss price
+                float(order['qty']),  # amount
+                float(order['executedQty']),  # executedQty
+                float(order['totalCost']),  # cost
+                order['side'],  # side
+                order['orderType'],  # order_type
+                order['orderStatus'],  # order_status
+                self.database.format_time_to_datetime(order['createdTime']),  # created_time
+                self.database.format_time_to_datetime(order['updatedTime']),  # updated_time
+                float(order['commission'])  # commission
+            )]
 
-        table_name = 'orders'
-        self.database.insert_data(table_name, data, column_names=column_names)
+            column_names = ['orderId', 'exchange', 'symbol', 'price', 'stopPrice', 'qty', 'executedQty', 'totalCost',
+                            'side',
+                            'orderType',
+                            'orderStatus', 'createdTime', 'updatedTime', 'commission']
+
+            self.database.insert_data('orders', data, column_names=column_names)
+            logger.info(f"Successfully inserted order with ID {order['orderId']}")
+            return
+        except Exception as e:
+            logger.exception(f"Failed to insert order: {e}")
+            return
 
     def link_order_with_strategy(self, order_id, strategy_id):
         """
@@ -80,17 +90,23 @@ class Monitoring:
         :param order_id: Идентификатор ордера.
         :param strategy_id: Идентификатор стратегии.
         """
-        data = [(order_id, strategy_id)]
+        logger.info(f"Linking order {order_id} with strategy {strategy_id}")
+        try:
+            data = [(order_id, strategy_id)]
 
-        column_names = ['orderId', 'strategyId']
+            column_names = ['orderId', 'strategyId']
 
-        self.database.insert_data('order_strategy_link', data, column_names)
+            self.database.insert_data('order_strategy_link', data, column_names)
+        except Exception as e:
+            logger.exception(f"Failed to link order {order_id} with strategy {strategy_id}: {e}")
 
     def insert_strategy_info(self, strategy_info):
         """
         Добавляет информацию о стратегии в ClickHouse.
         :param strategy_info: Информация о стратегии в виде словаря.
         """
+        logger.info(f"Inserting strategy info: {strategy_info['name']}")
+
         data = [(
             strategy_info['strategyId'],
             strategy_info['name'],
@@ -104,12 +120,17 @@ class Monitoring:
             self.database.format_time_to_datetime(strategy_info['createdTime']),
             strategy_info['settings']
         )]
-
-        column_names = ['strategyId', 'name', 'type', 'exchange', 'symbol', 'balance', 'assetsNumber', 'openPositions',
+        column_names = ['strategyId', 'name', 'type', 'exchange', 'symbol', 'balance', 'assetsNumber',
+                        'openPositions',
                         'status',
                         'createdTime', 'settings']
 
-        self.database.insert_data('strategies', data, column_names)
+        try:
+            self.database.insert_data('strategies', data, column_names)
+            logger.info(f"Successfully inserted strategy info for {strategy_info['name']}")
+        except Exception as e:
+            logger.exception(f"Failed to insert strategy info for {strategy_info['name']}: {e}")
+
 
     def get_strategy_info(self, strategy_id):
         """
@@ -210,7 +231,15 @@ class Monitoring:
             )
 
     def delete_all_data(self, table_name):
-        return self.database.delete_all_data(table_name)
+        logger.info(f"Deleting all data from table {table_name}")
+        try:
+            result = self.database.delete_all_data(table_name)
+            logger.info(f"Successfully deleted all data from table {table_name}")
+            return
+        except Exception as e:
+            logger.exception(f"Failed to delete all data from table {table_name}: {e}")
+            return
+
 
     def get_loss_order(self, strategy_id):
         try:
@@ -256,6 +285,7 @@ class Monitoring:
         total_cost = 0
         total_sell = 0
         total_qty = 0
+
         for order in orders:
             # Используйте индексы вместо ключей
             cost = float(order[7])  # Индекс для 'totalCost'

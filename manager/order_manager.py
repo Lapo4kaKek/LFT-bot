@@ -1,12 +1,9 @@
-import asyncio
-import threading
-
 import requests
 import logging
 from decimal import *
+from loguru import logger
 
 lock = threading.Lock()
-
 
 class OrderManager:
     @staticmethod
@@ -15,6 +12,7 @@ class OrderManager:
         Создаёт ордер на покупку.
         """
         with lock:
+            logger.info(f"Placing buy order: Symbol={token_symbol}, Balance={balance}")
             try:
                 ticker = await exchange.get_ticker(token_symbol, 'buy')
                 order = await exchange.create_market_buy_order(strategy_id=strategy_id, symbol=token_symbol,
@@ -24,7 +22,9 @@ class OrderManager:
                 monitoring.update_strategy_info(strategy_id=strategy_id,
                                                 data={'balance': balance - Decimal(order['cost']),
                                                       'assetsNumber': order['filled'], 'openPositions': True})
+                logger.info(f"Buy order placed successfully: {order}")
                 if stop_loss is not None:
+                    logger.info(f"Placing stop loss order: Symbol={token_symbol}, OrderSize={order['filled']}, TriggerPrice={Decimal(ticker[0]) * Decimal(stop_loss)}")
                     stop_loss_order = await exchange.create_market_stop_loss_order(strategy_id=strategy_id,
                                                                                    symbol=token_symbol,
                                                                                    order_size=order['filled'],
@@ -35,7 +35,7 @@ class OrderManager:
                                                                                    })
                 return order
             except Exception as e:
-                print(f"Error placing buy order: {e}")
+                logger.error(f"Error placing buy order: {e}")
                 return None
 
     @staticmethod

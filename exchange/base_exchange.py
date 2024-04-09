@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 import ccxt.async_support as ccxt
-
+from loguru import logger
 
 class BaseExchange(ABC):
     def __init__(self, api_key, api_secret):

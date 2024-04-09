@@ -3,6 +3,7 @@ from .base_exchange import BaseExchange
 from monitoring.monitoring import Monitoring
 from datetime import datetime
 from utils.converter import Converter
+from loguru import logger
 
 class BinanceExchange(BaseExchange):
     """

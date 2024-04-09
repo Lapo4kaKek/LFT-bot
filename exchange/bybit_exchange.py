@@ -14,6 +14,7 @@ import urllib3
 import time
 import uuid
 from urllib.parse import quote_plus
+from loguru import logger
 
 
 class BybitExchange(BaseExchange):
@@ -85,46 +86,58 @@ class BybitExchange(BaseExchange):
         return self.exchange.set_leverage(level, coin)
 
     async def create_market_buy_order(self, strategy_id, symbol, order_size, params={}):
-        response_data = await self.create_order(symbol, 'market', 'buy', order_size, params=params)
-        await asyncio.sleep(1)
-        closed_orders = await self.exchange.fetch_closed_orders(symbol)
-        sorted_by_timestamp = self.exchange.sort_by(closed_orders, 'timestamp', True)
-        order = sorted_by_timestamp[0]
-        if order is not None:
-            order_stm = self.parse_order_to_clickhouse_format_ccxt(order)
-            self.monitoring.insert_single_order_to_db(order_stm)
-            self.monitoring.link_order_with_strategy(order_stm['orderId'], strategy_id)
-            return order
-        else:
-            Exception
+        try:
+            response_data = await self.create_order(symbol, 'market', 'buy', order_size, params=params)
+            await asyncio.sleep(1)
+            closed_orders = await self.exchange.fetch_closed_orders(symbol)
+            sorted_by_timestamp = self.exchange.sort_by(closed_orders, 'timestamp', True)
+            order = sorted_by_timestamp[0]
+            if order is not None:
+                order_stm = self.parse_order_to_clickhouse_format_ccxt(order)
+                self.monitoring.insert_single_order_to_db(order_stm)
+                self.monitoring.link_order_with_strategy(order_stm['orderId'], strategy_id)
+                return order
+            else:
+                raise Exception("No closed orders found.")
+        except Exception as e:
+            logger.error(f"Failed to create market buy order: {e}")
+            raise
 
     async def create_market_sell_order(self, strategy_id, symbol, order_size, params={}):
-        response_data = await self.create_order(symbol, 'market', 'sell', order_size, params=params)
-        await asyncio.sleep(1)
-        closed_orders = await self.exchange.fetch_closed_orders(symbol)
-        sorted_by_timestamp = self.exchange.sort_by(closed_orders, 'timestamp', True)
-        order = sorted_by_timestamp[0]
-        if order is not None:
-            order_stm = self.parse_order_to_clickhouse_format_ccxt(order)
-            self.monitoring.insert_single_order_to_db(order_stm)
-            self.monitoring.link_order_with_strategy(order_stm['orderId'], strategy_id)
-            return order
-        else:
-            Exception
+        try:
+            response_data = await self.create_order(symbol, 'market', 'sell', order_size, params=params)
+            await asyncio.sleep(1)
+            closed_orders = await self.exchange.fetch_closed_orders(symbol)
+            sorted_by_timestamp = self.exchange.sort_by(closed_orders, 'timestamp', True)
+            order = sorted_by_timestamp[0]
+            if order is not None:
+                order_stm = self.parse_order_to_clickhouse_format_ccxt(order)
+                self.monitoring.insert_single_order_to_db(order_stm)
+                self.monitoring.link_order_with_strategy(order_stm['orderId'], strategy_id)
+                return order
+            else:
+                raise Exception("Order not found.")
+        except Exception as e:
+            logger.error(f"Failed to create market sell order: {e}")
+            raise
 
     async def create_market_stop_loss_order(self, strategy_id, symbol, order_size, params={}):
-        response_data = await self.create_order(symbol, 'market', 'sell', order_size, params=params)
-        await asyncio.sleep(1)
-        open_orders = await self.exchange.fetch_open_orders(symbol)
-        sorted_by_timestamp = self.exchange.sort_by(open_orders, 'timestamp', True)
-        order = sorted_by_timestamp[0]
-        if order is not None:
-            order_stm = self.parse_order_to_clickhouse_format_ccxt(order)
-            self.monitoring.insert_single_order_to_db(order_stm)
-            self.monitoring.link_order_with_strategy(order_stm['orderId'], strategy_id)
-            return order
-        else:
-            Exception
+        try:
+            response_data = await self.create_order(symbol, 'market', 'sell', order_size, params=params)
+            await asyncio.sleep(1)
+            open_orders = await self.exchange.fetch_open_orders(symbol)
+            sorted_by_timestamp = self.exchange.sort_by(open_orders, 'timestamp', True)
+            order = sorted_by_timestamp[0]
+            if order is not None:
+                order_stm = self.parse_order_to_clickhouse_format_ccxt(order)
+                self.monitoring.insert_single_order_to_db(order_stm)
+                self.monitoring.link_order_with_strategy(order_stm['orderId'], strategy_id)
+                return order
+            else:
+                raise Exception("No open orders found.")
+        except Exception as e:
+            logger.error(f"Failed to create market stop loss order: {e}")
+            raise
 
     async def cancel_order(self, order_id, symbol):
         try:
