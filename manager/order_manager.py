@@ -1,3 +1,5 @@
+import threading
+
 import requests
 import logging
 from decimal import *
@@ -12,8 +14,8 @@ class OrderManager:
         Создаёт ордер на покупку.
         """
         with lock:
-            logger.info(f"Placing buy order: Symbol={token_symbol}, Balance={balance}")
             try:
+                logger.info(f"Placing buy order: Symbol={token_symbol}, Balance={balance}")
                 ticker = await exchange.get_ticker(token_symbol, 'buy')
                 order = await exchange.create_market_buy_order(strategy_id=strategy_id, symbol=token_symbol,
                                                                order_size=Decimal(
@@ -33,6 +35,7 @@ class OrderManager:
                                                                                            ticker[0]) * Decimal(
                                                                                            stop_loss)
                                                                                    })
+                    logger.info(f"Stop loss order placed successfully: {stop_loss_order}")
                 return order
             except Exception as e:
                 logger.error(f"Error placing buy order: {e}")
@@ -45,6 +48,7 @@ class OrderManager:
         """
         with lock:
             try:
+                logger.info(f"Placing sell order: Symbol={token_symbol}, Balance={balance}, OrderSize={order_size}")
                 loss_id = monitoring.get_loss_order(strategy_id)
                 if loss_id is not None:
                     await exchange.cancel_order(loss_id, token_symbol)
@@ -56,7 +60,7 @@ class OrderManager:
                                                 data={'balance': Decimal(balance) + Decimal(order['cost']),
                                                       'assetsNumber': Decimal(0),
                                                       'openPositions': False})
-
+                logger.info(f"Sell order placed successfully: {order}")
                 return order
             except Exception as e:
                 print(f"Error placing sell order: {e}")

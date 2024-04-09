@@ -214,3 +214,447 @@ clickhouse_connect.driver.exceptions.ProgrammingError: Unrecognized column 'stop
 2024-04-09 00:49:21.012 | INFO     | database.database:execute_query:53 - Executed query: 
                 SELECT * FROM strategies WHERE strategyId == '70220851-ec01-47fa-bdbc-05b574a6324d' 
                  with params: {'strategy_id': '70220851-ec01-47fa-bdbc-05b574a6324d'}. Columns included.
+2024-04-10 02:18:05.830 | INFO     | database.database:create_table:14 - Table orders created or already exists
+2024-04-10 02:18:05.881 | INFO     | database.database:create_table:14 - Table strategies created or already exists
+2024-04-10 02:18:05.931 | INFO     | database.database:create_table:14 - Table order_strategy_link created or already exists
+2024-04-10 02:18:05.931 | INFO     | monitoring.monitoring:__init__:7 - Monitoring initialized with database <clickhouse_connect.driver.httpclient.HttpClient object at 0x000002276C582610>
+2024-04-10 02:18:05.983 | INFO     | database.database:execute_query:53 - Executed query: 
+                SELECT strategyId FROM strategies WHERE status == True 
+                 with params: {}. Columns included.
+2024-04-10 02:18:05.984 | INFO     | __main__:<module>:90 - Bot created!
+2024-04-10 02:18:05.984 | INFO     | __main__:<module>:96 - Starting Thread-3...
+2024-04-10 02:18:05.984 | INFO     | __main__:<module>:104 - Waiting for threads to finish...
+2024-04-10 02:18:32.654 | INFO     | database.database:execute_query:55 - Executed query: 
+                SELECT 
+                    name, type
+                FROM strategies 
+                 with params: {}.
+2024-04-10 02:18:32.700 | INFO     | database.database:execute_query:55 - Executed query: 
+                    SELECT strategyId
+                    FROM strategies 
+                     with params: {}.
+2024-04-10 02:18:34.342 | INFO     | database.database:execute_query:53 - Executed query: 
+                SELECT 
+                    *
+                FROM strategies 
+                WHERE strategyId == 'eabbff9d-866a-4d41-aeb8-81b9047ea86e'
+                 with params: {}. Columns included.
+2024-04-10 02:18:34.402 | INFO     | database.database:execute_query:55 - Executed query: 
+        SELECT 
+            orderId, 
+            exchange, 
+            symbol, 
+            price, 
+            stopPrice,
+            qty, 
+            executedQty, 
+            totalCost, 
+            side, 
+            orderType, 
+            orderStatus, 
+            createdTime, 
+            updatedTime, 
+            commission 
+        FROM orders 
+        INNER JOIN order_strategy_link ON orders.orderId = order_strategy_link.orderId 
+        WHERE order_strategy_link.strategyId = 'eabbff9d-866a-4d41-aeb8-81b9047ea86e'
+         with params: {}.
+2024-04-10 02:20:32.029 | INFO     | database.database:create_table:14 - Table orders created or already exists
+2024-04-10 02:20:32.079 | INFO     | database.database:create_table:14 - Table strategies created or already exists
+2024-04-10 02:20:32.139 | INFO     | database.database:create_table:14 - Table order_strategy_link created or already exists
+2024-04-10 02:20:32.139 | INFO     | monitoring.monitoring:__init__:7 - Monitoring initialized with database <clickhouse_connect.driver.httpclient.HttpClient object at 0x000002573723FE50>
+2024-04-10 02:20:32.190 | INFO     | database.database:execute_query:53 - Executed query: 
+                SELECT strategyId FROM strategies WHERE status == True 
+                 with params: {}. Columns included.
+2024-04-10 02:20:32.191 | INFO     | __main__:<module>:90 - Bot created!
+2024-04-10 02:20:32.192 | INFO     | __main__:<module>:96 - Starting Thread-3...
+2024-04-10 02:20:32.192 | INFO     | __main__:<module>:104 - Waiting for threads to finish...
+2024-04-10 02:20:32.739 | INFO     | database.database:__init__:8 - ClickHouse client initialized with host=localhost, port=8123, username=admin
+2024-04-10 02:20:32.739 | INFO     | monitoring.monitoring:__init__:7 - Monitoring initialized with database <clickhouse_connect.driver.httpclient.HttpClient object at 0x000002573718AB50>
+2024-04-10 02:20:32.792 | INFO     | database.database:execute_query:53 - Executed query: 
+                SELECT * FROM strategies WHERE strategyId == 'eabbff9d-866a-4d41-aeb8-81b9047ea86e' 
+                 with params: {}. Columns included.
+2024-04-10 02:20:32.852 | INFO     | database.database:execute_query:55 - Executed query: ALTER TABLE strategies UPDATE status = True WHERE strategyId = 'eabbff9d-866a-4d41-aeb8-81b9047ea86e' with params: {}.
+2024-04-10 02:20:32.862 | INFO     | database.database:execute_query:53 - Executed query: 
+                SELECT * FROM strategies WHERE strategyId == 'eabbff9d-866a-4d41-aeb8-81b9047ea86e' 
+                 with params: {}. Columns included.
+2024-04-10 02:20:32.913 | INFO     | database.database:execute_query:55 - Executed query: 
+                    SELECT TOP 1 orders.orderId
+                    FROM order_strategy_link 
+                    INNER JOIN orders ON orders.orderId = order_strategy_link.orderId 
+                    WHERE order_strategy_link.strategyId = 'eabbff9d-866a-4d41-aeb8-81b9047ea86e'
+                    ORDER BY orders.createdTime DESC
+                     with params: {}.
+2024-04-10 02:20:32.913 | INFO     | database.database:execute_query:53 - Executed query: 
+                SELECT 
+                    *
+                FROM strategies 
+                WHERE strategyId == 'eabbff9d-866a-4d41-aeb8-81b9047ea86e'
+                 with params: {}. Columns included.
+2024-04-10 02:20:32.963 | INFO     | database.database:execute_query:53 - Executed query: 
+                SELECT * FROM strategies WHERE strategyId == 'eabbff9d-866a-4d41-aeb8-81b9047ea86e' 
+                 with params: {}. Columns included.
+2024-04-10 02:20:32.972 | INFO     | database.database:execute_query:55 - Executed query: 
+        SELECT 
+            orderId, 
+            exchange, 
+            symbol, 
+            price, 
+            stopPrice,
+            qty, 
+            executedQty, 
+            totalCost, 
+            side, 
+            orderType, 
+            orderStatus, 
+            createdTime, 
+            updatedTime, 
+            commission 
+        FROM orders 
+        INNER JOIN order_strategy_link ON orders.orderId = order_strategy_link.orderId 
+        WHERE order_strategy_link.strategyId = 'eabbff9d-866a-4d41-aeb8-81b9047ea86e'
+         with params: {}.
+2024-04-10 02:20:33.762 | INFO     | database.database:execute_query:55 - Executed query: 
+                SELECT 
+                    name, type
+                FROM strategies 
+                 with params: {}.
+2024-04-10 02:20:33.811 | INFO     | database.database:execute_query:55 - Executed query: 
+                    SELECT strategyId
+                    FROM strategies 
+                     with params: {}.
+2024-04-10 02:20:34.902 | INFO     | database.database:execute_query:53 - Executed query: 
+                SELECT 
+                    *
+                FROM strategies 
+                WHERE strategyId == 'a0e7198f-3ec6-45e3-b77a-04741d372d96'
+                 with params: {}. Columns included.
+2024-04-10 02:20:34.963 | INFO     | database.database:execute_query:55 - Executed query: 
+        SELECT 
+            orderId, 
+            exchange, 
+            symbol, 
+            price, 
+            stopPrice,
+            qty, 
+            executedQty, 
+            totalCost, 
+            side, 
+            orderType, 
+            orderStatus, 
+            createdTime, 
+            updatedTime, 
+            commission 
+        FROM orders 
+        INNER JOIN order_strategy_link ON orders.orderId = order_strategy_link.orderId 
+        WHERE order_strategy_link.strategyId = 'a0e7198f-3ec6-45e3-b77a-04741d372d96'
+         with params: {}.
+2024-04-10 02:20:36.070 | INFO     | database.database:__init__:8 - ClickHouse client initialized with host=localhost, port=8123, username=admin
+2024-04-10 02:20:36.070 | INFO     | monitoring.monitoring:__init__:7 - Monitoring initialized with database <clickhouse_connect.driver.httpclient.HttpClient object at 0x000002573728F520>
+2024-04-10 02:20:36.122 | INFO     | database.database:execute_query:53 - Executed query: 
+                SELECT * FROM strategies WHERE strategyId == 'a0e7198f-3ec6-45e3-b77a-04741d372d96' 
+                 with params: {}. Columns included.
+2024-04-10 02:20:36.199 | INFO     | database.database:execute_query:55 - Executed query: ALTER TABLE strategies UPDATE status = True WHERE strategyId = 'a0e7198f-3ec6-45e3-b77a-04741d372d96' with params: {}.
+2024-04-10 02:20:36.252 | INFO     | database.database:execute_query:53 - Executed query: 
+                SELECT 
+                    *
+                FROM strategies 
+                WHERE strategyId == 'a0e7198f-3ec6-45e3-b77a-04741d372d96'
+                 with params: {}. Columns included.
+2024-04-10 02:20:36.253 | INFO     | database.database:execute_query:53 - Executed query: 
+                SELECT * FROM strategies WHERE strategyId == 'a0e7198f-3ec6-45e3-b77a-04741d372d96' 
+                 with params: {}. Columns included.
+2024-04-10 02:20:36.302 | INFO     | database.database:execute_query:55 - Executed query: 
+        SELECT 
+            orderId, 
+            exchange, 
+            symbol, 
+            price, 
+            stopPrice,
+            qty, 
+            executedQty, 
+            totalCost, 
+            side, 
+            orderType, 
+            orderStatus, 
+            createdTime, 
+            updatedTime, 
+            commission 
+        FROM orders 
+        INNER JOIN order_strategy_link ON orders.orderId = order_strategy_link.orderId 
+        WHERE order_strategy_link.strategyId = 'a0e7198f-3ec6-45e3-b77a-04741d372d96'
+         with params: {}.
+2024-04-10 02:20:37.361 | INFO     | database.database:execute_query:55 - Executed query: 
+                    SELECT TOP 1 orders.orderId
+                    FROM order_strategy_link 
+                    INNER JOIN orders ON orders.orderId = order_strategy_link.orderId 
+                    WHERE order_strategy_link.strategyId = 'a0e7198f-3ec6-45e3-b77a-04741d372d96'
+                    ORDER BY orders.createdTime DESC
+                     with params: {}.
+2024-04-10 02:20:37.412 | INFO     | database.database:execute_query:53 - Executed query: 
+                SELECT * FROM strategies WHERE strategyId == 'a0e7198f-3ec6-45e3-b77a-04741d372d96' 
+                 with params: {}. Columns included.
+2024-04-10 02:20:40.856 | INFO     | manager.order_manager:place_buy_order:18 - Placing buy order: Symbol=BTC/USDT, Balance=992.42356290999981968125
+2024-04-10 02:20:42.944 | INFO     | database.database:insert_data:28 - Inserted data into table orders: [('1660683002625484800', 'bybit', 'BTC/USDT', 68141.0, 0.0, 0.014564, 0.014564, 992.405524, 'buy', 'market', 'closed', datetime.datetime(2024, 4, 10, 2, 20, 40, 912000), datetime.datetime(2024, 4, 10, 2, 20, 40, 916000), 1.16512e-05)] with result: <clickhouse_connect.driver.summary.QuerySummary object at 0x000002573908BCD0>
+2024-04-10 02:20:42.944 | INFO     | monitoring.monitoring:insert_single_order_to_db:80 - Successfully inserted order with ID 1660683002625484800
+2024-04-10 02:20:42.945 | INFO     | monitoring.monitoring:link_order_with_strategy:93 - Linking order 1660683002625484800 with strategy eabbff9d-866a-4d41-aeb8-81b9047ea86e
+2024-04-10 02:20:43.039 | INFO     | database.database:insert_data:28 - Inserted data into table order_strategy_link: [('1660683002625484800', 'eabbff9d-866a-4d41-aeb8-81b9047ea86e')] with result: <clickhouse_connect.driver.summary.QuerySummary object at 0x000002573908BE20>
+2024-04-10 02:20:43.093 | INFO     | database.database:execute_query:55 - Executed query: ALTER TABLE strategies UPDATE balance = 0.01803890999980569685946553946, assetsNumber = 0.014564, openPositions = True WHERE strategyId = 'eabbff9d-866a-4d41-aeb8-81b9047ea86e' with params: {}.
+2024-04-10 02:20:43.093 | INFO     | manager.order_manager:place_buy_order:27 - Buy order placed successfully: {'info': {'symbol': 'BTCUSDT', 'orderType': 'Market', 'orderLinkId': '1660683002625484801', 'slLimitPrice': '0', 'orderId': '1660683002625484800', 'cancelType': 'UNKNOWN', 'avgPrice': '68141', 'stopOrderType': '', 'lastPriceOnCreated': '', 'orderStatus': 'Filled', 'takeProfit': '0', 'cumExecValue': '992.40552400', 'smpType': 'None', 'triggerDirection': '0', 'blockTradeId': '', 'rejectReason': 'EC_NoError', 'isLeverage': '0', 'price': '0', 'orderIv': '', 'createdTime': '1712704840912', 'tpTriggerBy': '', 'positionIdx': '0', 'trailingPercentage': '0', 'timeInForce': 'IOC', 'leavesValue': '48.92076728', 'basePrice': '68095.26', 'updatedTime': '1712704840916', 'side': 'Buy', 'smpGroup': '0', 'triggerPrice': '0.00', 'tpLimitPrice': '0', 'trailingValue': '0', 'cumExecFee': '0.0000116512', 'slTriggerBy': '', 'leavesQty': '0.000000', 'closeOnTrigger': False, 'placeType': '', 'cumExecQty': '0.014564', 'reduceOnly': False, 'activationPrice': '0', 'qty': '0.014564', 'stopLoss': '0', 'marketUnit': 'baseCoin', 'smpOrderId': '', 'triggerBy': '', 'nextPageCursor': '1660683002625484800%3A1712704840912%2C1660667199846967296%3A1712702957074'}, 'id': '1660683002625484800', 'clientOrderId': '1660683002625484801', 'timestamp': 1712704840912, 'datetime': '2024-04-09T23:20:40.912Z', 'lastTradeTimestamp': 1712704840916, 'lastUpdateTimestamp': 1712704840916, 'symbol': 'BTC/USDT', 'type': 'market', 'timeInForce': 'IOC', 'postOnly': False, 'reduceOnly': False, 'side': 'buy', 'price': 68141.0, 'stopPrice': None, 'triggerPrice': None, 'takeProfitPrice': None, 'stopLossPrice': None, 'amount': 0.014564, 'cost': 992.405524, 'average': 68141.0, 'filled': 0.014564, 'remaining': 0.0, 'status': 'closed', 'fee': {'cost': '0.0000116512', 'currency': 'BTC'}, 'trades': [], 'fees': [{'cost': 1.16512e-05, 'currency': 'BTC'}]}
+2024-04-10 02:20:43.094 | INFO     | manager.order_manager:place_buy_order:29 - Placing stop loss order: Symbol=BTC/USDT, OrderSize=0.014564, TriggerPrice=54512.80000000000302606828484
+2024-04-10 02:20:44.842 | INFO     | database.database:insert_data:28 - Inserted data into table orders: [('1660683018597394432', 'bybit', 'BTC/USDT', 0.0, 54512.8, 0.014564, 0.0, 0.0, 'sell', 'market', 'open', datetime.datetime(2024, 4, 10, 2, 20, 42, 816000), datetime.datetime(2024, 4, 10, 2, 20, 42, 816000), 0.0)] with result: <clickhouse_connect.driver.summary.QuerySummary object at 0x0000025738EA1FD0>
+2024-04-10 02:20:44.842 | INFO     | monitoring.monitoring:insert_single_order_to_db:80 - Successfully inserted order with ID 1660683018597394432
+2024-04-10 02:20:44.842 | INFO     | monitoring.monitoring:link_order_with_strategy:93 - Linking order 1660683018597394432 with strategy eabbff9d-866a-4d41-aeb8-81b9047ea86e
+2024-04-10 02:20:44.942 | INFO     | database.database:insert_data:28 - Inserted data into table order_strategy_link: [('1660683018597394432', 'eabbff9d-866a-4d41-aeb8-81b9047ea86e')] with result: <clickhouse_connect.driver.summary.QuerySummary object at 0x000002573728F370>
+2024-04-10 02:20:44.942 | INFO     | manager.order_manager:place_buy_order:38 - Stop loss order placed successfully: {'info': {'symbol': 'BTCUSDT', 'orderType': 'Market', 'orderLinkId': '1660683018597394433', 'slLimitPrice': '0', 'orderId': '1660683018597394432', 'cancelType': 'UNKNOWN', 'avgPrice': '0.00', 'stopOrderType': 'Stop', 'lastPriceOnCreated': '', 'orderStatus': 'Untriggered', 'takeProfit': '0', 'cumExecValue': '0.00000000', 'smpType': 'None', 'triggerDirection': '0', 'blockTradeId': '', 'isLeverage': '0', 'rejectReason': 'EC_NoError', 'price': '0', 'orderIv': '', 'createdTime': '1712704842816', 'tpTriggerBy': '', 'positionIdx': '0', 'trailingPercentage': '0', 'timeInForce': 'IOC', 'leavesValue': '0.00000000', 'basePrice': '68095.26', 'updatedTime': '1712704842816', 'side': 'Sell', 'smpGroup': '0', 'triggerPrice': '54512.80', 'tpLimitPrice': '0', 'trailingValue': '0', 'cumExecFee': '0', 'leavesQty': '0.014564', 'slTriggerBy': '', 'closeOnTrigger': False, 'placeType': '', 'cumExecQty': '0.000000', 'reduceOnly': False, 'activationPrice': '0', 'qty': '0.014564', 'stopLoss': '0', 'marketUnit': 'baseCoin', 'smpOrderId': '', 'triggerBy': '', 'nextPageCursor': '1660683018597394432%3A1712704842816%2C1660683018597394432%3A1712704842816'}, 'id': '1660683018597394432', 'clientOrderId': '1660683018597394433', 'timestamp': 1712704842816, 'datetime': '2024-04-09T23:20:42.816Z', 'lastTradeTimestamp': 1712704842816, 'lastUpdateTimestamp': 1712704842816, 'symbol': 'BTC/USDT', 'type': 'market', 'timeInForce': 'IOC', 'postOnly': False, 'reduceOnly': False, 'side': 'sell', 'price': None, 'stopPrice': 54512.8, 'triggerPrice': 54512.8, 'takeProfitPrice': None, 'stopLossPrice': None, 'amount': 0.014564, 'cost': 0.0, 'average': None, 'filled': 0.0, 'remaining': 0.014564, 'status': 'open', 'fee': {'cost': '0', 'currency': 'BTC'}, 'trades': [], 'fees': [{'cost': 0.0, 'currency': 'BTC'}]}
+2024-04-10 02:20:44.942 | INFO     | manager.order_manager:place_buy_order:18 - Placing buy order: Symbol=BTC/USDT, Balance=979.74277835999984749377
+2024-04-10 02:20:47.010 | INFO     | database.database:insert_data:28 - Inserted data into table orders: [('1660683036792285184', 'bybit', 'BTC/USDT', 68141.0, 0.0, 0.014378, 0.014378, 979.731298, 'buy', 'market', 'closed', datetime.datetime(2024, 4, 10, 2, 20, 44, 985000), datetime.datetime(2024, 4, 10, 2, 20, 44, 990000), 1.15024e-05)] with result: <clickhouse_connect.driver.summary.QuerySummary object at 0x000002573908BCD0>
+2024-04-10 02:20:47.010 | INFO     | monitoring.monitoring:insert_single_order_to_db:80 - Successfully inserted order with ID 1660683036792285184
+2024-04-10 02:20:47.010 | INFO     | monitoring.monitoring:link_order_with_strategy:93 - Linking order 1660683036792285184 with strategy a0e7198f-3ec6-45e3-b77a-04741d372d96
+2024-04-10 02:20:47.109 | INFO     | database.database:insert_data:28 - Inserted data into table order_strategy_link: [('1660683036792285184', 'a0e7198f-3ec6-45e3-b77a-04741d372d96')] with result: <clickhouse_connect.driver.summary.QuerySummary object at 0x0000025738EB25E0>
+2024-04-10 02:20:47.165 | INFO     | database.database:execute_query:55 - Executed query: ALTER TABLE strategies UPDATE balance = 0.01148035999980952054721157670, assetsNumber = 0.014378, openPositions = True WHERE strategyId = 'a0e7198f-3ec6-45e3-b77a-04741d372d96' with params: {}.
+2024-04-10 02:20:47.166 | INFO     | manager.order_manager:place_buy_order:27 - Buy order placed successfully: {'info': {'symbol': 'BTCUSDT', 'orderType': 'Market', 'orderLinkId': '1660683036792285185', 'slLimitPrice': '0', 'orderId': '1660683036792285184', 'cancelType': 'UNKNOWN', 'avgPrice': '68141', 'stopOrderType': '', 'lastPriceOnCreated': '', 'orderStatus': 'Filled', 'takeProfit': '0', 'cumExecValue': '979.73129800', 'smpType': 'None', 'triggerDirection': '0', 'blockTradeId': '', 'rejectReason': 'EC_NoError', 'isLeverage': '0', 'price': '0', 'orderIv': '', 'createdTime': '1712704844985', 'tpTriggerBy': '', 'positionIdx': '0', 'trailingPercentage': '0', 'timeInForce': 'IOC', 'leavesValue': '48.98656490', 'basePrice': '68141', 'updatedTime': '1712704844990', 'side': 'Buy', 'smpGroup': '0', 'triggerPrice': '0.00', 'tpLimitPrice': '0', 'trailingValue': '0', 'cumExecFee': '0.0000115024', 'slTriggerBy': '', 'leavesQty': '0.000000', 'closeOnTrigger': False, 'placeType': '', 'cumExecQty': '0.014378', 'reduceOnly': False, 'activationPrice': '0', 'qty': '0.014378', 'stopLoss': '0', 'marketUnit': 'baseCoin', 'smpOrderId': '', 'triggerBy': '', 'nextPageCursor': '1660683036792285184%3A1712704844985%2C1660667229743966208%3A1712702960638'}, 'id': '1660683036792285184', 'clientOrderId': '1660683036792285185', 'timestamp': 1712704844985, 'datetime': '2024-04-09T23:20:44.985Z', 'lastTradeTimestamp': 1712704844990, 'lastUpdateTimestamp': 1712704844990, 'symbol': 'BTC/USDT', 'type': 'market', 'timeInForce': 'IOC', 'postOnly': False, 'reduceOnly': False, 'side': 'buy', 'price': 68141.0, 'stopPrice': None, 'triggerPrice': None, 'takeProfitPrice': None, 'stopLossPrice': None, 'amount': 0.014378, 'cost': 979.731298, 'average': 68141.0, 'filled': 0.014378, 'remaining': 0.0, 'status': 'closed', 'fee': {'cost': '0.0000115024', 'currency': 'BTC'}, 'trades': [], 'fees': [{'cost': 1.15024e-05, 'currency': 'BTC'}]}
+2024-04-10 02:20:47.166 | INFO     | manager.order_manager:place_buy_order:29 - Placing stop loss order: Symbol=BTC/USDT, OrderSize=0.014378, TriggerPrice=54512.80000000000302606828484
+2024-04-10 02:20:48.922 | INFO     | database.database:insert_data:28 - Inserted data into table orders: [('1660683052789360640', 'bybit', 'BTC/USDT', 0.0, 54512.8, 0.014378, 0.0, 0.0, 'sell', 'market', 'open', datetime.datetime(2024, 4, 10, 2, 20, 46, 892000), datetime.datetime(2024, 4, 10, 2, 20, 46, 892000), 0.0)] with result: <clickhouse_connect.driver.summary.QuerySummary object at 0x0000025738EB27F0>
+2024-04-10 02:20:48.922 | INFO     | monitoring.monitoring:insert_single_order_to_db:80 - Successfully inserted order with ID 1660683052789360640
+2024-04-10 02:20:48.922 | INFO     | monitoring.monitoring:link_order_with_strategy:93 - Linking order 1660683052789360640 with strategy a0e7198f-3ec6-45e3-b77a-04741d372d96
+2024-04-10 02:20:49.030 | INFO     | database.database:insert_data:28 - Inserted data into table order_strategy_link: [('1660683052789360640', 'a0e7198f-3ec6-45e3-b77a-04741d372d96')] with result: <clickhouse_connect.driver.summary.QuerySummary object at 0x0000025738EB2460>
+2024-04-10 02:20:49.030 | INFO     | manager.order_manager:place_buy_order:38 - Stop loss order placed successfully: {'info': {'symbol': 'BTCUSDT', 'orderType': 'Market', 'orderLinkId': '1660683052789360641', 'slLimitPrice': '0', 'orderId': '1660683052789360640', 'cancelType': 'UNKNOWN', 'avgPrice': '0.00', 'stopOrderType': 'Stop', 'lastPriceOnCreated': '', 'orderStatus': 'Untriggered', 'takeProfit': '0', 'cumExecValue': '0.00000000', 'smpType': 'None', 'triggerDirection': '0', 'blockTradeId': '', 'isLeverage': '0', 'rejectReason': 'EC_NoError', 'price': '0', 'orderIv': '', 'createdTime': '1712704846892', 'tpTriggerBy': '', 'positionIdx': '0', 'trailingPercentage': '0', 'timeInForce': 'IOC', 'leavesValue': '0.00000000', 'basePrice': '68140.99', 'updatedTime': '1712704846892', 'side': 'Sell', 'smpGroup': '0', 'triggerPrice': '54512.80', 'tpLimitPrice': '0', 'trailingValue': '0', 'cumExecFee': '0', 'leavesQty': '0.014378', 'slTriggerBy': '', 'closeOnTrigger': False, 'placeType': '', 'cumExecQty': '0.000000', 'reduceOnly': False, 'activationPrice': '0', 'qty': '0.014378', 'stopLoss': '0', 'marketUnit': 'baseCoin', 'smpOrderId': '', 'triggerBy': '', 'nextPageCursor': '1660683052789360640%3A1712704846892%2C1660683018597394432%3A1712704842816'}, 'id': '1660683052789360640', 'clientOrderId': '1660683052789360641', 'timestamp': 1712704846892, 'datetime': '2024-04-09T23:20:46.892Z', 'lastTradeTimestamp': 1712704846892, 'lastUpdateTimestamp': 1712704846892, 'symbol': 'BTC/USDT', 'type': 'market', 'timeInForce': 'IOC', 'postOnly': False, 'reduceOnly': False, 'side': 'sell', 'price': None, 'stopPrice': 54512.8, 'triggerPrice': 54512.8, 'takeProfitPrice': None, 'stopLossPrice': None, 'amount': 0.014378, 'cost': 0.0, 'average': None, 'filled': 0.0, 'remaining': 0.014378, 'status': 'open', 'fee': {'cost': '0', 'currency': 'BTC'}, 'trades': [], 'fees': [{'cost': 0.0, 'currency': 'BTC'}]}
+2024-04-10 02:20:55.003 | INFO     | database.database:execute_query:53 - Executed query: 
+                SELECT * FROM strategies WHERE strategyId == 'eabbff9d-866a-4d41-aeb8-81b9047ea86e' 
+                 with params: {}. Columns included.
+2024-04-10 02:20:55.062 | INFO     | database.database:execute_query:55 - Executed query: 
+                    SELECT TOP 1 orders.orderId
+                    FROM order_strategy_link 
+                    INNER JOIN orders ON orders.orderId = order_strategy_link.orderId 
+                    WHERE order_strategy_link.strategyId = 'eabbff9d-866a-4d41-aeb8-81b9047ea86e'
+                    ORDER BY orders.createdTime DESC
+                     with params: {}.
+2024-04-10 02:20:55.111 | INFO     | database.database:execute_query:53 - Executed query: 
+                SELECT * FROM strategies WHERE strategyId == 'eabbff9d-866a-4d41-aeb8-81b9047ea86e' 
+                 with params: {}. Columns included.
+2024-04-10 02:20:56.154 | INFO     | manager.order_manager:place_sell_order:51 - Placing sell order: Symbol=BTC/USDT, Balance=0.01803890999980569600, OrderSize=0.01456400000000000000
+2024-04-10 02:20:56.214 | INFO     | database.database:execute_query:55 - Executed query: 
+                    SELECT TOP 1 orders.orderId
+                    FROM order_strategy_link 
+                    INNER JOIN orders ON orders.orderId = order_strategy_link.orderId 
+                    WHERE order_strategy_link.strategyId = 'eabbff9d-866a-4d41-aeb8-81b9047ea86e'
+                    ORDER BY orders.createdTime DESC
+                     with params: {}.
+2024-04-10 02:20:56.611 | INFO     | database.database:execute_query:55 - Executed query: ALTER TABLE orders UPDATE orderStatus = 'closed' WHERE orderId = '1660683018597394432' with params: {}.
+2024-04-10 02:20:58.820 | INFO     | database.database:insert_data:28 - Inserted data into table orders: [('1660683131440949248', 'bybit', 'BTC/USDT', 68095.26, 0.0, 0.014564, 0.014564, 991.73936664, 'sell', 'market', 'closed', datetime.datetime(2024, 4, 10, 2, 20, 56, 268000), datetime.datetime(2024, 4, 10, 2, 20, 56, 272000), 0.793391493312)] with result: <clickhouse_connect.driver.summary.QuerySummary object at 0x000002573908B9D0>
+2024-04-10 02:20:58.820 | INFO     | monitoring.monitoring:insert_single_order_to_db:80 - Successfully inserted order with ID 1660683131440949248
+2024-04-10 02:20:58.820 | INFO     | monitoring.monitoring:link_order_with_strategy:93 - Linking order 1660683131440949248 with strategy eabbff9d-866a-4d41-aeb8-81b9047ea86e
+2024-04-10 02:20:58.923 | INFO     | database.database:insert_data:28 - Inserted data into table order_strategy_link: [('1660683131440949248', 'eabbff9d-866a-4d41-aeb8-81b9047ea86e')] with result: <clickhouse_connect.driver.summary.QuerySummary object at 0x000002573908B730>
+2024-04-10 02:20:58.984 | INFO     | database.database:execute_query:55 - Executed query: ALTER TABLE strategies UPDATE balance = 991.7574055499997631383418380, assetsNumber = 0, openPositions = False WHERE strategyId = 'eabbff9d-866a-4d41-aeb8-81b9047ea86e' with params: {}.
+2024-04-10 02:20:58.985 | INFO     | manager.order_manager:place_sell_order:63 - Sell order placed successfully: {'info': {'symbol': 'BTCUSDT', 'orderType': 'Market', 'orderLinkId': '1660683131440949249', 'slLimitPrice': '0', 'orderId': '1660683131440949248', 'cancelType': 'UNKNOWN', 'avgPrice': '68095.26', 'stopOrderType': '', 'lastPriceOnCreated': '', 'orderStatus': 'Filled', 'takeProfit': '0', 'cumExecValue': '991.73936664', 'smpType': 'None', 'triggerDirection': '0', 'blockTradeId': '', 'rejectReason': 'EC_NoError', 'isLeverage': '0', 'price': '0', 'orderIv': '', 'createdTime': '1712704856268', 'tpTriggerBy': '', 'positionIdx': '0', 'trailingPercentage': '0', 'timeInForce': 'IOC', 'leavesValue': '0.00000000', 'basePrice': '68095.26', 'updatedTime': '1712704856272', 'side': 'Sell', 'smpGroup': '0', 'triggerPrice': '0.00', 'tpLimitPrice': '0', 'trailingValue': '0', 'cumExecFee': '0.793391493312', 'slTriggerBy': '', 'leavesQty': '0.000000', 'closeOnTrigger': False, 'placeType': '', 'cumExecQty': '0.014564', 'reduceOnly': False, 'activationPrice': '0', 'qty': '0.014564', 'stopLoss': '0', 'marketUnit': 'baseCoin', 'smpOrderId': '', 'triggerBy': '', 'nextPageCursor': '1660683131440949248%3A1712704856268%2C1660667316968712192%3A1712702971036'}, 'id': '1660683131440949248', 'clientOrderId': '1660683131440949249', 'timestamp': 1712704856268, 'datetime': '2024-04-09T23:20:56.268Z', 'lastTradeTimestamp': 1712704856272, 'lastUpdateTimestamp': 1712704856272, 'symbol': 'BTC/USDT', 'type': 'market', 'timeInForce': 'IOC', 'postOnly': False, 'reduceOnly': False, 'side': 'sell', 'price': 68095.26, 'stopPrice': None, 'triggerPrice': None, 'takeProfitPrice': None, 'stopLossPrice': None, 'amount': 0.014564, 'cost': 991.73936664, 'average': 68095.26, 'filled': 0.014564, 'remaining': 0.0, 'status': 'closed', 'fee': {'cost': '0.793391493312', 'currency': 'USDT'}, 'trades': [], 'fees': [{'cost': 0.793391493312, 'currency': 'USDT'}]}
+2024-04-10 02:20:59.096 | INFO     | database.database:execute_query:53 - Executed query: 
+                SELECT * FROM strategies WHERE strategyId == 'a0e7198f-3ec6-45e3-b77a-04741d372d96' 
+                 with params: {}. Columns included.
+2024-04-10 02:20:59.144 | INFO     | database.database:execute_query:55 - Executed query: 
+                    SELECT TOP 1 orders.orderId
+                    FROM order_strategy_link 
+                    INNER JOIN orders ON orders.orderId = order_strategy_link.orderId 
+                    WHERE order_strategy_link.strategyId = 'a0e7198f-3ec6-45e3-b77a-04741d372d96'
+                    ORDER BY orders.createdTime DESC
+                     with params: {}.
+2024-04-10 02:20:59.192 | INFO     | database.database:execute_query:53 - Executed query: 
+                SELECT * FROM strategies WHERE strategyId == 'a0e7198f-3ec6-45e3-b77a-04741d372d96' 
+                 with params: {}. Columns included.
+2024-04-10 02:21:00.214 | INFO     | manager.order_manager:place_sell_order:51 - Placing sell order: Symbol=BTC/USDT, Balance=0.01148035999980952064, OrderSize=0.01437800000000000000
+2024-04-10 02:21:00.261 | INFO     | database.database:execute_query:55 - Executed query: 
+                    SELECT TOP 1 orders.orderId
+                    FROM order_strategy_link 
+                    INNER JOIN orders ON orders.orderId = order_strategy_link.orderId 
+                    WHERE order_strategy_link.strategyId = 'a0e7198f-3ec6-45e3-b77a-04741d372d96'
+                    ORDER BY orders.createdTime DESC
+                     with params: {}.
+2024-04-10 02:21:00.654 | INFO     | database.database:execute_query:55 - Executed query: ALTER TABLE orders UPDATE orderStatus = 'closed' WHERE orderId = '1660683052789360640' with params: {}.
+2024-04-10 02:21:02.882 | INFO     | database.database:insert_data:28 - Inserted data into table orders: [('1660683165398034432', 'bybit', 'BTC/USDT', 68095.26, 0.0, 0.014378, 0.014378, 979.07364828, 'sell', 'market', 'closed', datetime.datetime(2024, 4, 10, 2, 21, 0, 316000), datetime.datetime(2024, 4, 10, 2, 21, 0, 320000), 0.783258918624)] with result: <clickhouse_connect.driver.summary.QuerySummary object at 0x0000025738EB2700>
+2024-04-10 02:21:02.882 | INFO     | monitoring.monitoring:insert_single_order_to_db:80 - Successfully inserted order with ID 1660683165398034432
+2024-04-10 02:21:02.882 | INFO     | monitoring.monitoring:link_order_with_strategy:93 - Linking order 1660683165398034432 with strategy a0e7198f-3ec6-45e3-b77a-04741d372d96
+2024-04-10 02:21:02.990 | INFO     | database.database:insert_data:28 - Inserted data into table order_strategy_link: [('1660683165398034432', 'a0e7198f-3ec6-45e3-b77a-04741d372d96')] with result: <clickhouse_connect.driver.summary.QuerySummary object at 0x0000025738EA1070>
+2024-04-10 02:21:03.050 | INFO     | database.database:execute_query:55 - Executed query: ALTER TABLE strategies UPDATE balance = 979.0851286399998526076968380, assetsNumber = 0, openPositions = False WHERE strategyId = 'a0e7198f-3ec6-45e3-b77a-04741d372d96' with params: {}.
+2024-04-10 02:21:03.051 | INFO     | manager.order_manager:place_sell_order:63 - Sell order placed successfully: {'info': {'symbol': 'BTCUSDT', 'orderType': 'Market', 'orderLinkId': '1660683165398034433', 'slLimitPrice': '0', 'orderId': '1660683165398034432', 'cancelType': 'UNKNOWN', 'avgPrice': '68095.26', 'stopOrderType': '', 'lastPriceOnCreated': '', 'orderStatus': 'Filled', 'takeProfit': '0', 'cumExecValue': '979.07364828', 'smpType': 'None', 'triggerDirection': '0', 'blockTradeId': '', 'rejectReason': 'EC_NoError', 'isLeverage': '0', 'price': '0', 'orderIv': '', 'createdTime': '1712704860316', 'tpTriggerBy': '', 'positionIdx': '0', 'trailingPercentage': '0', 'timeInForce': 'IOC', 'leavesValue': '0.00000000', 'basePrice': '68095.26', 'updatedTime': '1712704860320', 'side': 'Sell', 'smpGroup': '0', 'triggerPrice': '0.00', 'tpLimitPrice': '0', 'trailingValue': '0', 'cumExecFee': '0.783258918624', 'slTriggerBy': '', 'leavesQty': '0.000000', 'closeOnTrigger': False, 'placeType': '', 'cumExecQty': '0.014378', 'reduceOnly': False, 'activationPrice': '0', 'qty': '0.014378', 'stopLoss': '0', 'marketUnit': 'baseCoin', 'smpOrderId': '', 'triggerBy': '', 'nextPageCursor': '1660683165398034432%3A1712704860316%2C1660667365337425920%3A1712702976802'}, 'id': '1660683165398034432', 'clientOrderId': '1660683165398034433', 'timestamp': 1712704860316, 'datetime': '2024-04-09T23:21:00.316Z', 'lastTradeTimestamp': 1712704860320, 'lastUpdateTimestamp': 1712704860320, 'symbol': 'BTC/USDT', 'type': 'market', 'timeInForce': 'IOC', 'postOnly': False, 'reduceOnly': False, 'side': 'sell', 'price': 68095.26, 'stopPrice': None, 'triggerPrice': None, 'takeProfitPrice': None, 'stopLossPrice': None, 'amount': 0.014378, 'cost': 979.07364828, 'average': 68095.26, 'filled': 0.014378, 'remaining': 0.0, 'status': 'closed', 'fee': {'cost': '0.783258918624', 'currency': 'USDT'}, 'trades': [], 'fees': [{'cost': 0.783258918624, 'currency': 'USDT'}]}
+2024-04-10 02:21:09.052 | INFO     | database.database:execute_query:53 - Executed query: 
+                SELECT * FROM strategies WHERE strategyId == 'eabbff9d-866a-4d41-aeb8-81b9047ea86e' 
+                 with params: {}. Columns included.
+2024-04-10 02:21:09.115 | INFO     | database.database:execute_query:55 - Executed query: 
+                    SELECT TOP 1 orders.orderId
+                    FROM order_strategy_link 
+                    INNER JOIN orders ON orders.orderId = order_strategy_link.orderId 
+                    WHERE order_strategy_link.strategyId = 'eabbff9d-866a-4d41-aeb8-81b9047ea86e'
+                    ORDER BY orders.createdTime DESC
+                     with params: {}.
+2024-04-10 02:21:09.173 | INFO     | database.database:execute_query:53 - Executed query: 
+                SELECT * FROM strategies WHERE strategyId == 'eabbff9d-866a-4d41-aeb8-81b9047ea86e' 
+                 with params: {}. Columns included.
+2024-04-10 02:21:09.852 | INFO     | manager.order_manager:place_buy_order:18 - Placing buy order: Symbol=BTC/USDT, Balance=991.75740554999985343232
+2024-04-10 02:21:12.470 | INFO     | database.database:insert_data:28 - Inserted data into table orders: [('1660683248822740992', 'bybit', 'BTC/USDT', 68141.0, 0.0, 0.014554, 0.014554, 991.724114, 'buy', 'market', 'closed', datetime.datetime(2024, 4, 10, 2, 21, 10, 261000), datetime.datetime(2024, 4, 10, 2, 21, 10, 265000), 1.16432e-05)] with result: <clickhouse_connect.driver.summary.QuerySummary object at 0x000002573728F2B0>
+2024-04-10 02:21:12.470 | INFO     | monitoring.monitoring:insert_single_order_to_db:80 - Successfully inserted order with ID 1660683248822740992
+2024-04-10 02:21:12.470 | INFO     | monitoring.monitoring:link_order_with_strategy:93 - Linking order 1660683248822740992 with strategy eabbff9d-866a-4d41-aeb8-81b9047ea86e
+2024-04-10 02:21:12.581 | INFO     | database.database:insert_data:28 - Inserted data into table order_strategy_link: [('1660683248822740992', 'eabbff9d-866a-4d41-aeb8-81b9047ea86e')] with result: <clickhouse_connect.driver.summary.QuerySummary object at 0x000002573727AD00>
+2024-04-10 02:21:12.635 | INFO     | database.database:execute_query:55 - Executed query: ALTER TABLE strategies UPDATE balance = 0.03329154999986749674606821656, assetsNumber = 0.014554, openPositions = True WHERE strategyId = 'eabbff9d-866a-4d41-aeb8-81b9047ea86e' with params: {}.
+2024-04-10 02:21:12.635 | INFO     | manager.order_manager:place_buy_order:27 - Buy order placed successfully: {'info': {'symbol': 'BTCUSDT', 'orderType': 'Market', 'orderLinkId': '1660683248822740993', 'slLimitPrice': '0', 'orderId': '1660683248822740992', 'cancelType': 'UNKNOWN', 'avgPrice': '68141', 'stopOrderType': '', 'lastPriceOnCreated': '', 'orderStatus': 'Filled', 'takeProfit': '0', 'cumExecValue': '991.72411400', 'smpType': 'None', 'triggerDirection': '0', 'blockTradeId': '', 'rejectReason': 'EC_NoError', 'isLeverage': '0', 'price': '0', 'orderIv': '', 'createdTime': '1712704870261', 'tpTriggerBy': '', 'positionIdx': '0', 'trailingPercentage': '0', 'timeInForce': 'IOC', 'leavesValue': '49.58620570', 'basePrice': '68141', 'updatedTime': '1712704870265', 'side': 'Buy', 'smpGroup': '0', 'triggerPrice': '0.00', 'tpLimitPrice': '0', 'trailingValue': '0', 'cumExecFee': '0.0000116432', 'slTriggerBy': '', 'leavesQty': '0.000000', 'closeOnTrigger': False, 'placeType': '', 'cumExecQty': '0.014554', 'reduceOnly': False, 'activationPrice': '0', 'qty': '0.014554', 'stopLoss': '0', 'marketUnit': 'baseCoin', 'smpOrderId': '', 'triggerBy': '', 'nextPageCursor': '1660683248822740992%3A1712704870261%2C1660667458601969664%3A1712702987920'}, 'id': '1660683248822740992', 'clientOrderId': '1660683248822740993', 'timestamp': 1712704870261, 'datetime': '2024-04-09T23:21:10.261Z', 'lastTradeTimestamp': 1712704870265, 'lastUpdateTimestamp': 1712704870265, 'symbol': 'BTC/USDT', 'type': 'market', 'timeInForce': 'IOC', 'postOnly': False, 'reduceOnly': False, 'side': 'buy', 'price': 68141.0, 'stopPrice': None, 'triggerPrice': None, 'takeProfitPrice': None, 'stopLossPrice': None, 'amount': 0.014554, 'cost': 991.724114, 'average': 68141.0, 'filled': 0.014554, 'remaining': 0.0, 'status': 'closed', 'fee': {'cost': '0.0000116432', 'currency': 'BTC'}, 'trades': [], 'fees': [{'cost': 1.16432e-05, 'currency': 'BTC'}]}
+2024-04-10 02:21:12.635 | INFO     | manager.order_manager:place_buy_order:29 - Placing stop loss order: Symbol=BTC/USDT, OrderSize=0.014554, TriggerPrice=54512.80000000000302606828484
+2024-04-10 02:21:13.098 | INFO     | database.database:execute_query:53 - Executed query: 
+                SELECT * FROM strategies WHERE strategyId == 'a0e7198f-3ec6-45e3-b77a-04741d372d96' 
+                 with params: {}. Columns included.
+2024-04-10 02:21:14.379 | INFO     | database.database:insert_data:28 - Inserted data into table orders: [('1660683266262657024', 'bybit', 'BTC/USDT', 0.0, 54512.8, 0.014554, 0.0, 0.0, 'sell', 'market', 'open', datetime.datetime(2024, 4, 10, 2, 21, 12, 340000), datetime.datetime(2024, 4, 10, 2, 21, 12, 340000), 0.0)] with result: <clickhouse_connect.driver.summary.QuerySummary object at 0x000002573728FEB0>
+2024-04-10 02:21:14.380 | INFO     | monitoring.monitoring:insert_single_order_to_db:80 - Successfully inserted order with ID 1660683266262657024
+2024-04-10 02:21:14.380 | INFO     | monitoring.monitoring:link_order_with_strategy:93 - Linking order 1660683266262657024 with strategy eabbff9d-866a-4d41-aeb8-81b9047ea86e
+2024-04-10 02:21:14.479 | INFO     | database.database:insert_data:28 - Inserted data into table order_strategy_link: [('1660683266262657024', 'eabbff9d-866a-4d41-aeb8-81b9047ea86e')] with result: <clickhouse_connect.driver.summary.QuerySummary object at 0x000002573728F8E0>
+2024-04-10 02:21:14.479 | INFO     | manager.order_manager:place_buy_order:38 - Stop loss order placed successfully: {'info': {'symbol': 'BTCUSDT', 'orderType': 'Market', 'orderLinkId': '1660683266262657025', 'slLimitPrice': '0', 'orderId': '1660683266262657024', 'cancelType': 'UNKNOWN', 'avgPrice': '0.00', 'stopOrderType': 'Stop', 'lastPriceOnCreated': '', 'orderStatus': 'Untriggered', 'takeProfit': '0', 'cumExecValue': '0.00000000', 'smpType': 'None', 'triggerDirection': '0', 'blockTradeId': '', 'isLeverage': '0', 'rejectReason': 'EC_NoError', 'price': '0', 'orderIv': '', 'createdTime': '1712704872340', 'tpTriggerBy': '', 'positionIdx': '0', 'trailingPercentage': '0', 'timeInForce': 'IOC', 'leavesValue': '0.00000000', 'basePrice': '68095.26', 'updatedTime': '1712704872340', 'side': 'Sell', 'smpGroup': '0', 'triggerPrice': '54512.80', 'tpLimitPrice': '0', 'trailingValue': '0', 'cumExecFee': '0', 'leavesQty': '0.014554', 'slTriggerBy': '', 'closeOnTrigger': False, 'placeType': '', 'cumExecQty': '0.000000', 'reduceOnly': False, 'activationPrice': '0', 'qty': '0.014554', 'stopLoss': '0', 'marketUnit': 'baseCoin', 'smpOrderId': '', 'triggerBy': '', 'nextPageCursor': '1660683266262657024%3A1712704872340%2C1660683266262657024%3A1712704872340'}, 'id': '1660683266262657024', 'clientOrderId': '1660683266262657025', 'timestamp': 1712704872340, 'datetime': '2024-04-09T23:21:12.340Z', 'lastTradeTimestamp': 1712704872340, 'lastUpdateTimestamp': 1712704872340, 'symbol': 'BTC/USDT', 'type': 'market', 'timeInForce': 'IOC', 'postOnly': False, 'reduceOnly': False, 'side': 'sell', 'price': None, 'stopPrice': 54512.8, 'triggerPrice': 54512.8, 'takeProfitPrice': None, 'stopLossPrice': None, 'amount': 0.014554, 'cost': 0.0, 'average': None, 'filled': 0.0, 'remaining': 0.014554, 'status': 'open', 'fee': {'cost': '0', 'currency': 'BTC'}, 'trades': [], 'fees': [{'cost': 0.0, 'currency': 'BTC'}]}
+2024-04-10 02:21:14.545 | INFO     | database.database:execute_query:55 - Executed query: 
+                    SELECT TOP 1 orders.orderId
+                    FROM order_strategy_link 
+                    INNER JOIN orders ON orders.orderId = order_strategy_link.orderId 
+                    WHERE order_strategy_link.strategyId = 'a0e7198f-3ec6-45e3-b77a-04741d372d96'
+                    ORDER BY orders.createdTime DESC
+                     with params: {}.
+2024-04-10 02:21:14.603 | INFO     | database.database:execute_query:53 - Executed query: 
+                SELECT * FROM strategies WHERE strategyId == 'a0e7198f-3ec6-45e3-b77a-04741d372d96' 
+                 with params: {}. Columns included.
+2024-04-10 02:21:15.639 | INFO     | manager.order_manager:place_buy_order:18 - Placing buy order: Symbol=BTC/USDT, Balance=979.08512863999993318213
+2024-04-10 02:21:18.061 | INFO     | database.database:insert_data:28 - Inserted data into table orders: [('1660683297250174976', 'bybit', 'BTC/USDT', 68141.0, 0.0, 0.014368, 0.014368, 979.049888, 'buy', 'market', 'closed', datetime.datetime(2024, 4, 10, 2, 21, 16, 34000), datetime.datetime(2024, 4, 10, 2, 21, 16, 39000), 1.14944e-05)] with result: <clickhouse_connect.driver.summary.QuerySummary object at 0x00000257372D5940>
+2024-04-10 02:21:18.061 | INFO     | monitoring.monitoring:insert_single_order_to_db:80 - Successfully inserted order with ID 1660683297250174976
+2024-04-10 02:21:18.061 | INFO     | monitoring.monitoring:link_order_with_strategy:93 - Linking order 1660683297250174976 with strategy a0e7198f-3ec6-45e3-b77a-04741d372d96
+2024-04-10 02:21:18.179 | INFO     | database.database:insert_data:28 - Inserted data into table order_strategy_link: [('1660683297250174976', 'a0e7198f-3ec6-45e3-b77a-04741d372d96')] with result: <clickhouse_connect.driver.summary.QuerySummary object at 0x00000257372D58E0>
+2024-04-10 02:21:18.255 | INFO     | database.database:execute_query:55 - Executed query: ALTER TABLE strategies UPDATE balance = 0.03524063999992325772381425381, assetsNumber = 0.014368, openPositions = True WHERE strategyId = 'a0e7198f-3ec6-45e3-b77a-04741d372d96' with params: {}.
+2024-04-10 02:21:18.255 | INFO     | manager.order_manager:place_buy_order:27 - Buy order placed successfully: {'info': {'symbol': 'BTCUSDT', 'orderType': 'Market', 'orderLinkId': '1660683297250174977', 'slLimitPrice': '0', 'orderId': '1660683297250174976', 'cancelType': 'UNKNOWN', 'avgPrice': '68141', 'stopOrderType': '', 'lastPriceOnCreated': '', 'orderStatus': 'Filled', 'takeProfit': '0', 'cumExecValue': '979.04988800', 'smpType': 'None', 'triggerDirection': '0', 'blockTradeId': '', 'rejectReason': 'EC_NoError', 'isLeverage': '0', 'price': '0', 'orderIv': '', 'createdTime': '1712704876034', 'tpTriggerBy': '', 'positionIdx': '0', 'trailingPercentage': '0', 'timeInForce': 'IOC', 'leavesValue': '48.95249440', 'basePrice': '68141', 'updatedTime': '1712704876039', 'side': 'Buy', 'smpGroup': '0', 'triggerPrice': '0.00', 'tpLimitPrice': '0', 'trailingValue': '0', 'cumExecFee': '0.0000114944', 'slTriggerBy': '', 'leavesQty': '0.000000', 'closeOnTrigger': False, 'placeType': '', 'cumExecQty': '0.014368', 'reduceOnly': False, 'activationPrice': '0', 'qty': '0.014368', 'stopLoss': '0', 'marketUnit': 'baseCoin', 'smpOrderId': '', 'triggerBy': '', 'nextPageCursor': '1660683297250174976%3A1712704876034%2C1660667488540911616%3A1712702991489'}, 'id': '1660683297250174976', 'clientOrderId': '1660683297250174977', 'timestamp': 1712704876034, 'datetime': '2024-04-09T23:21:16.034Z', 'lastTradeTimestamp': 1712704876039, 'lastUpdateTimestamp': 1712704876039, 'symbol': 'BTC/USDT', 'type': 'market', 'timeInForce': 'IOC', 'postOnly': False, 'reduceOnly': False, 'side': 'buy', 'price': 68141.0, 'stopPrice': None, 'triggerPrice': None, 'takeProfitPrice': None, 'stopLossPrice': None, 'amount': 0.014368, 'cost': 979.049888, 'average': 68141.0, 'filled': 0.014368, 'remaining': 0.0, 'status': 'closed', 'fee': {'cost': '0.0000114944', 'currency': 'BTC'}, 'trades': [], 'fees': [{'cost': 1.14944e-05, 'currency': 'BTC'}]}
+2024-04-10 02:21:18.255 | INFO     | manager.order_manager:place_buy_order:29 - Placing stop loss order: Symbol=BTC/USDT, OrderSize=0.014368, TriggerPrice=54512.80000000000302606828484
+2024-04-10 02:21:20.370 | INFO     | database.database:insert_data:28 - Inserted data into table orders: [('1660683313431799808', 'bybit', 'BTC/USDT', 0.0, 54512.8, 0.014368, 0.0, 0.0, 'sell', 'market', 'open', datetime.datetime(2024, 4, 10, 2, 21, 17, 963000), datetime.datetime(2024, 4, 10, 2, 21, 17, 963000), 0.0)] with result: <clickhouse_connect.driver.summary.QuerySummary object at 0x00000257372D58E0>
+2024-04-10 02:21:20.371 | INFO     | monitoring.monitoring:insert_single_order_to_db:80 - Successfully inserted order with ID 1660683313431799808
+2024-04-10 02:21:20.371 | INFO     | monitoring.monitoring:link_order_with_strategy:93 - Linking order 1660683313431799808 with strategy a0e7198f-3ec6-45e3-b77a-04741d372d96
+2024-04-10 02:21:20.470 | INFO     | database.database:insert_data:28 - Inserted data into table order_strategy_link: [('1660683313431799808', 'a0e7198f-3ec6-45e3-b77a-04741d372d96')] with result: <clickhouse_connect.driver.summary.QuerySummary object at 0x00000257372D5310>
+2024-04-10 02:21:20.470 | INFO     | manager.order_manager:place_buy_order:38 - Stop loss order placed successfully: {'info': {'symbol': 'BTCUSDT', 'orderType': 'Market', 'orderLinkId': '1660683313431799809', 'slLimitPrice': '0', 'orderId': '1660683313431799808', 'cancelType': 'UNKNOWN', 'avgPrice': '0.00', 'stopOrderType': 'Stop', 'lastPriceOnCreated': '', 'orderStatus': 'Untriggered', 'takeProfit': '0', 'cumExecValue': '0.00000000', 'smpType': 'None', 'triggerDirection': '0', 'blockTradeId': '', 'isLeverage': '0', 'rejectReason': 'EC_NoError', 'price': '0', 'orderIv': '', 'createdTime': '1712704877963', 'tpTriggerBy': '', 'positionIdx': '0', 'trailingPercentage': '0', 'timeInForce': 'IOC', 'leavesValue': '0.00000000', 'basePrice': '68095.26', 'updatedTime': '1712704877963', 'side': 'Sell', 'smpGroup': '0', 'triggerPrice': '54512.80', 'tpLimitPrice': '0', 'trailingValue': '0', 'cumExecFee': '0', 'leavesQty': '0.014368', 'slTriggerBy': '', 'closeOnTrigger': False, 'placeType': '', 'cumExecQty': '0.000000', 'reduceOnly': False, 'activationPrice': '0', 'qty': '0.014368', 'stopLoss': '0', 'marketUnit': 'baseCoin', 'smpOrderId': '', 'triggerBy': '', 'nextPageCursor': '1660683313431799808%3A1712704877963%2C1660683266262657024%3A1712704872340'}, 'id': '1660683313431799808', 'clientOrderId': '1660683313431799809', 'timestamp': 1712704877963, 'datetime': '2024-04-09T23:21:17.963Z', 'lastTradeTimestamp': 1712704877963, 'lastUpdateTimestamp': 1712704877963, 'symbol': 'BTC/USDT', 'type': 'market', 'timeInForce': 'IOC', 'postOnly': False, 'reduceOnly': False, 'side': 'sell', 'price': None, 'stopPrice': 54512.8, 'triggerPrice': 54512.8, 'takeProfitPrice': None, 'stopLossPrice': None, 'amount': 0.014368, 'cost': 0.0, 'average': None, 'filled': 0.0, 'remaining': 0.014368, 'status': 'open', 'fee': {'cost': '0', 'currency': 'BTC'}, 'trades': [], 'fees': [{'cost': 0.0, 'currency': 'BTC'}]}
+2024-04-10 02:21:24.543 | INFO     | database.database:execute_query:53 - Executed query: 
+                SELECT * FROM strategies WHERE strategyId == 'eabbff9d-866a-4d41-aeb8-81b9047ea86e' 
+                 with params: {}. Columns included.
+2024-04-10 02:21:24.591 | INFO     | database.database:execute_query:55 - Executed query: 
+                    SELECT TOP 1 orders.orderId
+                    FROM order_strategy_link 
+                    INNER JOIN orders ON orders.orderId = order_strategy_link.orderId 
+                    WHERE order_strategy_link.strategyId = 'eabbff9d-866a-4d41-aeb8-81b9047ea86e'
+                    ORDER BY orders.createdTime DESC
+                     with params: {}.
+2024-04-10 02:21:24.642 | INFO     | database.database:execute_query:53 - Executed query: 
+                SELECT * FROM strategies WHERE strategyId == 'eabbff9d-866a-4d41-aeb8-81b9047ea86e' 
+                 with params: {}. Columns included.
+2024-04-10 02:21:25.724 | INFO     | manager.order_manager:place_sell_order:51 - Placing sell order: Symbol=BTC/USDT, Balance=0.03329154999986749952, OrderSize=0.01455400000000000000
+2024-04-10 02:21:25.771 | INFO     | database.database:execute_query:55 - Executed query: 
+                    SELECT TOP 1 orders.orderId
+                    FROM order_strategy_link 
+                    INNER JOIN orders ON orders.orderId = order_strategy_link.orderId 
+                    WHERE order_strategy_link.strategyId = 'eabbff9d-866a-4d41-aeb8-81b9047ea86e'
+                    ORDER BY orders.createdTime DESC
+                     with params: {}.
+2024-04-10 02:21:26.162 | INFO     | database.database:execute_query:55 - Executed query: ALTER TABLE orders UPDATE orderStatus = 'closed' WHERE orderId = '1660683266262657024' with params: {}.
+2024-04-10 02:21:28.040 | INFO     | database.database:insert_data:28 - Inserted data into table orders: [('1660683379332704256', 'bybit', 'BTC/USDT', 68140.96, 0.0, 0.014554, 0.014554, 991.72362862, 'sell', 'market', 'closed', datetime.datetime(2024, 4, 10, 2, 21, 25, 820000), datetime.datetime(2024, 4, 10, 2, 21, 25, 823000), 0.793378902896)] with result: <clickhouse_connect.driver.summary.QuerySummary object at 0x000002573718AAF0>
+2024-04-10 02:21:28.040 | INFO     | monitoring.monitoring:insert_single_order_to_db:80 - Successfully inserted order with ID 1660683379332704256
+2024-04-10 02:21:28.040 | INFO     | monitoring.monitoring:link_order_with_strategy:93 - Linking order 1660683379332704256 with strategy eabbff9d-866a-4d41-aeb8-81b9047ea86e
+2024-04-10 02:21:28.139 | INFO     | database.database:insert_data:28 - Inserted data into table order_strategy_link: [('1660683379332704256', 'eabbff9d-866a-4d41-aeb8-81b9047ea86e')] with result: <clickhouse_connect.driver.summary.QuerySummary object at 0x000002573728FAF0>
+2024-04-10 02:21:28.193 | INFO     | database.database:execute_query:55 - Executed query: ALTER TABLE strategies UPDATE balance = 991.7569201699998670000982694, assetsNumber = 0, openPositions = False WHERE strategyId = 'eabbff9d-866a-4d41-aeb8-81b9047ea86e' with params: {}.
+2024-04-10 02:21:28.193 | INFO     | manager.order_manager:place_sell_order:63 - Sell order placed successfully: {'info': {'symbol': 'BTCUSDT', 'orderType': 'Market', 'orderLinkId': '1660683379341092864', 'slLimitPrice': '0', 'orderId': '1660683379332704256', 'cancelType': 'UNKNOWN', 'avgPrice': '68140.96', 'stopOrderType': '', 'lastPriceOnCreated': '', 'orderStatus': 'Filled', 'takeProfit': '0', 'cumExecValue': '991.72362862', 'smpType': 'None', 'triggerDirection': '0', 'blockTradeId': '', 'rejectReason': 'EC_NoError', 'isLeverage': '0', 'price': '0', 'orderIv': '', 'createdTime': '1712704885820', 'tpTriggerBy': '', 'positionIdx': '0', 'trailingPercentage': '0', 'timeInForce': 'IOC', 'leavesValue': '0.00000000', 'basePrice': '68140.99', 'updatedTime': '1712704885823', 'side': 'Sell', 'smpGroup': '0', 'triggerPrice': '0.00', 'tpLimitPrice': '0', 'trailingValue': '0', 'cumExecFee': '0.793378902896', 'slTriggerBy': '', 'leavesQty': '0.000000', 'closeOnTrigger': False, 'placeType': '', 'cumExecQty': '0.014554', 'reduceOnly': False, 'activationPrice': '0', 'qty': '0.014554', 'stopLoss': '0', 'marketUnit': 'baseCoin', 'smpOrderId': '', 'triggerBy': '', 'nextPageCursor': '1660683379332704256%3A1712704885820%2C1660667578835888128%3A1712703002253'}, 'id': '1660683379332704256', 'clientOrderId': '1660683379341092864', 'timestamp': 1712704885820, 'datetime': '2024-04-09T23:21:25.820Z', 'lastTradeTimestamp': 1712704885823, 'lastUpdateTimestamp': 1712704885823, 'symbol': 'BTC/USDT', 'type': 'market', 'timeInForce': 'IOC', 'postOnly': False, 'reduceOnly': False, 'side': 'sell', 'price': 68140.96, 'stopPrice': None, 'triggerPrice': None, 'takeProfitPrice': None, 'stopLossPrice': None, 'amount': 0.014554, 'cost': 991.72362862, 'average': 68140.96, 'filled': 0.014554, 'remaining': 0.0, 'status': 'closed', 'fee': {'cost': '0.793378902896', 'currency': 'USDT'}, 'trades': [], 'fees': [{'cost': 0.793378902896, 'currency': 'USDT'}]}
+2024-04-10 02:21:30.533 | INFO     | database.database:execute_query:53 - Executed query: 
+                SELECT * FROM strategies WHERE strategyId == 'a0e7198f-3ec6-45e3-b77a-04741d372d96' 
+                 with params: {}. Columns included.
+2024-04-10 02:21:30.582 | INFO     | database.database:execute_query:55 - Executed query: 
+                    SELECT TOP 1 orders.orderId
+                    FROM order_strategy_link 
+                    INNER JOIN orders ON orders.orderId = order_strategy_link.orderId 
+                    WHERE order_strategy_link.strategyId = 'a0e7198f-3ec6-45e3-b77a-04741d372d96'
+                    ORDER BY orders.createdTime DESC
+                     with params: {}.
+2024-04-10 02:21:30.634 | INFO     | database.database:execute_query:53 - Executed query: 
+                SELECT * FROM strategies WHERE strategyId == 'a0e7198f-3ec6-45e3-b77a-04741d372d96' 
+                 with params: {}. Columns included.
+2024-04-10 02:21:31.654 | INFO     | manager.order_manager:place_sell_order:51 - Placing sell order: Symbol=BTC/USDT, Balance=0.03524063999992326144, OrderSize=0.01436800000000000000
+2024-04-10 02:21:31.707 | INFO     | database.database:execute_query:55 - Executed query: 
+                    SELECT TOP 1 orders.orderId
+                    FROM order_strategy_link 
+                    INNER JOIN orders ON orders.orderId = order_strategy_link.orderId 
+                    WHERE order_strategy_link.strategyId = 'a0e7198f-3ec6-45e3-b77a-04741d372d96'
+                    ORDER BY orders.createdTime DESC
+                     with params: {}.
+2024-04-10 02:21:32.473 | INFO     | database.database:execute_query:55 - Executed query: ALTER TABLE orders UPDATE orderStatus = 'closed' WHERE orderId = '1660683313431799808' with params: {}.
+2024-04-10 02:21:34.710 | INFO     | database.database:insert_data:28 - Inserted data into table orders: [('1660683432222877696', 'bybit', 'BTC/USDT', 68140.96, 0.0, 0.014368, 0.014368, 979.04945412, 'sell', 'market', 'closed', datetime.datetime(2024, 4, 10, 2, 21, 32, 124000), datetime.datetime(2024, 4, 10, 2, 21, 32, 128000), 0.783239563296)] with result: <clickhouse_connect.driver.summary.QuerySummary object at 0x000002573728FE20>
+2024-04-10 02:21:34.710 | INFO     | monitoring.monitoring:insert_single_order_to_db:80 - Successfully inserted order with ID 1660683432222877696
+2024-04-10 02:21:34.711 | INFO     | monitoring.monitoring:link_order_with_strategy:93 - Linking order 1660683432222877696 with strategy a0e7198f-3ec6-45e3-b77a-04741d372d96
+2024-04-10 02:21:34.820 | INFO     | database.database:insert_data:28 - Inserted data into table order_strategy_link: [('1660683432222877696', 'a0e7198f-3ec6-45e3-b77a-04741d372d96')] with result: <clickhouse_connect.driver.summary.QuerySummary object at 0x000002573728F910>
+2024-04-10 02:21:34.872 | INFO     | database.database:execute_query:55 - Executed query: ALTER TABLE strategies UPDATE balance = 979.0846947599998735692688399, assetsNumber = 0, openPositions = False WHERE strategyId = 'a0e7198f-3ec6-45e3-b77a-04741d372d96' with params: {}.
+2024-04-10 02:21:34.873 | INFO     | manager.order_manager:place_sell_order:63 - Sell order placed successfully: {'info': {'symbol': 'BTCUSDT', 'orderType': 'Market', 'orderLinkId': '1660683432222877697', 'slLimitPrice': '0', 'orderId': '1660683432222877696', 'cancelType': 'UNKNOWN', 'avgPrice': '68140.96', 'stopOrderType': '', 'lastPriceOnCreated': '', 'orderStatus': 'Filled', 'takeProfit': '0', 'cumExecValue': '979.04945412', 'smpType': 'None', 'triggerDirection': '0', 'blockTradeId': '', 'rejectReason': 'EC_NoError', 'isLeverage': '0', 'price': '0', 'orderIv': '', 'createdTime': '1712704892124', 'tpTriggerBy': '', 'positionIdx': '0', 'trailingPercentage': '0', 'timeInForce': 'IOC', 'leavesValue': '0.00000000', 'basePrice': '68140.99', 'updatedTime': '1712704892128', 'side': 'Sell', 'smpGroup': '0', 'triggerPrice': '0.00', 'tpLimitPrice': '0', 'trailingValue': '0', 'cumExecFee': '0.783239563296', 'slTriggerBy': '', 'leavesQty': '0.000000', 'closeOnTrigger': False, 'placeType': '', 'cumExecQty': '0.014368', 'reduceOnly': False, 'activationPrice': '0', 'qty': '0.014368', 'stopLoss': '0', 'marketUnit': 'baseCoin', 'smpOrderId': '', 'triggerBy': '', 'nextPageCursor': '1660683432222877696%3A1712704892124%2C1660667630501324800%3A1712703008412'}, 'id': '1660683432222877696', 'clientOrderId': '1660683432222877697', 'timestamp': 1712704892124, 'datetime': '2024-04-09T23:21:32.124Z', 'lastTradeTimestamp': 1712704892128, 'lastUpdateTimestamp': 1712704892128, 'symbol': 'BTC/USDT', 'type': 'market', 'timeInForce': 'IOC', 'postOnly': False, 'reduceOnly': False, 'side': 'sell', 'price': 68140.96, 'stopPrice': None, 'triggerPrice': None, 'takeProfitPrice': None, 'stopLossPrice': None, 'amount': 0.014368, 'cost': 979.04945412, 'average': 68140.96, 'filled': 0.014368, 'remaining': 0.0, 'status': 'closed', 'fee': {'cost': '0.783239563296', 'currency': 'USDT'}, 'trades': [], 'fees': [{'cost': 0.783239563296, 'currency': 'USDT'}]}
+2024-04-10 02:21:38.246 | INFO     | database.database:execute_query:53 - Executed query: 
+                SELECT * FROM strategies WHERE strategyId == 'eabbff9d-866a-4d41-aeb8-81b9047ea86e' 
+                 with params: {}. Columns included.
+2024-04-10 02:21:38.305 | INFO     | database.database:execute_query:55 - Executed query: 
+                    SELECT TOP 1 orders.orderId
+                    FROM order_strategy_link 
+                    INNER JOIN orders ON orders.orderId = order_strategy_link.orderId 
+                    WHERE order_strategy_link.strategyId = 'eabbff9d-866a-4d41-aeb8-81b9047ea86e'
+                    ORDER BY orders.createdTime DESC
+                     with params: {}.
+2024-04-10 02:21:38.354 | INFO     | database.database:execute_query:53 - Executed query: 
+                SELECT * FROM strategies WHERE strategyId == 'eabbff9d-866a-4d41-aeb8-81b9047ea86e' 
+                 with params: {}. Columns included.
+2024-04-10 02:21:39.035 | INFO     | manager.order_manager:place_buy_order:18 - Placing buy order: Symbol=BTC/USDT, Balance=991.75692016999987153664
+2024-04-10 02:21:41.473 | INFO     | database.database:insert_data:28 - Inserted data into table orders: [('1660683493610711040', 'bybit', 'BTC/USDT', 68356.32, 0.0, 0.014508, 0.014508, 991.71349776, 'buy', 'market', 'closed', datetime.datetime(2024, 4, 10, 2, 21, 39, 442000), datetime.datetime(2024, 4, 10, 2, 21, 39, 446000), 1.16064e-05)] with result: <clickhouse_connect.driver.summary.QuerySummary object at 0x00000257372D5070>
+2024-04-10 02:21:41.474 | INFO     | monitoring.monitoring:insert_single_order_to_db:80 - Successfully inserted order with ID 1660683493610711040
+2024-04-10 02:21:41.474 | INFO     | monitoring.monitoring:link_order_with_strategy:93 - Linking order 1660683493610711040 with strategy eabbff9d-866a-4d41-aeb8-81b9047ea86e
+2024-04-10 02:21:41.570 | INFO     | database.database:insert_data:28 - Inserted data into table order_strategy_link: [('1660683493610711040', 'eabbff9d-866a-4d41-aeb8-81b9047ea86e')] with result: <clickhouse_connect.driver.summary.QuerySummary object at 0x00000257372D5760>
+2024-04-10 02:21:41.633 | INFO     | database.database:execute_query:55 - Executed query: ALTER TABLE strategies UPDATE balance = 0.04342240999987588562538514972, assetsNumber = 0.014508, openPositions = True WHERE strategyId = 'eabbff9d-866a-4d41-aeb8-81b9047ea86e' with params: {}.
+2024-04-10 02:21:41.633 | INFO     | manager.order_manager:place_buy_order:27 - Buy order placed successfully: {'info': {'symbol': 'BTCUSDT', 'orderType': 'Market', 'orderLinkId': '1660683493610711041', 'slLimitPrice': '0', 'orderId': '1660683493610711040', 'cancelType': 'UNKNOWN', 'avgPrice': '68356.32', 'stopOrderType': '', 'lastPriceOnCreated': '', 'orderStatus': 'Filled', 'takeProfit': '0', 'cumExecValue': '991.71349776', 'smpType': 'None', 'triggerDirection': '0', 'blockTradeId': '', 'rejectReason': 'EC_NoError', 'isLeverage': '0', 'price': '0', 'orderIv': '', 'createdTime': '1712704899442', 'tpTriggerBy': '', 'positionIdx': '0', 'trailingPercentage': '0', 'timeInForce': 'IOC', 'leavesValue': '45.81756252', 'basePrice': '68108.97', 'updatedTime': '1712704899446', 'side': 'Buy', 'smpGroup': '0', 'triggerPrice': '0.00', 'tpLimitPrice': '0', 'trailingValue': '0', 'cumExecFee': '0.0000116064', 'slTriggerBy': '', 'leavesQty': '0.000000', 'closeOnTrigger': False, 'placeType': '', 'cumExecQty': '0.014508', 'reduceOnly': False, 'activationPrice': '0', 'qty': '0.014508', 'stopLoss': '0', 'marketUnit': 'baseCoin', 'smpOrderId': '', 'triggerBy': '', 'nextPageCursor': '1660683493610711040%3A1712704899442%2C1660667717541521408%3A1712703018789'}, 'id': '1660683493610711040', 'clientOrderId': '1660683493610711041', 'timestamp': 1712704899442, 'datetime': '2024-04-09T23:21:39.442Z', 'lastTradeTimestamp': 1712704899446, 'lastUpdateTimestamp': 1712704899446, 'symbol': 'BTC/USDT', 'type': 'market', 'timeInForce': 'IOC', 'postOnly': False, 'reduceOnly': False, 'side': 'buy', 'price': 68356.32, 'stopPrice': None, 'triggerPrice': None, 'takeProfitPrice': None, 'stopLossPrice': None, 'amount': 0.014508, 'cost': 991.71349776, 'average': 68356.32, 'filled': 0.014508, 'remaining': 0.0, 'status': 'closed', 'fee': {'cost': '0.0000116064', 'currency': 'BTC'}, 'trades': [], 'fees': [{'cost': 1.16064e-05, 'currency': 'BTC'}]}
+2024-04-10 02:21:41.633 | INFO     | manager.order_manager:place_buy_order:29 - Placing stop loss order: Symbol=BTC/USDT, OrderSize=0.014508, TriggerPrice=54686.59200000000722666726460
+2024-04-10 02:21:43.352 | INFO     | database.database:insert_data:28 - Inserted data into table orders: [('1660683509523900416', 'bybit', 'BTC/USDT', 0.0, 54686.59, 0.014508, 0.0, 0.0, 'sell', 'market', 'open', datetime.datetime(2024, 4, 10, 2, 21, 41, 340000), datetime.datetime(2024, 4, 10, 2, 21, 41, 340000), 0.0)] with result: <clickhouse_connect.driver.summary.QuerySummary object at 0x00000257372D5250>
+2024-04-10 02:21:43.353 | INFO     | monitoring.monitoring:insert_single_order_to_db:80 - Successfully inserted order with ID 1660683509523900416
+2024-04-10 02:21:43.353 | INFO     | monitoring.monitoring:link_order_with_strategy:93 - Linking order 1660683509523900416 with strategy eabbff9d-866a-4d41-aeb8-81b9047ea86e
+2024-04-10 02:21:43.450 | INFO     | database.database:insert_data:28 - Inserted data into table order_strategy_link: [('1660683509523900416', 'eabbff9d-866a-4d41-aeb8-81b9047ea86e')] with result: <clickhouse_connect.driver.summary.QuerySummary object at 0x00000257372D54F0>
+2024-04-10 02:21:43.450 | INFO     | manager.order_manager:place_buy_order:38 - Stop loss order placed successfully: {'info': {'symbol': 'BTCUSDT', 'orderType': 'Market', 'orderLinkId': '1660683509532289024', 'slLimitPrice': '0', 'orderId': '1660683509523900416', 'cancelType': 'UNKNOWN', 'avgPrice': '0.00', 'stopOrderType': 'Stop', 'lastPriceOnCreated': '', 'orderStatus': 'Untriggered', 'takeProfit': '0', 'cumExecValue': '0.00000000', 'smpType': 'None', 'triggerDirection': '0', 'blockTradeId': '', 'isLeverage': '0', 'rejectReason': 'EC_NoError', 'price': '0', 'orderIv': '', 'createdTime': '1712704901340', 'tpTriggerBy': '', 'positionIdx': '0', 'trailingPercentage': '0', 'timeInForce': 'IOC', 'leavesValue': '0.00000000', 'basePrice': '68108.97', 'updatedTime': '1712704901340', 'side': 'Sell', 'smpGroup': '0', 'triggerPrice': '54686.59', 'tpLimitPrice': '0', 'trailingValue': '0', 'cumExecFee': '0', 'leavesQty': '0.014508', 'slTriggerBy': '', 'closeOnTrigger': False, 'placeType': '', 'cumExecQty': '0.000000', 'reduceOnly': False, 'activationPrice': '0', 'qty': '0.014508', 'stopLoss': '0', 'marketUnit': 'baseCoin', 'smpOrderId': '', 'triggerBy': '', 'nextPageCursor': '1660683509523900416%3A1712704901340%2C1660683509523900416%3A1712704901340'}, 'id': '1660683509523900416', 'clientOrderId': '1660683509532289024', 'timestamp': 1712704901340, 'datetime': '2024-04-09T23:21:41.340Z', 'lastTradeTimestamp': 1712704901340, 'lastUpdateTimestamp': 1712704901340, 'symbol': 'BTC/USDT', 'type': 'market', 'timeInForce': 'IOC', 'postOnly': False, 'reduceOnly': False, 'side': 'sell', 'price': None, 'stopPrice': 54686.59, 'triggerPrice': 54686.59, 'takeProfitPrice': None, 'stopLossPrice': None, 'amount': 0.014508, 'cost': 0.0, 'average': None, 'filled': 0.0, 'remaining': 0.014508, 'status': 'open', 'fee': {'cost': '0', 'currency': 'BTC'}, 'trades': [], 'fees': [{'cost': 0.0, 'currency': 'BTC'}]}
+2024-04-10 02:21:44.945 | INFO     | database.database:execute_query:53 - Executed query: 
+                SELECT * FROM strategies WHERE strategyId == 'a0e7198f-3ec6-45e3-b77a-04741d372d96' 
+                 with params: {}. Columns included.
+2024-04-10 02:21:44.995 | INFO     | database.database:execute_query:55 - Executed query: 
+                    SELECT TOP 1 orders.orderId
+                    FROM order_strategy_link 
+                    INNER JOIN orders ON orders.orderId = order_strategy_link.orderId 
+                    WHERE order_strategy_link.strategyId = 'a0e7198f-3ec6-45e3-b77a-04741d372d96'
+                    ORDER BY orders.createdTime DESC
+                     with params: {}.
+2024-04-10 02:21:45.041 | INFO     | database.database:execute_query:53 - Executed query: 
+                SELECT * FROM strategies WHERE strategyId == 'a0e7198f-3ec6-45e3-b77a-04741d372d96' 
+                 with params: {}. Columns included.
+2024-04-10 02:21:45.719 | INFO     | manager.order_manager:place_buy_order:18 - Placing buy order: Symbol=BTC/USDT, Balance=979.08469475999985175365
+2024-04-10 02:21:47.783 | INFO     | database.database:insert_data:28 - Inserted data into table orders: [('1660683546584770560', 'bybit', 'BTC/USDT', 68356.29, 0.0, 0.014328, 0.014328, 979.40901456, 'buy', 'market', 'closed', datetime.datetime(2024, 4, 10, 2, 21, 45, 757000), datetime.datetime(2024, 4, 10, 2, 21, 45, 761000), 1.14624e-05)] with result: <clickhouse_connect.driver.summary.QuerySummary object at 0x00000257390875E0>
+2024-04-10 02:21:47.783 | INFO     | monitoring.monitoring:insert_single_order_to_db:80 - Successfully inserted order with ID 1660683546584770560
+2024-04-10 02:21:47.783 | INFO     | monitoring.monitoring:link_order_with_strategy:93 - Linking order 1660683546584770560 with strategy a0e7198f-3ec6-45e3-b77a-04741d372d96
+2024-04-10 02:21:47.881 | INFO     | database.database:insert_data:28 - Inserted data into table order_strategy_link: [('1660683546584770560', 'a0e7198f-3ec6-45e3-b77a-04741d372d96')] with result: <clickhouse_connect.driver.summary.QuerySummary object at 0x000002573728FFD0>
+2024-04-10 02:21:47.951 | INFO     | database.database:execute_query:55 - Executed query: ALTER TABLE strategies UPDATE balance = -0.3243198000000942054844930232, assetsNumber = 0.014328, openPositions = True WHERE strategyId = 'a0e7198f-3ec6-45e3-b77a-04741d372d96' with params: {}.
+2024-04-10 02:21:47.951 | INFO     | manager.order_manager:place_buy_order:27 - Buy order placed successfully: {'info': {'symbol': 'BTCUSDT', 'orderType': 'Market', 'orderLinkId': '1660683546584770561', 'slLimitPrice': '0', 'orderId': '1660683546584770560', 'cancelType': 'UNKNOWN', 'avgPrice': '68356.29', 'stopOrderType': '', 'lastPriceOnCreated': '', 'orderStatus': 'Filled', 'takeProfit': '0', 'cumExecValue': '979.40901456', 'smpType': 'None', 'triggerDirection': '0', 'blockTradeId': '', 'rejectReason': 'EC_NoError', 'isLeverage': '0', 'price': '0', 'orderIv': '', 'createdTime': '1712704905757', 'tpTriggerBy': '', 'positionIdx': '0', 'trailingPercentage': '0', 'timeInForce': 'IOC', 'leavesValue': '45.04327200', 'basePrice': '68095.26', 'updatedTime': '1712704905761', 'side': 'Buy', 'smpGroup': '0', 'triggerPrice': '0.00', 'tpLimitPrice': '0', 'trailingValue': '0', 'cumExecFee': '0.0000114624', 'slTriggerBy': '', 'leavesQty': '0.000000', 'closeOnTrigger': False, 'placeType': '', 'cumExecQty': '0.014328', 'reduceOnly': False, 'activationPrice': '0', 'qty': '0.014328', 'stopLoss': '0', 'marketUnit': 'baseCoin', 'smpOrderId': '', 'triggerBy': '', 'nextPageCursor': '1660683546584770560%3A1712704905757%2C1660667747312691200%3A1712703022337'}, 'id': '1660683546584770560', 'clientOrderId': '1660683546584770561', 'timestamp': 1712704905757, 'datetime': '2024-04-09T23:21:45.757Z', 'lastTradeTimestamp': 1712704905761, 'lastUpdateTimestamp': 1712704905761, 'symbol': 'BTC/USDT', 'type': 'market', 'timeInForce': 'IOC', 'postOnly': False, 'reduceOnly': False, 'side': 'buy', 'price': 68356.29, 'stopPrice': None, 'triggerPrice': None, 'takeProfitPrice': None, 'stopLossPrice': None, 'amount': 0.014328, 'cost': 979.40901456, 'average': 68356.29, 'filled': 0.014328, 'remaining': 0.0, 'status': 'closed', 'fee': {'cost': '0.0000114624', 'currency': 'BTC'}, 'trades': [], 'fees': [{'cost': 1.14624e-05, 'currency': 'BTC'}]}
+2024-04-10 02:21:47.951 | INFO     | manager.order_manager:place_buy_order:29 - Placing stop loss order: Symbol=BTC/USDT, OrderSize=0.014328, TriggerPrice=54664.22400000000210315143079
+2024-04-10 02:21:50.040 | INFO     | database.database:insert_data:28 - Inserted data into table orders: [('1660683562573457408', 'bybit', 'BTC/USDT', 0.0, 54664.22, 0.014328, 0.0, 0.0, 'sell', 'market', 'open', datetime.datetime(2024, 4, 10, 2, 21, 47, 663000), datetime.datetime(2024, 4, 10, 2, 21, 47, 663000), 0.0)] with result: <clickhouse_connect.driver.summary.QuerySummary object at 0x00000257390878B0>
+2024-04-10 02:21:50.040 | INFO     | monitoring.monitoring:insert_single_order_to_db:80 - Successfully inserted order with ID 1660683562573457408
+2024-04-10 02:21:50.040 | INFO     | monitoring.monitoring:link_order_with_strategy:93 - Linking order 1660683562573457408 with strategy a0e7198f-3ec6-45e3-b77a-04741d372d96
+2024-04-10 02:21:50.150 | INFO     | database.database:insert_data:28 - Inserted data into table order_strategy_link: [('1660683562573457408', 'a0e7198f-3ec6-45e3-b77a-04741d372d96')] with result: <clickhouse_connect.driver.summary.QuerySummary object at 0x00000257390878B0>
+2024-04-10 02:21:50.150 | INFO     | manager.order_manager:place_buy_order:38 - Stop loss order placed successfully: {'info': {'symbol': 'BTCUSDT', 'orderType': 'Market', 'orderLinkId': '1660683562573457409', 'slLimitPrice': '0', 'orderId': '1660683562573457408', 'cancelType': 'UNKNOWN', 'avgPrice': '0.00', 'stopOrderType': 'Stop', 'lastPriceOnCreated': '', 'orderStatus': 'Untriggered', 'takeProfit': '0', 'cumExecValue': '0.00000000', 'smpType': 'None', 'triggerDirection': '0', 'blockTradeId': '', 'isLeverage': '0', 'rejectReason': 'EC_NoError', 'price': '0', 'orderIv': '', 'createdTime': '1712704907663', 'tpTriggerBy': '', 'positionIdx': '0', 'trailingPercentage': '0', 'timeInForce': 'IOC', 'leavesValue': '0.00000000', 'basePrice': '68108.97', 'updatedTime': '1712704907663', 'side': 'Sell', 'smpGroup': '0', 'triggerPrice': '54664.22', 'tpLimitPrice': '0', 'trailingValue': '0', 'cumExecFee': '0', 'leavesQty': '0.014328', 'slTriggerBy': '', 'closeOnTrigger': False, 'placeType': '', 'cumExecQty': '0.000000', 'reduceOnly': False, 'activationPrice': '0', 'qty': '0.014328', 'stopLoss': '0', 'marketUnit': 'baseCoin', 'smpOrderId': '', 'triggerBy': '', 'nextPageCursor': '1660683562573457408%3A1712704907663%2C1660683509523900416%3A1712704901340'}, 'id': '1660683562573457408', 'clientOrderId': '1660683562573457409', 'timestamp': 1712704907663, 'datetime': '2024-04-09T23:21:47.663Z', 'lastTradeTimestamp': 1712704907663, 'lastUpdateTimestamp': 1712704907663, 'symbol': 'BTC/USDT', 'type': 'market', 'timeInForce': 'IOC', 'postOnly': False, 'reduceOnly': False, 'side': 'sell', 'price': None, 'stopPrice': 54664.22, 'triggerPrice': 54664.22, 'takeProfitPrice': None, 'stopLossPrice': None, 'amount': 0.014328, 'cost': 0.0, 'average': None, 'filled': 0.0, 'remaining': 0.014328, 'status': 'open', 'fee': {'cost': '0', 'currency': 'BTC'}, 'trades': [], 'fees': [{'cost': 0.0, 'currency': 'BTC'}]}
+2024-04-10 02:21:53.516 | INFO     | database.database:execute_query:53 - Executed query: 
+                SELECT * FROM strategies WHERE strategyId == 'eabbff9d-866a-4d41-aeb8-81b9047ea86e' 
+                 with params: {}. Columns included.
+2024-04-10 02:21:53.565 | INFO     | database.database:execute_query:55 - Executed query: 
+                    SELECT TOP 1 orders.orderId
+                    FROM order_strategy_link 
+                    INNER JOIN orders ON orders.orderId = order_strategy_link.orderId 
+                    WHERE order_strategy_link.strategyId = 'eabbff9d-866a-4d41-aeb8-81b9047ea86e'
+                    ORDER BY orders.createdTime DESC
+                     with params: {}.
+2024-04-10 02:21:53.623 | INFO     | database.database:execute_query:53 - Executed query: 
+                SELECT * FROM strategies WHERE strategyId == 'eabbff9d-866a-4d41-aeb8-81b9047ea86e' 
+                 with params: {}. Columns included.
+2024-04-10 02:21:54.669 | INFO     | manager.order_manager:place_sell_order:51 - Placing sell order: Symbol=BTC/USDT, Balance=0.04342240999987588608, OrderSize=0.01450800000000000000
+2024-04-10 02:21:54.725 | INFO     | database.database:execute_query:55 - Executed query: 
+                    SELECT TOP 1 orders.orderId
+                    FROM order_strategy_link 
+                    INNER JOIN orders ON orders.orderId = order_strategy_link.orderId 
+                    WHERE order_strategy_link.strategyId = 'eabbff9d-866a-4d41-aeb8-81b9047ea86e'
+                    ORDER BY orders.createdTime DESC
+                     with params: {}.
+2024-04-10 02:21:55.102 | INFO     | database.database:execute_query:55 - Executed query: ALTER TABLE orders UPDATE orderStatus = 'closed' WHERE orderId = '1660683509523900416' with params: {}.
