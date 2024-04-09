@@ -102,14 +102,15 @@ def strategy_info(database, strategy_id):
             text = 'Sorry, something went wrong.'
             return text
         strategy_data = data[0]
-        text = '<b>Title:</b> ' + strategy_data['name'] + '\n'
-        text += '<b>Type:</b> ' + strategy_data['type'] + '\n'
-        text += '<b>Exchange:</b> ' + strategy_data['exchange'] + '\n'
-        text += '<b>Symbol:</b> ' + strategy_data['symbol'] + '\n'
-        text += '<b>Balance:</b> ' + str(strategy_data['balance']) + '\n'
-        text += '<b>AssetsNumber:</b> ' + str(strategy_data['assetsNumber']) + '\n'
-        text += '<b>Status:</b> ' + str(strategy_data['status']) + '\n'
-        text += '<b>Date:</b> ' + str(strategy_data['createdTime']) + '\n'
+        text = '<b>🔹 Strategy Details 🔹</b>\n\n'
+        text += '<b>Title:</b> <i>' + strategy_data['name'] + '</i>\n'
+        text += '<b>Type:</b> <i>' + strategy_data['type'] + '</i>\n'
+        text += '<b>Exchange:</b> <i>' + strategy_data['exchange'] + '</i>\n'
+        text += '<b>Symbol:</b> <i>' + strategy_data['symbol'] + '</i>\n'
+        text += '<b>Balance:</b> <i>' + str(round(strategy_data['balance'], 5)) + '</i>\n'
+        text += '<b>Assets Number:</b> <i>' + str(round(strategy_data['assetsNumber'], 5)) + '</i>\n'
+        text += '<b>Status:</b> <i>' + ('launched' if strategy_data['status'] else 'stopped') + '</i>\n'
+        text += '<b>Created:</b> <i>' + str(strategy_data['createdTime']) + '</i>\n'
         return text
     except Exception as err:
         print(err)

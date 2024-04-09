@@ -162,6 +162,17 @@ class Monitoring:
     def delete_all_data(self, table_name):
         return self.database.delete_all_data(table_name)
 
+    def get_loss_order(self, strategy_id):
+        query = f"""
+                SELECT TOP 1 orders.orderId
+                FROM order_strategy_link 
+                INNER JOIN orders ON orders.orderId = order_strategy_link.orderId 
+                WHERE order_strategy_link.strategyId = '{strategy_id}'
+                ORDER BY orders.createdTime DESC
+                """
+        loss = self.database.execute_query(query)
+        print(loss)
+
     def calculate_pnl_by_strategy(self, strategy_id):
         """
         Вычисляет PnL для заданной стратегии.

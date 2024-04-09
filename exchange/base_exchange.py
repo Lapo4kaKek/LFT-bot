@@ -54,8 +54,8 @@ class BaseExchange(ABC):
     def update_leverage(self, coin, level):
         pass
 
-    async def create_market_buy_order(self, symbol, order_size):
+    async def create_market_buy_order(self, strategy_id, symbol, order_size):
         return await self.exchange.create_order(symbol, 'market', 'buy', order_size)
 
-    async def create_market_sell_order(self, symbol, order_size):
+    async def create_market_sell_order(self, strategy_id, symbol, order_size):
         return await self.exchange.create_order(symbol, 'market', 'sell', order_size)
