@@ -42,6 +42,13 @@ async def example_binance_work():
 
 
 async def macd_trading(bybit, monitoring):
+    strategy_id = str(uuid.uuid4())
+
+    bybit.exchange.verbose = True
+    strategy1 = macd_strategy.MACDStrategy(exchange=bybit, symbol="BTCUSDT",
+                                                  settings={'strategy_name': 'Strategy 1',
+                                                            'filter_days': 3, 'limit': 100, 'loss_coef': 0.8},
+                                           strategy_id=strategy_id, monitoring=monitoring)
     logger.info("Init strategy MACD")
 
     logger.info(f"Strategy with ID: {strategy_id} and parameters: {strategy1.settings} ready and running!")
@@ -67,4 +74,10 @@ async def main():
     await macd_trading(bybit, monitoring)
 
 
-run(main())
+#run(main())
+database = Database('localhost', port, login_click, password_click)
+monitoring = Monitoring(database)
+monitoring.delete_all_data("order_strategy_link")
+monitoring.delete_all_data("orders")
+monitoring.delete_all_data("pnl_data")
+monitoring.delete_all_data("strategies")

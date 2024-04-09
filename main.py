@@ -23,16 +23,20 @@ from telegram_bot.handlers import TelegramBotHandlers
 # from utils.converter import Converter
 # from eth_utils import from_wei, to_hex
 # from eth_account.account import Account
+from loguru import logger
 
 load_dotenv()
 
-api_key_bybit = os.getenv('BYBIT_API_KEY')
-api_secret_bybit = os.getenv('BYBIT_API_SECRET')
+api_key_bybit = os.getenv('BYBIT_API_TESTNET')
+api_secret_bybit = os.getenv('BYBIT_API_SECRET_TESTNET')
 
 login_click = os.getenv('CLICKHOUSE_LOGIN')
 password_click = os.getenv('CLICKHOUSE_PASSWORD')
 
 database = Database('localhost', 8123, login_click, password_click)
+
+logger.remove()
+logger.add("logs/info.log", level="INFO")
 
 orders_columns = {
     'orderId': 'String',
@@ -77,17 +81,24 @@ if __name__ == '__main__':
     monitoring = Monitoring(database)
     telegram_bot_token = os.getenv('TELEGRAM_BOT_TOKEN')
     bot = TelegramBotHandlers(monitoring, database, telegram_bot_token)
-
+    logger.info("Bot created!")
     # thread1 = threading.Thread(target=func)
+
+
     thread2 = threading.Thread(target=bot.start_bot)
+
+    logger.info(f"Starting {thread2.name}...")
 
     # Запуск потоков
     #thread1.start()
+
     thread2.start()
 
     # Ожидание завершения обоих потоков
+    logger.info("Waiting for threads to finish...")
     # thread1.join()
     thread2.join()
+    logger.info("All threads finished executing.")
 
 
 

@@ -14,6 +14,7 @@ import urllib3
 import time
 import uuid
 from urllib.parse import quote_plus
+from loguru import logger
 
 
 class BybitExchange(BaseExchange):
@@ -82,32 +83,40 @@ class BybitExchange(BaseExchange):
         return self.exchange.set_leverage(level, coin)
 
     async def create_market_buy_order(self, symbol, order_size, params={}):
-        response_data = await self.create_order(symbol, 'market', 'buy', order_size, params=params)
-        await asyncio.sleep(1)
-        closed_orders = await self.exchange.fetch_closed_orders(symbol)
-        sorted_by_timestamp = self.exchange.sort_by(closed_orders, 'timestamp', True)
-        order = sorted_by_timestamp[0]
-        if order is not None:
-            order_stm = self.parse_order_to_clickhouse_format_ccxt(order)
-            print("Order_stm: ", order_stm)
-            self.monitoring.insert_single_order_to_db(order_stm)
-            return order
-        else:
-            Exception
+        try:
+            response_data = await self.create_order(symbol, 'market', 'buy', order_size, params=params)
+            await asyncio.sleep(1)
+            closed_orders = await self.exchange.fetch_closed_orders(symbol)
+            sorted_by_timestamp = self.exchange.sort_by(closed_orders, 'timestamp', True)
+            order = sorted_by_timestamp[0]
+            if order is not None:
+                order_stm = self.parse_order_to_clickhouse_format_ccxt(order)
+                logger.info(f"Order_stm: {order_stm}")
+                self.monitoring.insert_single_order_to_db(order_stm)
+                return order
+            else:
+                raise Exception("No closed orders found.")
+        except Exception as e:
+            logger.error(f"Failed to create market buy order: {e}")
+            raise
 
     async def create_market_stop_loss_order(self, symbol, order_size, params={}):
-        response_data = await self.create_order(symbol, 'market', 'sell', order_size, params=params)
-        await asyncio.sleep(1)
-        open_orders = await self.exchange.fetch_open_orders(symbol)
-        sorted_by_timestamp = self.exchange.sort_by(open_orders, 'timestamp', True)
-        order = sorted_by_timestamp[0]
-        if order is not None:
-            order_stm = self.parse_order_to_clickhouse_format_ccxt(order)
-            print("Order_stm: ", order_stm)
-            self.monitoring.insert_single_order_to_db(order_stm)
-            return order
-        else:
-            Exception
+        try:
+            response_data = await self.create_order(symbol, 'market', 'sell', order_size, params=params)
+            await asyncio.sleep(1)
+            open_orders = await self.exchange.fetch_open_orders(symbol)
+            sorted_by_timestamp = self.exchange.sort_by(open_orders, 'timestamp', True)
+            order = sorted_by_timestamp[0]
+            if order is not None:
+                order_stm = self.parse_order_to_clickhouse_format_ccxt(order)
+                logger.info(f"Order_stm: {order_stm}")
+                self.monitoring.insert_single_order_to_db(order_stm)
+                return order
+            else:
+                raise Exception("No open orders found.")
+        except Exception as e:
+            logger.error(f"Failed to create market stop loss order: {e}")
+            raise
 
     def parse_order_to_clickhouse_format_ccxt(self, order):
         # created_time = self.format_time_to_datetime(str(response.get('time')))
@@ -132,26 +141,29 @@ class BybitExchange(BaseExchange):
         return order_data
 
     def create_market_sell_order(self, symbol, order_size):
-        response_data = self.create_order(symbol, 'market', 'sell', order_size)
-        time.sleep(1)
+        try:
+            response_data = self.create_order(symbol, 'market', 'sell', order_size)
+            time.sleep(1)
 
-        order_id = response_data['result']['orderId']
-        print("Order id:" + order_id)
-        order = self.session.get_executions(
-            category="spot",
-            orderId=f'{order_id}',
-            limit=1,
-        )
-        print("Order:")
-        print(order)
+            order_id = response_data['result']['orderId']
+            logger.info(f"Order id: {order_id}")
+            order = self.session.get_executions(
+                category="spot",
+                orderId=f'{order_id}',
+                limit=1,
+            )
+            logger.info("Order: {}", order)
 
-        if order is not None:
-            order_stm = self.parse_order_to_clickhouse_format(order)
-            print(order_stm)
-            self.monitoring.insert_single_order_to_db(order_stm[0])
-            return order
-        else:
-            Exception
+            if order is not None:
+                order_stm = self.parse_order_to_clickhouse_format(order)
+                logger.info(order_stm)
+                self.monitoring.insert_single_order_to_db(order_stm[0])
+                return order
+            else:
+                raise Exception("Order not found.")
+        except Exception as e:
+            logger.error(f"Failed to create market sell order: {e}")
+            raise
 
     def get_order_history(self, limit=5):
         result = self.session.get_order_history(
