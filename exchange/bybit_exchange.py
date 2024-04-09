@@ -126,6 +126,22 @@ class BybitExchange(BaseExchange):
         else:
             Exception
 
+    async def cancel_order(self, order_id, symbol):
+        try:
+            await self.exchange.cancel_order(order_id, symbol)
+        except Exception as err:
+            print("Error in cancel_order: " + str(err))
+
+    async def fetch_loss_order(self, order_id, symbol):
+        try:
+            return await self.exchange.fetch_closed_order(order_id, symbol, params={'trigger': True})
+        except Exception:
+            try:
+                return await self.exchange.fetch_open_order(order_id, symbol, params={'trigger': True})
+            except Exception:
+                print("No order found in fetch_loss_order")
+            return None
+
     def parse_order_to_clickhouse_format_ccxt(self, order):
         # created_time = self.format_time_to_datetime(str(response.get('time')))
         # updated_time = self.format_time_to_datetime(str(order.get('execTime', response.get('time'))))
@@ -143,7 +159,7 @@ class BybitExchange(BaseExchange):
             'orderStatus': order.get('status'),
             'createdTime': order.get('timestamp'),
             'updatedTime': order.get('lastTradeTimestamp'),
-            'commission': float( order.get('fee', {}).get('cost', 0))
+            'commission': float(order.get('fee', {}).get('cost', 0))
         }
 
         return order_data
@@ -234,8 +250,7 @@ class BybitExchange(BaseExchange):
         else:
             Exception
 
-
-    def get_executions(self, order_id, category="spot", limit = 1):
+    def get_executions(self, order_id, category="spot", limit=1):
         order = self.session.get_executions(
             category=category,
             order_id=f'{order_id}',

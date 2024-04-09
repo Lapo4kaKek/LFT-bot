@@ -117,10 +117,24 @@ class Monitoring:
         query = f"""
                 SELECT * FROM strategies WHERE strategyId == '{strategy_id}' 
                 """
-        strategy = self.database.execute_query(query, params={'strategy_id': strategy_id}, columns=True)
+        strategy = self.database.execute_query(query, columns=True)
         if strategy is not None:
             return strategy[0]
         return strategy
+
+    async def get_order_info(self, order_id):
+        """
+        Ищет ордер в ClickHouse.
+        :param order_id: id ордера.
+        :return Dict, ордер.
+        """
+        query = f"""
+                SELECT * FROM orders WHERE orderId == '{order_id}' 
+                """
+        order = self.database.execute_query(query, columns=True)
+        if order is not None:
+            return order[0]
+        return order
 
     async def update_strategy_info(self, strategy_id, data):
         """
@@ -131,7 +145,18 @@ class Monitoring:
         """
         condition = ', '.join([f"{key} = {data[key]}" for key in data])
         query = f"ALTER TABLE strategies UPDATE {condition} WHERE strategyId = '{strategy_id}'"
-        self.database.execute_query(query, {'strategy_id': strategy_id})
+        self.database.execute_query(query)
+
+    async def update_order_info(self, order_id, data):
+        """
+        Обновляет строку в таблице orders по её id.
+        :param order_id: id ордера.
+        :param data: Dict, данные для обновления нужных столбцов.
+        :return Dict, ордер.
+        """
+        condition = ', '.join([f"{key} = {data[key]}" for key in data])
+        query = f"ALTER TABLE orders UPDATE {condition} WHERE orderId = '{order_id}'"
+        self.database.execute_query(query)
 
     # нужно еще поработать над этим
     def calculate_and_insert_daily_pnl(self, orders_data, starting_capital):
@@ -162,16 +187,19 @@ class Monitoring:
     def delete_all_data(self, table_name):
         return self.database.delete_all_data(table_name)
 
-    def get_loss_order(self, strategy_id):
-        query = f"""
-                SELECT TOP 1 orders.orderId
-                FROM order_strategy_link 
-                INNER JOIN orders ON orders.orderId = order_strategy_link.orderId 
-                WHERE order_strategy_link.strategyId = '{strategy_id}'
-                ORDER BY orders.createdTime DESC
-                """
-        loss = self.database.execute_query(query)
-        print(loss)
+    async def get_loss_order(self, strategy_id):
+        try:
+            query = f"""
+                    SELECT TOP 1 orders.orderId
+                    FROM order_strategy_link 
+                    INNER JOIN orders ON orders.orderId = order_strategy_link.orderId 
+                    WHERE order_strategy_link.strategyId = '{strategy_id}'
+                    ORDER BY orders.createdTime DESC
+                    """
+            loss = self.database.execute_query(query)
+            return loss[0][0]
+        except Exception as err:
+            return None
 
     def calculate_pnl_by_strategy(self, strategy_id):
         """
