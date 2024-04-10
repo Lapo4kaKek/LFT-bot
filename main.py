@@ -91,19 +91,16 @@ if __name__ == '__main__':
     # thread1 = threading.Thread(target=func)
 
 
-    thread2 = threading.Thread(target=bot.start_bot)
+    thread_bot = threading.Thread(target=bot.start_bot)
 
-    logger.info(f"Starting {thread2.name}...")
+    logger.info(f"Starting {thread_bot.name}...")
 
-    # Запуск потоков
-    #thread1.start()
-
-    thread2.start()
+    thread_bot.start()
 
     # Ожидание завершения обоих потоков
     logger.info("Waiting for threads to finish...")
     # thread1.join()
-    thread2.join()
+    thread_bot.join()
     logger.info("All threads finished executing.")
 
 

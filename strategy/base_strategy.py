@@ -1,6 +1,8 @@
-import time
 from abc import ABC, abstractmethod
+import asyncio
 from analysis.technical_analysis import TechnicalAnalysis
+from decimal import *
+from manager.order_manager import OrderManager
 
 
 class BaseStrategy(ABC):
@@ -33,12 +35,42 @@ class BaseStrategy(ABC):
         """
         pass
 
-    @abstractmethod
     async def trading(self):
         """
-        Запуск асинхронной торговли.
+        Осуществление асинхронной торговли в соответствии с заданными настройками.
         """
-        pass
+        while True:
+            self.update_info()
+            if not self.info['status']:
+                break
+            await OrderManager.check_loss_order(self.strategy_id, self.monitoring, self.exchange, self.symbol,
+                                                Decimal(self.info['balance']))
+            try:
+                signal = await self.get_signal()
+                print(self.info['name'] + ":\nSignal: " + str(signal))
+                if signal == 1:
+                    await OrderManager.place_buy_order(strategy_id=self.strategy_id, monitoring=self.monitoring,
+                                                       exchange=self.exchange,
+                                                       token_symbol=self.symbol,
+                                                       balance=Decimal(self.info['balance']),
+                                                       stop_loss=Decimal(self.info['settings']['loss_coef']))
+                    print('Buy\n----------------------')
+                elif signal == -1:
+                    await OrderManager.place_sell_order(
+                        strategy_id=self.strategy_id, monitoring=self.monitoring,
+                        exchange=self.exchange,
+                        token_symbol=self.symbol,
+                        balance=Decimal(self.info['balance']),
+                        order_size=self.info['assetsNumber'])
+                    print('Sell\n----------------------')
+                else:
+                    print('Hold')
+            except Exception as err:
+                print(err)
+
+            await asyncio.sleep(10)  # Пауза в 10 секунд
+
+        await self.exchange.close()
 
     def stop_strategy(self):
         """

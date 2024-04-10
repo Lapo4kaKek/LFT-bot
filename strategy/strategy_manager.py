@@ -4,10 +4,12 @@ import time
 import uuid
 import os
 from dotenv import load_dotenv
+from loguru import logger
 
 from database.database import Database
 from exchange.bybit_exchange import BybitExchange
 from monitoring.monitoring import Monitoring
+from strategy.aroon_strategy import AroonStrategy
 from strategy.macd_strategy import MACDStrategy
 
 strategies_types = {
@@ -15,16 +17,26 @@ strategies_types = {
         'type': 'macd',
         'exchange': 'bybit',
         'symbol': 'BTC/USDT',
-        'strategy_name': 'Strategy 1',
+        'strategy_name': 'MACD 1',
         'balance': 1000,
         'settings': {
             'filter_days': 3,
             'limit': 100,
-            'loss_coef': 0.8
+            'loss_coef': 0.9
         }
     },
-    'example1': '',
-    'example2': ''
+    'Aroon': {
+        'type': 'aroon',
+        'exchange': 'bybit',
+        'symbol': 'BTC/USDT',
+        'strategy_name': 'Aroon 1',
+        'balance': 1000,
+        'settings': {
+            'filter_frames': 5,
+            'limit': 100,
+            'loss_coef': 0.9
+        }
+    },
 }
 
 
@@ -75,6 +87,8 @@ def start_strategy(strategy_id, first_launch=False):
     strategy = None
     if info['type'] == 'macd':
         strategy = MACDStrategy(exchange, info['symbol'], strategy_id, monitoring)
+    elif info['type'] == 'aroon':
+        strategy = AroonStrategy(exchange, info['symbol'], strategy_id, monitoring)
 
     monitoring.update_strategy_info(strategy_id=strategy_id, data={
         'status': True
@@ -85,6 +99,7 @@ def start_strategy(strategy_id, first_launch=False):
         asyncio.set_event_loop(loop)
         loop.run_until_complete(strategy.trading())
 
+    logger.info(f"Launch strategy {info['name']}...")
     thread = threading.Thread(target=start_new_event_loop)
     thread.start()
 
@@ -98,3 +113,4 @@ def stop_strategy(strategy_id, monitoring):
     monitoring.update_strategy_info(strategy_id=strategy_id, data={
         'status': False
     })
+    logger.info(f"Stop strategy {info['name']}...")
