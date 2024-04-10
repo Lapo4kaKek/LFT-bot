@@ -1,1 +1,1 @@
-ccxt hyperliquid-python-sdk eth-account eth-utils loguru texttable pyTelegramBotAPI
+ccxt hyperliquid-python-sdk eth-account eth-utils loguru texttable pyTelegramBotAPI coverage

@@ -64,3 +64,19 @@ python main.py
 
 
 ### Логи сохраняются [здесь](./logs)
+
+## 
+## Тесты
+### Для запуска тестов и получения отчета с помощью 'coverage' 
+```python
+coverage run -m unittest discover
+coverage report --include='tests/*'
+```
+
+Для более детализированного отчета можно сгенерировать HTML:
+```
+coverage html
+```
+
+
+
